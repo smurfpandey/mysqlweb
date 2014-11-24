@@ -77,8 +77,6 @@
 }
 
 #sidebar .title {
-  position: absolute;
-  top: 0;
   width: 100%;
   line-height: 33px;
   height: 33px;
@@ -174,7 +172,7 @@
 }
 
 #sidebar ul li span {
-  padding: 0px 8px 0 12px;
+  padding: 0px 8px 0 5px;
   display: inline-block;
   width: auto;
   min-width: 100%;
@@ -402,4 +400,8 @@
 
 .connection-ssh-group {
   display: none;
+}
+
+#database-tree {
+  padding-left: 10px;
 }

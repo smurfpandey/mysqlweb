@@ -6,12 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta http-equiv="Content-Language" content="en">
   <link rel="stylesheet" href="/static/css/bootstrap.css"></link>
+  <link rel="stylesheet" href="/static/css/jqtree.css"></link>
   <link rel="stylesheet" href="/static/css/app.css"></link>
   <link rel="icon" type="image/x-icon" href="/static/img/icon.ico" />
-  <script type="text/javascript" src="/static/js/jquery.js"></script>
-  <script type="text/javascript" src="/static/js/ace.js"></script>
-  <script type="text/javascript" src="/static/js/ace-pgsql.js"></script>
-  <script type="text/javascript" src="/static/js/app.js"></script>
+
 </head>
 <body>
   <div id="main">
@@ -30,8 +28,10 @@
     <div id="sidebar">
       <div class="tables-list">
         <div class="wrap">
-          <div class="title">Database Tables</div>
-          <ul id="tables"></ul>
+          <div class="title">Database</div>
+          <div id="database-tree">
+            <ul id="databases"></ul>
+          </div>
         </div>
       </div>
       <div class="table-information">
@@ -181,5 +181,20 @@
       </form>
     </div>
   </div>
+  <script type="text/javascript" src="/static/js/jquery.js"></script>
+  <script type="text/javascript" src="/static/js/ace.js"></script>
+  <script type="text/javascript" src="/static/js/ace-pgsql.js"></script>
+  <script type="text/javascript" src="/static/js/tree.jquery.js"></script>
+  <script type="text/javascript" src="/static/js/handlebars-v2.0.0.js"></script>
+  <script type="text/javascript" src="/static/js/app.js"></script>
+  <script id="tmpl-database-tree" type="text/x-handlebars-template">
+    <ul>
+      {{#each database}}
+      <li data-jstree='{"children": true}'>
+        {{.}}
+      </li>
+      {{/each}}
+    </ul>
+  </script>
 </body>
 </html>

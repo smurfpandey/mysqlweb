@@ -20,6 +20,19 @@ function getTables(cb)                { apiCall("get", "/tables", {}, cb); }
 function getTableStructure(table, cb) { apiCall("get", "/tables/" + table, {}, cb); }
 function getTableIndexes(table, cb)   { apiCall("get", "/tables/" + table + "/indexes", {}, cb); }
 function getHistory(cb)               { apiCall("get", "/history", {}, cb); }
+function getDatabases(cb)             { apiCall("get", "/databases", {}, cb); }
+
+function forTheTree(){
+  $('#database-tree').bind('tree.toggle',function(e) {
+    console.log(e.node);
+    e.preventDefault();
+  });
+
+  $('#database-tree').bind('tree.click',function(e) {
+    console.log(e.node);
+    e.preventDefault();
+  });
+}
 
 function executeQuery(query, cb) {
   apiCall("post", "/query", { query: query }, cb);
@@ -34,8 +47,28 @@ function loadTables() {
 
   getTables(function(data) {
     data.forEach(function(item) {
-      $("<li><span>" + item + "</span></li>").appendTo("#tables");
+      $('<li data-jstree="{"children":true}"><span>' + item + '</span></li>').appendTo("#tables");
     });
+  });
+}
+
+function loadDatabases() {
+  $('#database-tree').empty();
+
+  getDatabases(function(data){
+    //generateFromTemplate({database: data}, 'tmpl-database-tree', $('#database-tree'), true);
+    var objData = [];
+
+    data.forEach(function(val){
+      objData.push({
+        label: val,
+        load_on_demand: true
+      });
+    });
+    //Make a jsTree
+    $('#database-tree').tree({data: objData});
+
+    forTheTree();
   });
 }
 
@@ -337,18 +370,31 @@ function getConnectionString() {
     var db   = $("#pg_db").val();
 
     if (port.length == 0) {
-      port = "5432";
+      port = "3306";
     }
 
     url = user + ":" + pass + "@tcp(" + host + ":" + port + ")/" + db;
   }
   else {
     if (url.indexOf("localhost") != -1 && url.indexOf("sslmode") == -1) {
-      url += "?sslmode=" + ssl;
+      //url += "?sslmode=" + ssl;
     }
   }
 
   return url;
+}
+
+function generateFromTemplate(objData, templateId, $destContainer, iReplace){
+  var source   = $("#"+templateId).html();
+  var template = Handlebars.compile(source);
+  var html    = template(objData);
+
+  if(iReplace){
+    $destContainer.html(html);
+  }
+  else{
+    $destContainer.append(html);
+  }
 }
 
 $(document).ready(function() {
@@ -472,7 +518,8 @@ $(document).ready(function() {
       else {
         connected = true;
         $("#connection_window").hide();
-        loadTables();
+        //loadTables();
+        loadDatabases();
         $("#main").show();
       }
     });
@@ -488,7 +535,8 @@ $(document).ready(function() {
     }
     else {
       connected = true;
-      loadTables();
+      //loadTables();
+      loadDatabases();
       $("#main").show();
     }
   });

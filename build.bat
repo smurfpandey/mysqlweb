@@ -1,0 +1,3 @@
+go-bindata -ignore=\\.gitignore -ignore=\\.DS_Store -ignore=\\.gitkeep static/...
+go build
+mysqlweb.exe
