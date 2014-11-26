@@ -1,5 +1,6 @@
 var editor;
 var connected = false;
+var $tree = $('#database-tree');
 
 function apiCall(method, path, params, cb) {
   $.ajax({
@@ -16,16 +17,30 @@ function apiCall(method, path, params, cb) {
   });
 }
 
-function getTables(cb)                { apiCall("get", "/tables", {}, cb); }
-function getTableStructure(table, cb) { apiCall("get", "/tables/" + table, {}, cb); }
-function getTableIndexes(table, cb)   { apiCall("get", "/tables/" + table + "/indexes", {}, cb); }
-function getHistory(cb)               { apiCall("get", "/history", {}, cb); }
-function getDatabases(cb)             { apiCall("get", "/databases", {}, cb); }
+function getTables(cb)                    { apiCall("get", "/tables", {}, cb); }
+function getTableStructure(table, cb)     { apiCall("get", "/tables/" + table, {}, cb); }
+function getTablesOfDatabase(dbName, cb)  { apiCall("get", "/databases/" + dbName + "/tables", {}, cb); }
+function getTableIndexes(table, cb)       { apiCall("get", "/tables/" + table + "/indexes", {}, cb); }
+function getHistory(cb)                   { apiCall("get", "/history", {}, cb); }
+function getDatabases(cb)                 { apiCall("get", "/databases", {}, cb); }
 
 function forTheTree(){
   $('#database-tree').bind('tree.toggle',function(e) {
-    console.log(e.node);
-    e.preventDefault();
+    var dbNode = e.node;
+    var dbName = dbNode.name;
+
+    getTablesOfDatabase(dbName, function(data){
+      var objData = [];
+
+      data.forEach(function(val){
+        objData.push({
+          label: val,
+          load_on_demand: true
+        });
+      });
+
+      $tree.tree('loadData', objData, dbNode);
+    });
   });
 
   $('#database-tree').bind('tree.click',function(e) {

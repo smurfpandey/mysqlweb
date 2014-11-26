@@ -78,6 +78,23 @@ func (client *Client) Databases() ([]string, error) {
 	return tables, nil
 }
 
+//DatabaseTables will give you list of tables belonging to the database
+func (client *Client) DatabaseTables(database string) ([]string, error) {
+	res, err := client.Query(fmt.Sprintf(MySQLDatabaseTables, database))
+
+	if err != nil {
+		return nil, err
+	}
+
+	var tables []string
+
+	for _, row := range res.Rows {
+		tables = append(tables, row[0].(string))
+	}
+
+	return tables, nil
+}
+
 //Tables will return list of tables in test database
 func (client *Client) Tables() ([]string, error) {
 	res, err := client.Query(MySQLTables)

@@ -94,6 +94,18 @@ func APIGetDatabases(c *gin.Context) {
 	c.JSON(200, names)
 }
 
+//APIGetDatabaseTables will give the tables of a database
+func APIGetDatabaseTables(c *gin.Context) {
+	res, err := dbClient.DatabaseTables(c.Params.ByName("database"))
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.JSON(200, res)
+}
+
 //APIRunQuery will run the user's sql query
 func APIRunQuery(c *gin.Context) {
 	query := strings.TrimSpace(c.Request.FormValue("query"))
