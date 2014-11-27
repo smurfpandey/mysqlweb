@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>pgweb</title>
+  <title>mysqlweb</title>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta http-equiv="Content-Language" content="en">
@@ -69,7 +69,7 @@
 
   <div id="connection_window">
     <div class="connection-settings">
-      <h1>pgweb</h1>
+      <h1>mysqlweb</h1>
 
       <form role="form" class="form-horizontal" id="connection_form">
         <div class="text-center">
@@ -87,7 +87,7 @@
             <div class="col-sm-12">
               <label>Enter server URL scheme</label>
               <input type="text" class="form-control" id="connection_url" name="url">
-              <p class="help-block">URL format: postgres://user:password@host:port/db?sslmode=mode</p>
+              <p class="help-block">URL format: user:password@tcp(host:port)/db</p>
             </div>
           </div>
         </div>
@@ -124,11 +124,11 @@
           <div class="form-group">
             <label class="col-sm-3 control-label">Port</label>
             <div class="col-sm-9">
-              <input type="text" id="pg_port" class="form-control" placeholder="5432" />
+              <input type="text" id="pg_port" class="form-control" placeholder="3306" />
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" style="display:none;">
             <label class="col-sm-3 control-label">SSL</label>
             <div class="col-sm-9">
               <select class="form-control" id="connection_ssl">

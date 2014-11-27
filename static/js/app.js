@@ -27,24 +27,52 @@ function getDatabases(cb)                 { apiCall("get", "/databases", {}, cb)
 function forTheTree(){
   $('#database-tree').bind('tree.toggle',function(e) {
     var dbNode = e.node;
-    var dbName = dbNode.name;
+    var nodeName = dbNode.name;
 
-    getTablesOfDatabase(dbName, function(data){
-      var objData = [];
+    //If data is already loaded, just do nothing.
+    //It's all taken care of.
+    if(dbNode.data_loaded){
+      return;
+    }
 
-      data.forEach(function(val){
-        objData.push({
-          label: val,
-          load_on_demand: true
+    if(dbNode.type === 'database'){
+      getTablesOfDatabase(nodeName, function(data){
+        var objData = [];
+
+        data.forEach(function(val){
+          objData.push({
+            label: val,
+            type: 'table'
+          });
         });
-      });
 
-      $tree.tree('loadData', objData, dbNode);
-    });
+        $tree.tree('loadData', objData, dbNode);
+        $tree.tree('updateNode', dbNode, { data_loaded: true, });
+        $tree.tree('openNode', dbNode);
+      });
+    }
+    else {
+
+    }
   });
 
   $('#database-tree').bind('tree.click',function(e) {
-    console.log(e.node);
+    var dbNode = e.node;
+    var nodeName = dbNode.name;
+    getTableStructure(nodeName, function(data) {
+      setCurrentTab("table_structure");
+      buildTable(data);
+    });
+
+    apiCall("get", "/tables/" + nodeName + "/info", {}, function(data) {
+      $(".table-information ul").show();
+      $("#table_total_size").text(data.total_size);
+      $("#table_data_size").text(data.data_length);
+      $("#table_index_size").text(data.index_length);
+      $("#table_rows_count").text(data.row_count);
+      $("#table_encoding").text("Unknown");
+    });
+
     e.preventDefault();
   });
 }
@@ -77,7 +105,8 @@ function loadDatabases() {
     data.forEach(function(val){
       objData.push({
         label: val,
-        load_on_demand: true
+        load_on_demand: true,
+        type: 'database'
       });
     });
     //Make a jsTree
