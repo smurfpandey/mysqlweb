@@ -93,7 +93,7 @@
   left: 0px;
   bottom: 130px;
   overflow: auto;
-  background: #31373d;
+  background: #CACDD0;
 }
 
 #sidebar div.tables-list .wrap {
@@ -165,10 +165,6 @@
   font-weight: bold;
   background: #272c30;
   -webkit-font-smoothing: antialiased;
-}
-
-#sidebar ul li:hover span {
-  background: #272c30;
 }
 
 #sidebar ul li span {
@@ -404,4 +400,8 @@
 
 #database-tree {
   padding-left: 10px;
+}
+
+#database-tree .jqtree-title {
+  color: #202427;
 }

@@ -1,6 +1,8 @@
 var editor;
 var connected = false;
 var $tree = $('#database-tree');
+var theTable = '';
+var theDatabase = '';
 
 function apiCall(method, path, params, cb) {
   $.ajax({
@@ -23,6 +25,10 @@ function getTablesOfDatabase(dbName, cb)  { apiCall("get", "/databases/" + dbNam
 function getTableIndexes(table, cb)       { apiCall("get", "/tables/" + table + "/indexes", {}, cb); }
 function getHistory(cb)                   { apiCall("get", "/history", {}, cb); }
 function getDatabases(cb)                 { apiCall("get", "/databases", {}, cb); }
+
+var fnGetSelectedTable = function(){
+  return theTable;
+}
 
 function forTheTree(){
   $('#database-tree').bind('tree.toggle',function(e) {
@@ -59,19 +65,10 @@ function forTheTree(){
   $('#database-tree').bind('tree.click',function(e) {
     var dbNode = e.node;
     var nodeName = dbNode.name;
-    getTableStructure(nodeName, function(data) {
-      setCurrentTab("table_structure");
-      buildTable(data);
-    });
 
-    apiCall("get", "/tables/" + nodeName + "/info", {}, function(data) {
-      $(".table-information ul").show();
-      $("#table_total_size").text(data.total_size);
-      $("#table_data_size").text(data.data_length);
-      $("#table_index_size").text(data.index_length);
-      $("#table_rows_count").text(data.row_count);
-      $("#table_encoding").text("Unknown");
-    });
+    if(dbNode.type === 'table'){
+      theTable = nodeName;
+    }
 
     e.preventDefault();
   });
@@ -192,7 +189,7 @@ function showQueryHistory() {
 }
 
 function showTableIndexes() {
-  var name = $("#tables li.selected").text();
+  var name = fnGetSelectedTable();
 
   if (name.length == 0) {
     alert("Please select a table!");
@@ -210,7 +207,7 @@ function showTableIndexes() {
 }
 
 function showTableInfo() {
-  var name = $("#tables li.selected").text();
+  var name = fnGetSelectedTable();
 
   if (name.length == 0) {
     alert("Please select a table!");
@@ -228,14 +225,14 @@ function showTableInfo() {
 }
 
 function showTableContent() {
-  var name = $("#tables li.selected").text();
+  var name = fnGetSelectedTable();
 
   if (name.length == 0) {
     alert("Please select a table!");
     return;
   }
 
-  var query = "SELECT * FROM \"" + name + "\" LIMIT 100;";
+  var query = "SELECT * FROM " + name + " LIMIT 100;";
 
   executeQuery(query, function(data) {
     buildTable(data);
@@ -248,7 +245,7 @@ function showTableContent() {
 }
 
 function showTableStructure() {
-  var name = $("#tables li.selected").text();
+  var name = fnGetSelectedTable();
 
   if (name.length == 0) {
     alert("Please select a table!");
@@ -415,6 +412,9 @@ function getConnectionString() {
 
     if (port.length == 0) {
       port = "3306";
+    }
+    if(db.length > 0){
+      theDatabase = db;
     }
 
     url = user + ":" + pass + "@tcp(" + host + ":" + port + ")/" + db;
