@@ -7,7 +7,7 @@ Note: This is a work in progress.
 
 Overview
 ========
-This is a web-based browser for PostgreSQL database server. Its written in Go and works on Mac OSX, Linux and Windows machines. Main idea behind using Go for the backend is to utilize language's ability for cross-compile source code for multiple platforms. This project is my attempt to learn golang.
+This is a web-based browser for MySQL database server. Its written in Go and works on Mac OSX, Linux and Windows machines. Main idea behind using Go for the backend is to utilize language's ability for cross-compile source code for multiple platforms. This project is my attempt to learn golang.
 
 ## How to run
 
@@ -20,7 +20,7 @@ This is a web-based browser for PostgreSQL database server. Its written in Go an
 ## TODO
 
 1. Set default database
-2. Context menus, to create, drop tables
+2. Create, drop tables via context menu
 3. Build file for non-windows OS
 
 ## Contributing
