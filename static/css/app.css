@@ -405,3 +405,7 @@
 #database-tree .jqtree-title {
   color: #202427;
 }
+
+.selected-db .jqtree-title:first-of-type{
+  font-weight: 600;
+}

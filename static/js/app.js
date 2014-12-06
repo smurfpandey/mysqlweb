@@ -30,6 +30,33 @@ var fnGetSelectedTable = function(){
   return theTable;
 }
 
+var fnShowTheDatabase = function(){
+  //Get all nodes with name as database name
+
+  var arrFirst = $tree.tree('getNodesByProperty', 'name', theDatabase);
+
+  //If we got no nodes, than it's sad
+  if(arrFirst.length === 0){
+    return;
+  }
+
+  //Chances are we might get nodes of type table as well as database
+  //Let's apply filter again, this time for type database
+  //Just in case
+  var myNode = arrFirst.filter(function (el) {
+    return el.type == 'database';
+  });
+
+  if(myNode.length === 0){
+    return;
+  }
+
+  //Apply style to this node
+  //Make it bold
+  var $nodeEle = $(myNode[0].element);
+  $nodeEle.addClass('selected-db');
+}
+
 function forTheTree(){
   $('#database-tree').bind('tree.toggle',function(e) {
     var dbNode = e.node;
@@ -110,6 +137,9 @@ function loadDatabases() {
     $('#database-tree').tree({data: objData});
 
     forTheTree();
+
+    //Highlisht the selected database, if any
+    fnShowTheDatabase();
   });
 }
 
