@@ -106,6 +106,14 @@ func APIGetDatabaseTables(c *gin.Context) {
 	c.JSON(200, res)
 }
 
+//APISetDefaultDatabase will set the database as default db for connection
+func APISetDefaultDatabase(c *gin.Context) {
+	dbName := c.Params.ByName("database")
+	query := fmt.Sprintf("use %s;", dbName)
+
+	APIHandleQuery(query, c)
+}
+
 //APIRunQuery will run the user's sql query
 func APIRunQuery(c *gin.Context) {
 	query := strings.TrimSpace(c.Request.FormValue("query"))

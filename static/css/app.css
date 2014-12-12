@@ -406,6 +406,6 @@
   color: #202427;
 }
 
-.selected-db .jqtree-title:first-of-type{
+.selected-db .jqtree-title-folder:first-of-type{
   font-weight: 600;
 }

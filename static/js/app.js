@@ -25,6 +25,7 @@ function getTablesOfDatabase(dbName, cb)  { apiCall("get", "/databases/" + dbNam
 function getTableIndexes(table, cb)       { apiCall("get", "/tables/" + table + "/indexes", {}, cb); }
 function getHistory(cb)                   { apiCall("get", "/history", {}, cb); }
 function getDatabases(cb)                 { apiCall("get", "/databases", {}, cb); }
+function setDefaultDatabase(cb)           { apiCall("put", "/databases/")}
 
 var fnGetSelectedTable = function(){
   return theTable;
@@ -98,6 +99,32 @@ function forTheTree(){
     }
 
     e.preventDefault();
+  });
+
+  //Double click on a database node, to set it as default
+  //tree.dblclick
+  $tree.on('tree.dblclick', function(e){
+    e.preventDefault();
+
+    var dbNode = e.node;
+
+    if(dbNode.type === 'database'){
+      theDatabase = dbNode.name;
+
+      //Set this as default database
+
+
+      //Highglight this database node
+    }
+
+  });
+
+  //Listen when data is refreshed inside the tree
+  $tree.on('tree.refresh', function(e){
+    fnShowTheDatabase();
+  });
+  $tree.on('tree.open', function(e){
+    fnShowTheDatabase();
   });
 }
 
@@ -610,6 +637,7 @@ $(document).ready(function() {
     else {
       connected = true;
       //loadTables();
+      theDatabase = resp['DATABASE()'];
       loadDatabases();
       $("#main").show();
     }
