@@ -25,13 +25,16 @@ function getTablesOfDatabase(dbName, cb)  { apiCall("get", "/databases/" + dbNam
 function getTableIndexes(table, cb)       { apiCall("get", "/tables/" + table + "/indexes", {}, cb); }
 function getHistory(cb)                   { apiCall("get", "/history", {}, cb); }
 function getDatabases(cb)                 { apiCall("get", "/databases", {}, cb); }
-function setDefaultDatabase(cb)           { apiCall("put", "/databases/")}
+function setDefaultDatabase(dbName, cb)   { apiCall("post", "/databases/" + dbName + "/actions/default", {}, cb); }
 
 var fnGetSelectedTable = function(){
   return theTable;
 }
 
 var fnShowTheDatabase = function(){
+  //Remove previous one
+  $('.selected-db').removeClass('selected-db');
+
   //Get all nodes with name as database name
 
   var arrFirst = $tree.tree('getNodesByProperty', 'name', theDatabase);
@@ -112,9 +115,12 @@ function forTheTree(){
       theDatabase = dbNode.name;
 
       //Set this as default database
+      setDefaultDatabase(dbNode.name, function(){
+        //Highglight this database node
+        fnShowTheDatabase();
+      });
 
 
-      //Highglight this database node
     }
 
   });
