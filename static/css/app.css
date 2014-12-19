@@ -409,3 +409,7 @@
 .selected-db .jqtree-title-folder:first-of-type{
   font-weight: 600;
 }
+
+#database-tree .jqtree_common.active {
+  font-weight: 600;
+}

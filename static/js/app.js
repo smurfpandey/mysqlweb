@@ -99,6 +99,8 @@ function forTheTree(){
 
     if(dbNode.type === 'table'){
       theTable = nodeName;
+      $('li.jqtree_common.active').removeClass('active');
+      $(dbNode.element).addClass('active');
     }
 
     e.preventDefault();
