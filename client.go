@@ -112,6 +112,23 @@ func (client *Client) DatabaseProcedures(database string) ([]string, error) {
 	return tables, nil
 }
 
+//DatabaseFunctions returns a list of all the functions in the database
+func (client *Client) DatabaseFunctions(database string) ([]string, error) {
+	res, err := client.Query(fmt.Sprintf(MySQLDatabaseFunctions, database))
+
+	if err != nil {
+		return nil, err
+	}
+
+	var tables []string
+
+	for _, row := range res.Rows {
+		tables = append(tables, row[0].(string))
+	}
+
+	return tables, nil
+}
+
 //Tables will return list of tables in test database
 func (client *Client) Tables() ([]string, error) {
 	res, err := client.Query(MySQLTables)

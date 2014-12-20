@@ -154,6 +154,7 @@ func startServer() {
 	router.GET("/databases", APIGetDatabases)
 	router.GET("/databases/:database/tables", APIGetDatabaseTables)
 	router.GET("/databases/:database/procedures", APIGetDatabaseProcedures)
+	router.GET("/databases/:database/functions", APIGetDatabaseFunctions)
 	router.POST("/databases/:database/actions/default", APISetDefaultDatabase)
 	router.GET("/info", APIInfo)
 	router.GET("/tables", APIGetTables)

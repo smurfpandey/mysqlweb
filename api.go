@@ -118,6 +118,18 @@ func APIGetDatabaseProcedures(c *gin.Context) {
 	c.JSON(200, res)
 }
 
+//APIGetDatabaseFunctions will give the functions of a database
+func APIGetDatabaseFunctions(c *gin.Context) {
+	res, err := dbClient.DatabaseFunctions(c.Params.ByName("database"))
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.JSON(200, res)
+}
+
 //APISetDefaultDatabase will set the database as default db for connection
 func APISetDefaultDatabase(c *gin.Context) {
 	dbName := c.Params.ByName("database")
