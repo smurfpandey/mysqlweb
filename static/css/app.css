@@ -144,11 +144,6 @@
   padding-left: 0px;
 }
 
-#sidebar ul {
-  margin: 0px;
-  padding: 0px;
-}
-
 #sidebar ul li {
   list-style: none;
   list-style-type: none;
@@ -412,4 +407,8 @@
 
 #database-tree .jqtree_common.active {
   font-weight: 600;
+}
+
+ul.jqtree_common ul.jqtree_common {
+  margin-left: 15px;
 }

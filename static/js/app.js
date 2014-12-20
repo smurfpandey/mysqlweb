@@ -3,6 +3,23 @@ var connected = false;
 var $tree = $('#database-tree');
 var theTable = '';
 var theDatabase = '';
+var dbChildNode = [
+  {
+    label: 'Table',
+    load_on_demand: true,
+    type: 'tbl-holder'
+  },
+  {
+    label: 'Procedure',
+    load_on_demand: true,
+    type: 'sp-holder'
+  },
+  {
+    label: 'Function',
+    load_on_demand: true,
+    type: 'fn-holder'
+  }
+];
 
 function apiCall(method, path, params, cb) {
   $.ajax({
@@ -64,7 +81,7 @@ var fnShowTheDatabase = function(){
 function forTheTree(){
   $('#database-tree').bind('tree.toggle',function(e) {
     var dbNode = e.node;
-    var nodeName = dbNode.name;
+
 
     //If data is already loaded, just do nothing.
     //It's all taken care of.
@@ -72,8 +89,9 @@ function forTheTree(){
       return;
     }
 
-    if(dbNode.type === 'database'){
-      getTablesOfDatabase(nodeName, function(data){
+    if(dbNode.type === 'tbl-holder'){
+      var dbName = dbNode.parent.name;
+      getTablesOfDatabase(dbName, function(data){
         var objData = [];
 
         data.forEach(function(val){
@@ -164,8 +182,8 @@ function loadDatabases() {
     data.forEach(function(val){
       objData.push({
         label: val,
-        load_on_demand: true,
-        type: 'database'
+        type: 'database',
+        children: dbChildNode
       });
     });
     //Make a jsTree
