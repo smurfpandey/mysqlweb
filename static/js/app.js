@@ -98,7 +98,8 @@ function forTheTree(){
         data.forEach(function(val){
           objData.push({
             label: val,
-            type: 'table'
+            type: 'table',
+            load_on_demand: true
           });
         });
 
@@ -131,6 +132,23 @@ function forTheTree(){
           objData.push({
             label: val,
             type: 'function'
+          });
+        });
+
+        $tree.tree('loadData', objData, dbNode);
+        $tree.tree('updateNode', dbNode, { data_loaded: true, });
+        $tree.tree('openNode', dbNode);
+      });
+    }
+    else if (dbNode.type === 'table') {
+      var tblName = dbNode.name;
+      getTableStructure(tblName, function(data){
+        var objData = [];
+
+        data.rows.forEach(function(val){
+          objData.push({
+            label: val[0] + ' (' + val[1] + ')',
+            type: 'column'
           });
         });
 
