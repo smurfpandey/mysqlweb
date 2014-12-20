@@ -36,13 +36,14 @@ function apiCall(method, path, params, cb) {
   });
 }
 
-function getTables(cb)                    { apiCall("get", "/tables", {}, cb); }
-function getTableStructure(table, cb)     { apiCall("get", "/tables/" + table, {}, cb); }
-function getTablesOfDatabase(dbName, cb)  { apiCall("get", "/databases/" + dbName + "/tables", {}, cb); }
-function getTableIndexes(table, cb)       { apiCall("get", "/tables/" + table + "/indexes", {}, cb); }
-function getHistory(cb)                   { apiCall("get", "/history", {}, cb); }
-function getDatabases(cb)                 { apiCall("get", "/databases", {}, cb); }
-function setDefaultDatabase(dbName, cb)   { apiCall("post", "/databases/" + dbName + "/actions/default", {}, cb); }
+function getTables(cb)                        { apiCall("get", "/tables", {}, cb); }
+function getTableStructure(table, cb)         { apiCall("get", "/tables/" + table, {}, cb); }
+function getTablesOfDatabase(dbName, cb)      { apiCall("get", "/databases/" + dbName + "/tables", {}, cb); }
+function getProceduresOfDatabase(dbName, cb)  { apiCall("get", "/databases/" + dbName + "/procedures", {}, cb); }
+function getTableIndexes(table, cb)           { apiCall("get", "/tables/" + table + "/indexes", {}, cb); }
+function getHistory(cb)                       { apiCall("get", "/history", {}, cb); }
+function getDatabases(cb)                     { apiCall("get", "/databases", {}, cb); }
+function setDefaultDatabase(dbName, cb)       { apiCall("post", "/databases/" + dbName + "/actions/default", {}, cb); }
 
 var fnGetSelectedTable = function(){
   return theTable;
@@ -81,7 +82,7 @@ var fnShowTheDatabase = function(){
 function forTheTree(){
   $('#database-tree').bind('tree.toggle',function(e) {
     var dbNode = e.node;
-
+    var dbName = dbNode.parent.name;
 
     //If data is already loaded, just do nothing.
     //It's all taken care of.
@@ -89,8 +90,7 @@ function forTheTree(){
       return;
     }
 
-    if(dbNode.type === 'tbl-holder'){
-      var dbName = dbNode.parent.name;
+    if (dbNode.type === 'tbl-holder') {
       getTablesOfDatabase(dbName, function(data){
         var objData = [];
 
@@ -106,8 +106,21 @@ function forTheTree(){
         $tree.tree('openNode', dbNode);
       });
     }
-    else {
+    else if (dbNode.type === 'sp-holder') {
+      getProceduresOfDatabase(dbName, function(data){
+        var objData = [];
 
+        data.forEach(function(val){
+          objData.push({
+            label: val,
+            type: 'procedure'
+          });
+        });
+
+        $tree.tree('loadData', objData, dbNode);
+        $tree.tree('updateNode', dbNode, { data_loaded: true, });
+        $tree.tree('openNode', dbNode);
+      });
     }
   });
 
