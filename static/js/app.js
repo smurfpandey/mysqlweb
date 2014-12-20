@@ -40,6 +40,7 @@ function getTables(cb)                        { apiCall("get", "/tables", {}, cb
 function getTableStructure(table, cb)         { apiCall("get", "/tables/" + table, {}, cb); }
 function getTablesOfDatabase(dbName, cb)      { apiCall("get", "/databases/" + dbName + "/tables", {}, cb); }
 function getProceduresOfDatabase(dbName, cb)  { apiCall("get", "/databases/" + dbName + "/procedures", {}, cb); }
+function getFunctionsOfDatabase(dbName, cb)   { apiCall("get", "/databases/" + dbName + "/functions", {}, cb); }
 function getTableIndexes(table, cb)           { apiCall("get", "/tables/" + table + "/indexes", {}, cb); }
 function getHistory(cb)                       { apiCall("get", "/history", {}, cb); }
 function getDatabases(cb)                     { apiCall("get", "/databases", {}, cb); }
@@ -114,6 +115,22 @@ function forTheTree(){
           objData.push({
             label: val,
             type: 'procedure'
+          });
+        });
+
+        $tree.tree('loadData', objData, dbNode);
+        $tree.tree('updateNode', dbNode, { data_loaded: true, });
+        $tree.tree('openNode', dbNode);
+      });
+    }
+    else if (dbNode.type === 'fn-holder') {
+      getFunctionsOfDatabase(dbName, function(data){
+        var objData = [];
+
+        data.forEach(function(val){
+          objData.push({
+            label: val,
+            type: 'function'
           });
         });
 
