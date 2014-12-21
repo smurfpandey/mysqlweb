@@ -36,15 +36,16 @@ function apiCall(method, path, params, cb) {
   });
 }
 
-function getTables(cb)                        { apiCall("get", "/tables", {}, cb); }
-function getTableStructure(table, cb)         { apiCall("get", "/tables/" + table, {}, cb); }
-function getTablesOfDatabase(dbName, cb)      { apiCall("get", "/databases/" + dbName + "/tables", {}, cb); }
-function getProceduresOfDatabase(dbName, cb)  { apiCall("get", "/databases/" + dbName + "/procedures", {}, cb); }
-function getFunctionsOfDatabase(dbName, cb)   { apiCall("get", "/databases/" + dbName + "/functions", {}, cb); }
-function getTableIndexes(table, cb)           { apiCall("get", "/tables/" + table + "/indexes", {}, cb); }
-function getHistory(cb)                       { apiCall("get", "/history", {}, cb); }
-function getDatabases(cb)                     { apiCall("get", "/databases", {}, cb); }
-function setDefaultDatabase(dbName, cb)       { apiCall("post", "/databases/" + dbName + "/actions/default", {}, cb); }
+function getTables(cb)                                  { apiCall("get", "/tables", {}, cb); }
+function getTableStructure(table, cb)                   { apiCall("get", "/tables/" + table, {}, cb); }
+function getTablesOfDatabase(dbName, cb)                { apiCall("get", "/databases/" + dbName + "/tables", {}, cb); }
+function getProceduresOfDatabase(dbName, cb)            { apiCall("get", "/databases/" + dbName + "/procedures", {}, cb); }
+function getFunctionsOfDatabase(dbName, cb)             { apiCall("get", "/databases/" + dbName + "/functions", {}, cb); }
+function getTableIndexes(table, cb)                     { apiCall("get", "/tables/" + table + "/indexes", {}, cb); }
+function getHistory(cb)                                 { apiCall("get", "/history", {}, cb); }
+function getDatabases(cb)                               { apiCall("get", "/databases", {}, cb); }
+function setDefaultDatabase(dbName, cb)                 { apiCall("post", "/databases/" + dbName + "/actions/default", {}, cb); }
+function getProcedureParameters(procedure, dbName, cb)  { apiCall("get", "/procedures/" + procedure + "/parameters?database=" + dbName, {}, cb); }
 
 var fnGetSelectedTable = function(){
   return theTable;
@@ -115,7 +116,8 @@ function forTheTree(){
         data.forEach(function(val){
           objData.push({
             label: val,
-            type: 'procedure'
+            type: 'procedure',
+            load_on_demand: true
           });
         });
 
@@ -149,6 +151,25 @@ function forTheTree(){
           objData.push({
             label: val[0] + ' (' + val[1] + ')',
             type: 'column'
+          });
+        });
+
+        $tree.tree('loadData', objData, dbNode);
+        $tree.tree('updateNode', dbNode, { data_loaded: true, });
+        $tree.tree('openNode', dbNode);
+      });
+    }
+    else if (dbNode.type === 'procedure') {
+      var procName = dbNode.name;
+      var dbName = dbNode.parent.parent.name;
+
+      getProcedureParameters(procName, dbName, function(data){
+        var objData = [];
+
+        data.rows.forEach(function(val){
+          objData.push({
+            label: val[0] + '- ' + val[1] + ' -' + val[2],
+            type: 'parameter'
           });
         });
 
