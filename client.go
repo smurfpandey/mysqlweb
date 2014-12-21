@@ -167,6 +167,17 @@ func (client *Client) TableIndexes(table string) (*Result, error) {
 	return res, err
 }
 
+//ProcedureParameters returns all the paramaters of a stored procedure
+func (client *Client) ProcedureParameters(procedure string, database string) (*Result, error) {
+	res, err := client.Query(fmt.Sprintf(MySQLProcedureParameters, procedure, database))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
+}
+
 //Query will execute the sql query passed as parameter, and return the resultset
 func (client *Client) Query(query string) (*Result, error) {
 	rows, err := client.db.Queryx(query)

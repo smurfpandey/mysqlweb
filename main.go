@@ -167,6 +167,7 @@ func startServer() {
 	router.POST("/explain", APIExplainQuery)
 	router.GET("/history", APIHistory)
 	router.GET("/static/:type/:name", APIServeAsset)
+	router.GET("/procedures/:procedure/parameters", APIProcedureParameters)
 
 	fmt.Println("Starting server...")
 	go router.Run(fmt.Sprintf("%v:%v", options.HttpHost, options.HttpPort))

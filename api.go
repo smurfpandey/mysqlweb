@@ -232,6 +232,18 @@ func APITableIndexes(c *gin.Context) {
 	c.JSON(200, res)
 }
 
+//APIProcedureParameters returns the parameters of a procedure
+func APIProcedureParameters(c *gin.Context) {
+	res, err := dbClient.ProcedureParameters(c.Params.ByName("procedure"), c.Request.FormValue("database"))
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.JSON(200, res)
+}
+
 //APIHandleQuery handles thq query and return the resultset as JSON
 func APIHandleQuery(query string, c *gin.Context) {
 	result, err := dbClient.Query(query)
