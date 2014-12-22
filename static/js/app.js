@@ -133,7 +133,8 @@ function forTheTree(){
         data.forEach(function(val){
           objData.push({
             label: val,
-            type: 'function'
+            type: 'function',
+            load_on_demand: true
           });
         });
 
@@ -159,7 +160,8 @@ function forTheTree(){
         $tree.tree('openNode', dbNode);
       });
     }
-    else if (dbNode.type === 'procedure') {
+    else if (dbNode.type === 'procedure' ||
+             dbNode.type === 'function') {
       var procName = dbNode.name;
       var dbName = dbNode.parent.parent.name;
 
@@ -167,8 +169,17 @@ function forTheTree(){
         var objData = [];
 
         data.rows.forEach(function(val){
+
+          var ordinalPos = parseInt(val[3], 10);
+          var paramText = '';
+          if(ordinalPos === 0) {
+            paramText = 'returns ' + val[2];
+          }
+          else {
+            paramText = val[0] + '- ' + val[1] + ' -' + val[2];
+          }
           objData.push({
-            label: val[0] + '- ' + val[1] + ' -' + val[2],
+            label: paramText,
             type: 'parameter'
           });
         });
