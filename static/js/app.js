@@ -522,7 +522,7 @@ function exportToCSV() {
 function initEditor() {
   editor = ace.edit("custom_query");
 
-  editor.getSession().setMode("ace/mode/pgsql");
+  editor.getSession().setMode("ace/mode/mysql");
   editor.getSession().setTabSize(2);
   editor.getSession().setUseSoftTabs(true);
   editor.commands.addCommands([{
