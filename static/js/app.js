@@ -232,6 +232,13 @@ function forTheTree(){
   $tree.on('tree.open', function(e){
     fnShowTheDatabase();
   });
+
+  $tree.jqTreeContextMenu($('#tblMenu'), {
+    "edit": function (node) { alert('Edit node: ' + node.name); },
+    "delete": function (node) { alert('Delete node: ' + node.name); },
+    "add": function (node) { alert('Add node: ' + node.name); }
+  });
+
 }
 
 function executeQuery(query, cb) {

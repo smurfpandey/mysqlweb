@@ -6,25 +6,34 @@
 	$.fn.jqTreeContextMenu = function (menuElement, callbacks) {
 		//
 		// TODO:
-		// * Make sure the useContextMenu option is set in jqTree, either complain or set it automatically
-		// * Make menu fade in/out
+		// * Different menu for different node type
 		//
+
 		var self = this;
 		var $el = this;
+		var menuFadeDuration = 250;
+
+		//Check if useContextMenu option is set
+		var jqTree = $el.data('simple_widget_tree');
+		var isContextTrue = jqTree.options.useContextMenu;
+
+		if(!isContextTrue){
+			throw 'Error: useContextMenu is set as false. Set it true in options before using contextmenu.'
+		}
 
 		// The jQuery object of the menu div.
 		var $menuEl = menuElement;
-		
+
 		// This hash holds all menu items that should be disabled for a specific node.
 		var nodeToDisabledMenuItems = {};
-		
+
 		// Hide the menu div.
 		$menuEl.hide();
 
 		// Disable system context menu from beeing displayed.
-		$el.bind("contextmenu", function (e) { 
+		$el.bind("contextmenu", function (e) {
 			e.preventDefault();
-			return false; 
+			return false;
 		});
 
 		// Handle the contextmenu event sent from jqTree when user clicks right mouse button.
@@ -37,13 +46,13 @@
 			var menuWidth = $menuEl.width();
 			var windowHeight = $(window).height();
 			var windowWidth = $(window).width();
-			
+
 			if (menuHeight + y + yPadding > windowHeight) {
-				// Make sure the whole menu is rendered within the viewport. 
+				// Make sure the whole menu is rendered within the viewport.
 				y = y - menuHeight;
 			}
 			if (menuWidth + x + xPadding > windowWidth) {
-				// Make sure the whole menu is rendered within the viewport. 
+				// Make sure the whole menu is rendered within the viewport.
 				x = x - menuWidth;
 			}
 
@@ -64,7 +73,7 @@
 								$(this).closest('li').addClass('disabled');
 								$(this).unbind('click');
 							}
-						});	
+						});
 					}
 				} else {
 					$menuEl.find('li.disabled').removeClass('disabled');
@@ -72,14 +81,14 @@
 			}
 
 			// Must call show before we set the offset (offset can not be set on display: none elements).
-			$menuEl.show();
+			$menuEl.fadeIn(menuFadeDuration);
 
 			$menuEl.offset({ left: x, top: y });
 
 			var dismissContextMenu = function () {
 				$(document).unbind('click.jqtreecontextmenu');
 				$el.unbind('tree.click.jqtreecontextmenu');
-				$menuEl.hide();
+				$menuEl.fadeOut(menuFadeDuration);
 			}
 			// Make it possible to dismiss context menu by clicking somewhere in the document.
 			$(document).bind('click.jqtreecontextmenu', function () {
@@ -114,7 +123,7 @@
 				});
 			}
 		});
-		
+
 		this.disable = function () {
 			if (arguments.length === 0) {
 				// Called as: api.disable()
@@ -155,7 +164,7 @@
 				if (typeof items !== 'object') {
 					return;
 				}
-				
+
 				$menuEl.find('li > a').each(function () {
 					var hrefValue = $(this).attr('href');
 					var value = hrefValue.slice(hrefValue.indexOf("#") + 1, hrefValue.length)
@@ -182,7 +191,7 @@
 					if (disabledItems.length === 0) {
 						delete nodeToDisabledMenuItems[nodeName];
 					} else {
-						nodeToDisabledMenuItems[nodeName] = disabledItems;	
+						nodeToDisabledMenuItems[nodeName] = disabledItems;
 					}
 				}
 				if (Object.keys(nodeToDisabledMenuItems).length === 0) {
