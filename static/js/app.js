@@ -176,6 +176,12 @@ function forTheTree(){
       getTableStructure(tblName, function(data){
         var objData = [];
 
+        if (data.rows === null){
+          console.log('No columns in table: ' + tblName);
+          setNoLoadOnDemand(dbNode);
+          return;
+        }
+
         data.rows.forEach(function(val){
           objData.push({
             label: val[0] + ' (' + val[1] + ')',
@@ -195,6 +201,12 @@ function forTheTree(){
 
       getProcedureParameters(procName, dbName, function(data){
         var objData = [];
+
+        if (data.rows === null){
+          console.log('No parameter in procedure: ' + procName);
+          setNoLoadOnDemand(dbNode);
+          return;
+        }
 
         data.rows.forEach(function(val){
 
