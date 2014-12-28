@@ -233,12 +233,30 @@ function forTheTree(){
     fnShowTheDatabase();
   });
 
-  $tree.jqTreeContextMenu($('#tblMenu'), {
+  var menuArray = [
+    {
+      type: 'table',
+      menu_element: $('#tblMenu')
+    },
+    {
+      type: 'database',
+      menu_element: $('#dbMenu')
+    },
+    {
+      type: 'procedure',
+      menu_element: $('#spMenu')
+    },
+    {
+      type: 'function',
+      menu_element: $('#funcMenu')
+    }
+  ];
+
+  $tree.jqTreeContextMenu(menuArray, {
     "edit": function (node) { alert('Edit node: ' + node.name); },
     "delete": function (node) { alert('Delete node: ' + node.name); },
     "add": function (node) { alert('Add node: ' + node.name); }
   });
-
 }
 
 function executeQuery(query, cb) {

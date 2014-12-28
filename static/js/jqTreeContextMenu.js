@@ -12,29 +12,51 @@
 		var self = this;
 		var $el = this;
 		var menuFadeDuration = 250;
+		var menuType = '';
+		var $menuEl;
 
 		//Check if useContextMenu option is set
 		var jqTree = $el.data('simple_widget_tree');
 		var isContextTrue = jqTree.options.useContextMenu;
 
 		if(!isContextTrue){
-			throw 'Error: useContextMenu is set as false. Set it true in options before using contextmenu.'
+			throw 'Error: useContextMenu is set as false. Set it true in options before using contextmenu.';
 		}
 
-		// The jQuery object of the menu div.
-		var $menuEl = menuElement;
+		// Check if the parameter is a jquery object
+		if(menuElement instanceof jQuery){
+			//This is a jQuery object.
+			//Same menu for complete tree
+			menuType = 'SINGLE';
+			$menuEl = menuElement;
+
+			// Hide the menu div.
+			$menuEl.hide();
+		}
+		else if (menuElement instanceof Array) {
+			//Diff menu for diff node
+			menuType = 'MULTI';
+		}
+		else {
+			//Awww! We don't know what kind of input is this
+			throw 'Error: Input parameters are incorrect';
+		}
 
 		// This hash holds all menu items that should be disabled for a specific node.
 		var nodeToDisabledMenuItems = {};
 
-		// Hide the menu div.
-		$menuEl.hide();
+		// Disable system context menu from being displayed.
+		//This is being handled by latest version of jqTree atleast.
+		// $el.bind("contextmenu", function (e) {
+		// 	e.preventDefault();
+		// 	return false;
+		// });
 
-		// Disable system context menu from beeing displayed.
-		$el.bind("contextmenu", function (e) {
-			e.preventDefault();
-			return false;
-		});
+		var hideOldMenu = function($oldMenu) {
+			if($oldMenu instanceof jQuery){
+				$oldMenu.fadeOut(menuFadeDuration);
+			}
+		}
 
 		// Handle the contextmenu event sent from jqTree when user clicks right mouse button.
 		$el.bind('tree.contextmenu', function (event) {
@@ -42,6 +64,60 @@
 			var y = event.click_event.pageY;
 			var yPadding = 5;
 			var xPadding = 5;
+
+			//If type of menu is SINGLE, show the menuEl,
+			//Else we need to get the menuEl of this particular node
+			switch (menuType){
+				case 'MULTI':{
+
+						//Hide the previous which is being displayed
+						var $oldMenu = $menuEl;
+						if($menuEl instanceof jQuery){
+							//deselect everyone
+							$el.tree('selectNode', null);
+						}
+
+						//Check if menu differentiation is based on id, type or name
+						var firstObj = menuElement[0];
+						var diffKey = '';
+						if(firstObj.hasOwnProperty('id')) {
+							diffKey = 'id';
+						}
+						else if (firstObj.hasOwnProperty('type')) {
+							diffKey = 'type';
+						}
+						else if (firstObj.hasOwnProperty('name')) {
+							diffKey = 'name';
+						}
+
+						var nodeValue = event.node[diffKey];
+						if(typeof(nodeValue) === 'undefined'){
+							hideOldMenu($oldMenu);
+							return;
+						}
+
+						//Get id of the current node
+						//jQuery method
+						var result = $.grep(menuElement, function(e){ return e[diffKey] == nodeValue; });
+
+						if(result.length === 0){
+							//No menu defined for this node
+							//We better hide the old one too
+							hideOldMenu($oldMenu);
+							return;
+						}
+						else {
+							$menuEl = result[0].menu_element;
+						}
+
+						if(!$menuEl.is($oldMenu)){
+							hideOldMenu($oldMenu);
+						}
+
+					break;
+				}
+			}
+
 			var menuHeight = $menuEl.height();
 			var menuWidth = $menuEl.width();
 			var windowHeight = $(window).height();
