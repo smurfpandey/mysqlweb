@@ -81,6 +81,16 @@ var fnShowTheDatabase = function(){
   $nodeEle.addClass('selected-db');
 }
 
+var setNoLoadOnDemand = function(node) {
+  $tree.tree(
+    'updateNode',
+    node,
+    {
+        load_on_demand: false
+    }
+);
+}
+
 function forTheTree(){
   $('#database-tree').bind('tree.toggle',function(e) {
     var dbNode = e.node;
@@ -95,6 +105,12 @@ function forTheTree(){
     if (dbNode.type === 'tbl-holder') {
       getTablesOfDatabase(dbName, function(data){
         var objData = [];
+
+        if (data === null){
+          console.log('No tables in database: ' + dbName);
+          setNoLoadOnDemand(dbNode);
+          return;
+        }
 
         data.forEach(function(val){
           objData.push({
@@ -113,6 +129,12 @@ function forTheTree(){
       getProceduresOfDatabase(dbName, function(data){
         var objData = [];
 
+        if (data === null){
+          console.log('No procedures in database: ' + dbName);
+          setNoLoadOnDemand(dbNode);
+          return;
+        }
+
         data.forEach(function(val){
           objData.push({
             label: val,
@@ -129,6 +151,12 @@ function forTheTree(){
     else if (dbNode.type === 'fn-holder') {
       getFunctionsOfDatabase(dbName, function(data){
         var objData = [];
+
+        if (data === null){
+          console.log('No functions in database: ' + dbName);
+          setNoLoadOnDemand(dbNode);
+          return;
+        }
 
         data.forEach(function(val){
           objData.push({
