@@ -22,7 +22,10 @@ This is a web-based browser for MySQL database server. Its written in Go and wor
 1. ~~Set default database~~ - DONE. Double click on a dbNode to set it as a default database
 2. ~~List stored procedures of database~~
 3. ~~List functions of database~~
-4. Create, drop tables via context menu
+4. Context menus
+5. Redesign the query tab
+  i. A simple query tab, that will allow users to write any SQL  query.
+  ii. No separate tabs for content,
 
 ## Contributing
 
