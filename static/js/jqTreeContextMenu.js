@@ -72,10 +72,10 @@
 
 						//Hide the previous which is being displayed
 						var $oldMenu = $menuEl;
-						if($menuEl instanceof jQuery){
-							//deselect everyone
-							$el.tree('selectNode', null);
-						}
+						// if($menuEl instanceof jQuery){
+						// 	//deselect everyone
+						// 	$el.tree('selectNode', null);
+						// }
 
 						//Check if menu differentiation is based on id, type or name
 						var firstObj = menuElement[0];
@@ -177,10 +177,10 @@
 			});
 
 			// Make selection follow the node that was right clicked on.
-			var selectedNode = $el.tree('getSelectedNode');
-			if (selectedNode !== event.node) {
-				$el.tree('selectNode', event.node);
-			}
+			// var selectedNode = $el.tree('getSelectedNode');
+			// if (selectedNode !== event.node) {
+			// 	$el.tree('selectNode', event.node);
+			// }
 
 			// Handle click on menu items, if it's not disabled.
 			var menuItems = $menuEl.find('li:not(.disabled) a');

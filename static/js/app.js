@@ -88,7 +88,15 @@ var setNoLoadOnDemand = function(node) {
     {
         load_on_demand: false
     }
-);
+  );
+}
+
+var fnSetDefaultDatabase = function(dbName) {
+  theDatabase = dbName;
+  setDefaultDatabase(dbName, function(){
+    //Highglight this database node
+    fnShowTheDatabase();
+  });
 }
 
 function forTheTree(){
@@ -252,15 +260,9 @@ function forTheTree(){
     var dbNode = e.node;
 
     if(dbNode.type === 'database'){
-      theDatabase = dbNode.name;
 
       //Set this as default database
-      setDefaultDatabase(dbNode.name, function(){
-        //Highglight this database node
-        fnShowTheDatabase();
-      });
-
-
+      fnSetDefaultDatabase(dbNode.name);
     }
 
   });
@@ -294,8 +296,7 @@ function forTheTree(){
 
   $tree.jqTreeContextMenu(menuArray, {
     "edit": function (node) { alert('Edit node: ' + node.name); },
-    "delete": function (node) { alert('Delete node: ' + node.name); },
-    "add": function (node) { alert('Add node: ' + node.name); }
+    "default-db": function(node) { fnSetDefaultDatabase(node.name); }
   });
 }
 
