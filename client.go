@@ -178,6 +178,17 @@ func (client *Client) ProcedureParameters(procedure string, database string) (*R
 	return res, err
 }
 
+//DatabaseCollationCharSet returns all the collation and character sets in db
+func (client *Client) DatabaseCollationCharSet() (*Result, error) {
+	res, err := client.Query(MySQLAllCollationCharSet)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
+}
+
 //Query will execute the sql query passed as parameter, and return the resultset
 func (client *Client) Query(query string) (*Result, error) {
 	rows, err := client.db.Queryx(query)

@@ -244,6 +244,19 @@ func APIProcedureParameters(c *gin.Context) {
 	c.JSON(200, res)
 }
 
+//APIGetCollationCharSet returns the character sets and collation available in
+//database
+func APIGetCollationCharSet(c *gin.Context) {
+	res, err := dbClient.DatabaseCollationCharSet()
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.JSON(200, res)
+}
+
 //APIHandleQuery handles thq query and return the resultset as JSON
 func APIHandleQuery(query string, c *gin.Context) {
 	result, err := dbClient.Query(query)

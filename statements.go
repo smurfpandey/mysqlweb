@@ -11,4 +11,5 @@ const (
 	MySQLTableInfo           = "SELECT DATA_LENGTH AS data_length, INDEX_LENGTH AS index_length, (DATA_LENGTH + INDEX_LENGTH) AS total_size, TABLE_ROWS AS row_count FROM information_schema.TABLES WHERE TABLE_NAME = '%s';"
 	MySQLTableIndexs         = "SELECT INDEX_NAME, INDEX_TYPE FROM information_schema.statistics WHERE TABLE_NAME = '%s';"
 	MySQLProcedureParameters = "SELECT PARAMETER_MODE, PARAMETER_NAME, DATA_TYPE, ORDINAL_POSITION FROM information_schema.parameters where SPECIFIC_NAME = '%s' and SPECIFIC_SCHEMA = '%s' order by ORDINAL_POSITION"
+	MySQLAllCollationCharSet = "SELECT COLLATION_NAME, CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATION_CHARACTER_SET_APPLICABILITY"
 )
