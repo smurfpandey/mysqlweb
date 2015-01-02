@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta http-equiv="Content-Language" content="en">
   <link rel="stylesheet" href="/static/css/bootstrap.css"></link>
+  <link rel="stylesheet" href="/static/css/bootstrap-select.min.css"></link>
   <link rel="stylesheet" href="/static/css/jqtree.css"></link>
   <link rel="stylesheet" href="/static/css/app.css"></link>
   <link rel="icon" type="image/x-icon" href="/static/img/icon.ico" />
@@ -182,43 +183,87 @@
     </div>
   </div>
   <ul id="tblMenu" class="dropdown-menu" style="display:none;" role="menu" aria-labelledby="dLabel">
-    <li><a href="#edit"><i class="icon-edit"></i> Alter Table</a></li>
-    <li><a href="#edit"><i class="icon-edit"></i> Retrieve Data</a></li>
-    <li><a href="#edit"><i class="icon-edit"></i> Export Data</a></li>
-    <li><a href="#edit"><i class="icon-edit"></i> Truncate Data</a></li>
-    <li><a href="#delete"><i class="icon-remove"></i> Drop Table</a></li>
+    <li><a href="#edit"><i class="fa fa-edit"></i> Alter Table</a></li>
+    <li><a href="#edit"><i class="fa fa-edit"></i> Retrieve Data</a></li>
+    <li><a href="#edit"><i class="fa fa-edit"></i> Export Data</a></li>
+    <li><a href="#edit"><i class="fa fa-edit"></i> Truncate Data</a></li>
+    <li><a href="#delete"><i class="fa fa-remove"></i> Drop Table</a></li>
     <li class="divider"></li>
-    <li><a href="#delete"><i class="icon-remove"></i> Refresh All</a></li>
+    <li><a href="#delete"><i class="fa fa-remove"></i> Refresh All</a></li>
   </ul>
   <ul id="dbMenu" class="dropdown-menu" style="display:none;" role="menu" aria-labelledby="dLabel">
-    <li><a href="#default-db"><i class="icon-edit"></i> Set as Default </a></li>
-    <li><a href="#edit"><i class="icon-edit"></i> Alter Database</a></li>
-    <li><a href="#delete"><i class="icon-remove"></i> Drop Database</a></li>
+    <li><a href="#default-db"><i class="fa fa-edit"></i> Set as Default </a></li>
+    <li><a href="#alter-db"><i class="fa fa-edit"></i> Alter Database</a></li>
+    <li><a href="#delete"><i class="fa fa-remove"></i> Drop Database</a></li>
     <li class="divider"></li>
-    <li><a href="#delete"><i class="icon-remove"></i> Refresh All</a></li>
+    <li><a href="#delete"><i class="fa fa-remove"></i> Refresh All</a></li>
   </ul>
   <ul id="spMenu" class="dropdown-menu" style="display:none;" role="menu" aria-labelledby="dLabel">
-    <li><a href="#edit"><i class="icon-edit"></i> Edit Procedure</a></li>
-    <li><a href="#edit"><i class="icon-edit"></i> Execute</a></li>
-    <li><a href="#delete"><i class="icon-remove"></i> Delete</a></li>
+    <li><a href="#edit"><i class="fa fa-edit"></i> Edit Procedure</a></li>
+    <li><a href="#edit"><i class="fa fa-edit"></i> Execute</a></li>
+    <li><a href="#delete"><i class="fa fa-remove"></i> Delete</a></li>
     <li class="divider"></li>
-    <li><a href="#delete"><i class="icon-remove"></i> Refresh All</a></li>
+    <li><a href="#delete"><i class="fa fa-remove"></i> Refresh All</a></li>
   </ul>
   <ul id="fnMenu" class="dropdown-menu" style="display:none;" role="menu" aria-labelledby="dLabel">
-    <li><a href="#edit"><i class="icon-edit"></i> Edit Function</a></li>
-    <li><a href="#edit"><i class="icon-edit"></i> Execute</a></li>
-    <li><a href="#delete"><i class="icon-remove"></i> Delete</a></li>
+    <li><a href="#edit"><i class="fa fa-edit"></i> Edit Function</a></li>
+    <li><a href="#edit"><i class="fa fa-edit"></i> Execute</a></li>
+    <li><a href="#delete"><i class="fa fa-remove"></i> Delete</a></li>
     <li class="divider"></li>
-    <li><a href="#delete"><i class="icon-remove"></i> Refresh All</a></li>
+    <li><a href="#delete"><i class="fa fa-remove"></i> Refresh All</a></li>
   </ul>
 
+  <!-- Modal for alter database -->
+  <div id="mdlAlterDB" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Alter database</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group clearfix">
+            <label class="col-sm-3 control-label">Database name</label>
+            <div class="col-sm-9">
+              <input type="text" id="db_alter_name" class="form-control" readonly />
+            </div>
+          </div>
+          <div class="form-group clearfix">
+            <label class="col-sm-3 control-label">Character set</label>
+            <div class="col-sm-9">
+              <select id="ddlCharSet" class="selectpicker" data-width="100%">
+              </select>
+            </div>
+          </div>
+          <div class="form-group clearfix">
+            <label class="col-sm-3 control-label">Collation</label>
+            <div class="col-sm-9">
+              <select class="selectpicker" data-width="100%">
+                <option>Mustard</option>
+                <option>Ketchup</option>
+                <option>Relish</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button id="btnAlterDatabase" data-db-name="" type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
   <script type="text/javascript" src="/static/js/jquery.js"></script>
+  <script type="text/javascript" src="/static/js/bootstrap.js"></script>
+  <script type="text/javascript" src="/static/js/bootstrap-select.min.js"></script>
   <script type="text/javascript" src="/static/js/ace.js"></script>
   <script type="text/javascript" src="/static/js/ace-mode-mysql.js"></script>
   <script type="text/javascript" src="/static/js/ace-snippets-mysql.js"></script>
   <script type="text/javascript" src="/static/js/tree.jquery.js"></script>
   <script type="text/javascript" src="/static/js/jqTreeContextMenu.js"></script>
   <script type="text/javascript" src="/static/js/handlebars-v2.0.0.js"></script>
+  <script type="text/javascript" src="/static/js/lodash.min.js"></script>
   <script type="text/javascript" src="/static/js/app.js"></script>
   <script id="tmpl-database-tree" type="text/x-handlebars-template">
     <ul>

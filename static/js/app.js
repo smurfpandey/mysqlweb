@@ -46,6 +46,7 @@ function getHistory(cb)                                 { apiCall("get", "/histo
 function getDatabases(cb)                               { apiCall("get", "/databases", {}, cb); }
 function setDefaultDatabase(dbName, cb)                 { apiCall("post", "/databases/" + dbName + "/actions/default", {}, cb); }
 function getProcedureParameters(procedure, dbName, cb)  { apiCall("get", "/procedures/" + procedure + "/parameters?database=" + dbName, {}, cb); }
+function getAllCollationCharSet(cb)                       { apiCall("get", "/collation", {}, cb) }
 
 var fnGetSelectedTable = function(){
   return theTable;
@@ -89,6 +90,27 @@ var setNoLoadOnDemand = function(node) {
         load_on_demand: false
     }
   );
+}
+
+var showAlterDBPopup = function(node) {
+  $('#mdlAlterDB').modal('show');
+
+  //Load all the collation in dropdown
+  getAllCollationCharSet(function(data){
+    //data.row.[i][1] = character set
+    //data.row.[i][0] = collation
+    var strOptions = '';
+
+    var filteredData = _.uniq(data.rows, function(val){
+      return val[1];
+    });
+
+    filteredData.forEach(function(val){
+      strOptions += '<option>' + val[1] + '</option>';
+    });
+
+    $('#ddlCharSet').html(strOptions).selectpicker('refresh');
+  });
 }
 
 var fnSetDefaultDatabase = function(dbName) {
@@ -296,7 +318,8 @@ function forTheTree(){
 
   $tree.jqTreeContextMenu(menuArray, {
     "edit": function (node) { alert('Edit node: ' + node.name); },
-    "default-db": function(node) { fnSetDefaultDatabase(node.name); }
+    "default-db": function(node) { fnSetDefaultDatabase(node.name); },
+    "alter-db": function(node) { showAlterDBPopup(node.name); }
   });
 }
 
@@ -670,6 +693,12 @@ function generateFromTemplate(objData, templateId, $destContainer, iReplace){
   }
 }
 
+function initModals() {
+  $('#mdlAlterDB').modal({
+    show: false
+  })
+};
+
 $(document).ready(function() {
   $("#table_content").on("click",    function() { showTableContent();    });
   $("#table_structure").on("click",  function() { showTableStructure();  });
@@ -797,6 +826,8 @@ $(document).ready(function() {
       }
     });
   });
+
+  initModals();
 
   initEditor();
   addShortcutTooltips();
