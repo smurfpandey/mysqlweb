@@ -3,6 +3,8 @@ var connected = false;
 var $tree = $('#database-tree');
 var theTable = '';
 var theDatabase = '';
+var charCollData = [];
+var strCharsetOptions = '';
 var dbChildNode = [
   {
     label: 'Table',
@@ -92,25 +94,75 @@ var setNoLoadOnDemand = function(node) {
   );
 }
 
-var showAlterDBPopup = function(node) {
+var showAlterDBPopup = function(nodeName) {
   $('#mdlAlterDB').modal('show');
 
-  //Load all the collation in dropdown
-  getAllCollationCharSet(function(data){
-    //data.row.[i][1] = character set
-    //data.row.[i][0] = collation
-    var strOptions = '';
-
-    var filteredData = _.uniq(data.rows, function(val){
-      return val[1];
+  var loadCollation = function(charName){
+    //Get collation for this charset
+    var thisObj = _.find(charCollData, function(objData){
+      return objData.character_set === charName;
     });
 
-    filteredData.forEach(function(val){
-      strOptions += '<option>' + val[1] + '</option>';
+    var strCollList = '';
+    _.each(thisObj.collation, function(val){
+      strCollList += '<option>' + val + '</option>';
     });
 
-    $('#ddlCharSet').html(strOptions).selectpicker('refresh');
+    $('#ddlCollList').html(strCollList).selectpicker('refresh');
+  };
+
+  if(charCollData.length == 0){
+    //Load all the collation in dropdown
+    getAllCollationCharSet(function(data){
+      //data.row.[i][1] = character set
+      //data.row.[i][0] = collation
+
+
+      var filteredData = _.uniq(data.rows, function(val){
+        return val[1];
+      });
+
+      var charset = [];
+      _.each(filteredData, function(val){
+          charset.push(val[1]);
+      });
+
+      charCollData = [];
+      //Take one char_set
+      _.each(charset, function (charName) {
+          var charCollObj = {};
+          charCollObj.character_set = charName;
+          charCollObj.collation = [];
+          var thisCharCollation = _.each(data.rows, function (val) {
+              if (val[1] === charName) return charCollObj.collation.push(val[0]);
+          });
+          charCollData.push(charCollObj);
+      });
+
+      charset.forEach(function(val){
+        strCharsetOptions += '<option>' + val + '</option>';
+      });
+
+      $('#ddlCharSet').html(strCharsetOptions).selectpicker('refresh');
+      loadCollation(charset[0]);
+    });
+  }
+  else {
+    $('#ddlCharSet').html(strCharsetOptions).selectpicker('refresh');
+    loadCollation($('#ddlCharSet').val());
+  }
+
+  //event listeners for select change
+  $('#ddlCharSet').on('change', function(e){
+    var $this = $(this);
+    var selectedCharset = $this.val();
+
+    //Load all the
+    loadCollation(selectedCharset);
   });
+
+  //Set this db in textfield
+  $('#db_alter_name').val(nodeName);
 }
 
 var fnSetDefaultDatabase = function(dbName) {
