@@ -189,6 +189,17 @@ func (client *Client) DatabaseCollationCharSet() (*Result, error) {
 	return res, err
 }
 
+//AlterDatabase let's you set character set & collation of the database
+func (client *Client) AlterDatabase(database string, charset string, collation string) (*Result, error) {
+	res, err := client.Query(fmt.Sprintf(MySQLAlterDatabase, database, charset, collation))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
+}
+
 //Query will execute the sql query passed as parameter, and return the resultset
 func (client *Client) Query(query string) (*Result, error) {
 	rows, err := client.db.Queryx(query)

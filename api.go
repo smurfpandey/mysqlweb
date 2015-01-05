@@ -257,6 +257,19 @@ func APIGetCollationCharSet(c *gin.Context) {
 	c.JSON(200, res)
 }
 
+//APIAlterDatabase alter database to change charset & collation
+func APIAlterDatabase(c *gin.Context) {
+	res, err := dbClient.AlterDatabase(c.Params.ByName("database"),
+		c.Request.FormValue("charset"), c.Request.FormValue("collation"))
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.JSON(200, res)
+}
+
 //APIHandleQuery handles thq query and return the resultset as JSON
 func APIHandleQuery(query string, c *gin.Context) {
 	result, err := dbClient.Query(query)
