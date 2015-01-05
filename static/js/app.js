@@ -48,7 +48,8 @@ function getHistory(cb)                                 { apiCall("get", "/histo
 function getDatabases(cb)                               { apiCall("get", "/databases", {}, cb); }
 function setDefaultDatabase(dbName, cb)                 { apiCall("post", "/databases/" + dbName + "/actions/default", {}, cb); }
 function getProcedureParameters(procedure, dbName, cb)  { apiCall("get", "/procedures/" + procedure + "/parameters?database=" + dbName, {}, cb); }
-function getAllCollationCharSet(cb)                       { apiCall("get", "/collation", {}, cb) }
+function getAllCollationCharSet(cb)                     { apiCall("get", "/collation", {}, cb) }
+function alterDatabase(dbName, data, cb)                { apiCall("post", "/databases/" + dbName + "/actions/alter", data, cb); }
 
 var fnGetSelectedTable = function(){
   return theTable;
@@ -152,8 +153,11 @@ var showAlterDBPopup = function(nodeName) {
     loadCollation($('#ddlCharSet').val());
   }
 
+  //Set this db in textfield
+  $('#db_alter_name').val(nodeName);
+
   //event listeners for select change
-  $('#ddlCharSet').on('change', function(e){
+  $('#ddlCharSet').off('change').on('change', function(e){
     var $this = $(this);
     var selectedCharset = $this.val();
 
@@ -161,8 +165,26 @@ var showAlterDBPopup = function(nodeName) {
     loadCollation(selectedCharset);
   });
 
-  //Set this db in textfield
-  $('#db_alter_name').val(nodeName);
+  $('#btnAlterDatabase').off('click').on('click', function(e){
+    var dbName = $('#db_alter_name').val();
+    var charsetName = $('#ddlCharSet').val();
+    var collationName = $('#ddlCollList').val();
+    var reqData = {
+      charset : charsetName,
+      collation : collationName
+    };
+
+    alterDatabase(dbName, reqData, function(results){
+      if(results.error){
+        //Show erroe mesage
+        alter(result.error);
+      }
+      else {
+        $('#mdlAlterDB').modal('hide');
+      }
+    });
+  });
+
 }
 
 var fnSetDefaultDatabase = function(dbName) {
