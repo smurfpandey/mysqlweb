@@ -191,7 +191,18 @@ func (client *Client) DatabaseCollationCharSet() (*Result, error) {
 
 //AlterDatabase let's you set character set & collation of the database
 func (client *Client) AlterDatabase(database string, charset string, collation string) (*Result, error) {
-	res, err := client.Query(fmt.Sprintf(MySQLAlterDatabase, database, charset, collation))
+	res, err := client.Query(fmt.Sprintf(MySQLDatabaseAlter, database, charset, collation))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
+}
+
+//DropDatabase will drop the database from the system
+func (client *Client) DropDatabase(database string) (*Result, error) {
+	res, err := client.Query(fmt.Sprintf(MySQLDatabaseDrop, database))
 
 	if err != nil {
 		return nil, err

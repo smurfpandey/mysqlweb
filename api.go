@@ -267,7 +267,19 @@ func APIAlterDatabase(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, res)
+	c.JSON(201, res)
+}
+
+//APIDropDatabase drops the given database from the system
+func APIDropDatabase(c *gin.Context) {
+	res, err := dbClient.DropDatabase(c.Params.ByName("database"))
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.JSON(204, res)
 }
 
 //APIHandleQuery handles thq query and return the resultset as JSON

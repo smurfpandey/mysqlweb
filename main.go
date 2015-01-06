@@ -170,6 +170,7 @@ func startServer() {
 	router.GET("/procedures/:procedure/parameters", APIProcedureParameters)
 	router.GET("/collation", APIGetCollationCharSet)
 	router.POST("/databases/:database/actions/alter", APIAlterDatabase)
+	router.DELETE("/databases/:database/actions/drop", APIDropDatabase)
 
 	fmt.Println("Starting server...")
 	go router.Run(fmt.Sprintf("%v:%v", options.HttpHost, options.HttpPort))
