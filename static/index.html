@@ -194,7 +194,7 @@
   <ul id="dbMenu" class="dropdown-menu" style="display:none;" role="menu" aria-labelledby="dLabel">
     <li><a href="#default-db"><i class="fa fa-edit"></i> Set as Default </a></li>
     <li><a href="#alter-db"><i class="fa fa-edit"></i> Alter Database</a></li>
-    <li><a href="#delete"><i class="fa fa-remove"></i> Drop Database</a></li>
+    <li><a href="#drop-db"><i class="fa fa-remove"></i> Drop Database</a></li>
     <li class="divider"></li>
     <li><a href="#delete"><i class="fa fa-remove"></i> Refresh All</a></li>
   </ul>
@@ -238,7 +238,7 @@
           <div class="form-group clearfix">
             <label class="col-sm-3 control-label">Collation</label>
             <div class="col-sm-9">
-              <select id=ddlCollList class="selectpicker" data-width="100%">                
+              <select id=ddlCollList class="selectpicker" data-width="100%">
               </select>
             </div>
           </div>
@@ -246,6 +246,34 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           <button id="btnAlterDatabase" data-db-name="" type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!-- Modal for drop database -->
+  <div id="mdlDropDB" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Are you ABSOLUTELY sure?</h4>
+        </div>
+        <div class="modal-body">
+          <div style="margin-bottom: 20px;">
+            This action CANNOT be undone. This will permanently delete the
+            <strong id="spDeleteDb">DATABASE</strong> database, it's table, stored procedures, and function, and remove all associated data.
+          </div>
+          <div class="form-group clearfix">
+            <label class="col-sm-12 control-label">Please type in the name of database to confirm.</label>
+            <div class="col-sm-12">
+              <input type="text" id="db_delete_name" class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button id="btnDropDatabase" data-db-name="" type="button" class="btn btn-primary">Save changes</button>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

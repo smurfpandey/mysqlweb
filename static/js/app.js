@@ -50,10 +50,24 @@ function setDefaultDatabase(dbName, cb)                 { apiCall("post", "/data
 function getProcedureParameters(procedure, dbName, cb)  { apiCall("get", "/procedures/" + procedure + "/parameters?database=" + dbName, {}, cb); }
 function getAllCollationCharSet(cb)                     { apiCall("get", "/collation", {}, cb) }
 function alterDatabase(dbName, data, cb)                { apiCall("post", "/databases/" + dbName + "/actions/alter", data, cb); }
+function dropDatabase(dbName, cb)                       { apiCall("delete", "/databases/" + dbName + "/actions/drop", {}, cb); }
 
 var fnGetSelectedTable = function(){
   return theTable;
 }
+
+var fnRemoveDatabaseInTree = function (dbName) {
+  //Get all nodes with name as database name
+
+  var arrFirst = $tree.tree('getNodeByName', dbName);
+
+  //If we got no nodes, than it's sad
+  if(arrFirst.length === 0){
+    return;
+  }
+
+  $tree.tree('removeNode', arrFirst);
+};
 
 var fnShowTheDatabase = function(){
   //Remove previous one
@@ -62,12 +76,7 @@ var fnShowTheDatabase = function(){
   //Get all nodes with name as database name
 
   var arrFirst = $tree.tree('getNodesByProperty', 'name', theDatabase);
-
-  //If we got no nodes, than it's sad
-  if(arrFirst.length === 0){
-    return;
-  }
-
+  
   //Chances are we might get nodes of type table as well as database
   //Let's apply filter again, this time for type database
   //Just in case
@@ -185,6 +194,38 @@ var showAlterDBPopup = function(nodeName) {
     });
   });
 
+}
+
+var showDropDBPopup = function (dbName) {
+  $('#mdlDropDB').modal('show');
+
+  $('#spDeleteDb').text(dbName);
+
+  $('#btnDropDatabase').off('click').on('click', function(e){
+    //Make sure this confirm dbname is correct
+    var confirmDBName = $('#db_delete_name').val();
+    var origDBName = $('#spDeleteDb').text();
+
+    if(confirmDBName !== origDBName){
+      return;
+    }
+
+    dropDatabase(dbName, function(result){
+
+      if(typeof(result) === 'undefined') {
+        //remove this ndoe from the tree
+        fnRemoveDatabaseInTree(dbName)
+        $('#mdlDropDB').modal('hide');
+
+        return;
+      }
+
+      if (result.error) {
+        alert(result.error);
+        return;
+      }
+    });
+  });
 }
 
 var fnSetDefaultDatabase = function(dbName) {
@@ -393,7 +434,8 @@ function forTheTree(){
   $tree.jqTreeContextMenu(menuArray, {
     "edit": function (node) { alert('Edit node: ' + node.name); },
     "default-db": function(node) { fnSetDefaultDatabase(node.name); },
-    "alter-db": function(node) { showAlterDBPopup(node.name); }
+    "alter-db": function(node) { showAlterDBPopup(node.name); },
+    "drop-db": function(node) { showDropDBPopup(node.name); }
   });
 }
 
