@@ -211,6 +211,17 @@ func (client *Client) DropDatabase(database string) (*Result, error) {
 	return res, err
 }
 
+//DropTable will drop the table from selected database
+func (client *Client) DropTable(database string, table string) (*Result, error) {
+	res, err := client.Query(fmt.Sprintf(MySQLTableDrop, database, table))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
+}
+
 //Query will execute the sql query passed as parameter, and return the resultset
 func (client *Client) Query(query string) (*Result, error) {
 	rows, err := client.db.Queryx(query)
