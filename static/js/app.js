@@ -107,6 +107,7 @@ var setNoLoadOnDemand = function(node) {
 
 var showAlterDBPopup = function(nodeName) {
   $('#mdlAlterDB').modal('show');
+  $('#dvAlterDBMsg').hide().text('');
 
   var loadCollation = function(charName){
     //Get collation for this charset
@@ -175,6 +176,7 @@ var showAlterDBPopup = function(nodeName) {
     loadCollation(selectedCharset);
   });
 
+
   $('#btnAlterDatabase').off('click').on('click', function(e){
     var dbName = $('#db_alter_name').val();
     var charsetName = $('#ddlCharSet').val();
@@ -187,7 +189,7 @@ var showAlterDBPopup = function(nodeName) {
     alterDatabase(dbName, reqData, function(results){
       if(results.error){
         //Show erroe mesage
-        alter(result.error);
+        $('#dvAlterDBMsg').show().text(result.error);
       }
       else {
         $('#mdlAlterDB').modal('hide');
@@ -203,6 +205,7 @@ var showDropDBPopup = function (dbName) {
 
   $('#spDeleteDb').text(dbName);
   $('#db_delete_name').val('');
+  $('#dvDropDbMsg').hide().text('');
 
   $('#btnDropDatabase').off('click').on('click', function(e){
     //Make sure this confirm dbname is correct
@@ -224,7 +227,7 @@ var showDropDBPopup = function (dbName) {
       }
 
       if (result.error) {
-        alert(result.error);
+        $('#dvDropDbMsg').show().text(result.error);
         return;
       }
     });
@@ -239,6 +242,7 @@ var showDropTablePopup = function(tblName, treeNode) {
 
   $('#spDeleteTable').text(tblName);
   $('#tbl_delete_name').val('');
+  $('#dvDropTableMsg').hide().text('');
 
   $('#btnDropTable').off('click').on('click', function(e){
     //Make sure this confirm dbname is correct
@@ -260,7 +264,7 @@ var showDropTablePopup = function(tblName, treeNode) {
       }
 
       if (result.error) {
-        alert(result.error);
+        $('#dvDropTableMsg').show().text(result.error);
         return;
       }
     });
