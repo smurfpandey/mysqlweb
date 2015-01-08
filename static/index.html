@@ -187,7 +187,7 @@
     <li><a href="#edit"><i class="fa fa-edit"></i> Retrieve Data</a></li>
     <li><a href="#edit"><i class="fa fa-edit"></i> Export Data</a></li>
     <li><a href="#edit"><i class="fa fa-edit"></i> Truncate Data</a></li>
-    <li><a href="#delete"><i class="fa fa-remove"></i> Drop Table</a></li>
+    <li><a href="#drop-tbl"><i class="fa fa-remove"></i> Drop Table</a></li>
     <li class="divider"></li>
     <li><a href="#delete"><i class="fa fa-remove"></i> Refresh All</a></li>
   </ul>
@@ -273,7 +273,35 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button id="btnDropDatabase" data-db-name="" type="button" class="btn btn-primary">Save changes</button>
+          <button id="btnDropDatabase" data-db-name="" type="button" class="btn btn-danger">Drop Database</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!-- Modal for drop table -->
+  <div id="mdlDropTable" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Are you ABSOLUTELY sure?</h4>
+        </div>
+        <div class="modal-body">
+          <div style="margin-bottom: 20px;">
+            This action CANNOT be undone. This will permanently delete the
+            <strong id="spDeleteTable">DATABASE</strong> table, and remove all it's data.
+          </div>
+          <div class="form-group clearfix">
+            <label class="col-sm-12 control-label">Please type in the name of table to confirm.</label>
+            <div class="col-sm-12">
+              <input type="text" id="tbl_delete_name" class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button id="btnDropTable" type="button" class="btn btn-danger">Drop Table</button>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

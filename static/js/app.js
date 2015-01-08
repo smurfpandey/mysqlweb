@@ -51,15 +51,16 @@ function getProcedureParameters(procedure, dbName, cb)  { apiCall("get", "/proce
 function getAllCollationCharSet(cb)                     { apiCall("get", "/collation", {}, cb) }
 function alterDatabase(dbName, data, cb)                { apiCall("post", "/databases/" + dbName + "/actions/alter", data, cb); }
 function dropDatabase(dbName, cb)                       { apiCall("delete", "/databases/" + dbName + "/actions/drop", {}, cb); }
+function dropTable(dbName, tblName, cb)                 { apiCall("delete", "/databases/" + dbName + "/tables/" + tblName + "/actions/drop", {}, cb); }
 
 var fnGetSelectedTable = function(){
   return theTable;
 }
 
-var fnRemoveDatabaseInTree = function (dbName) {
+var fnRemoveNodeInTree = function (nodeName, type) {
   //Get all nodes with name as database name
 
-  var arrFirst = $tree.tree('getNodeByName', dbName);
+  var arrFirst = $tree.tree('getNodeByName', nodeName);
 
   //If we got no nodes, than it's sad
   if(arrFirst.length === 0){
@@ -76,7 +77,7 @@ var fnShowTheDatabase = function(){
   //Get all nodes with name as database name
 
   var arrFirst = $tree.tree('getNodesByProperty', 'name', theDatabase);
-  
+
   //Chances are we might get nodes of type table as well as database
   //Let's apply filter again, this time for type database
   //Just in case
@@ -197,9 +198,11 @@ var showAlterDBPopup = function(nodeName) {
 }
 
 var showDropDBPopup = function (dbName) {
-  $('#mdlDropDB').modal('show');
+  var $thisModel = $('#mdlDropDB');
+  $thisModel.modal('show');
 
   $('#spDeleteDb').text(dbName);
+  $('#db_delete_name').val('');
 
   $('#btnDropDatabase').off('click').on('click', function(e){
     //Make sure this confirm dbname is correct
@@ -214,8 +217,8 @@ var showDropDBPopup = function (dbName) {
 
       if(typeof(result) === 'undefined') {
         //remove this ndoe from the tree
-        fnRemoveDatabaseInTree(dbName)
-        $('#mdlDropDB').modal('hide');
+        fnRemoveNodeInTree(dbName, 'database');
+        $thisModel.modal('hide');
 
         return;
       }
@@ -227,6 +230,42 @@ var showDropDBPopup = function (dbName) {
     });
   });
 }
+
+var showDropTablePopup = function(tblName, treeNode) {
+  var $thisModel = $('#mdlDropTable');
+  $thisModel.modal('show');
+
+  var dbName = treeNode.parent.parent.name;
+
+  $('#spDeleteTable').text(tblName);
+  $('#tbl_delete_name').val('');
+
+  $('#btnDropTable').off('click').on('click', function(e){
+    //Make sure this confirm dbname is correct
+    var confirmTblName = $('#tbl_delete_name').val();
+    var origTblName = $('#spDeleteTable').text();
+
+    if(confirmTblName !== origTblName){
+      return;
+    }
+
+    dropTable(dbName, tblName, function(result){
+
+      if(typeof(result) === 'undefined') {
+        //remove this ndoe from the tree
+        fnRemoveNodeInTree(tblName, 'table');
+        $thisModel.modal('hide');
+
+        return;
+      }
+
+      if (result.error) {
+        alert(result.error);
+        return;
+      }
+    });
+  });
+};
 
 var fnSetDefaultDatabase = function(dbName) {
   theDatabase = dbName;
@@ -435,7 +474,8 @@ function forTheTree(){
     "edit": function (node) { alert('Edit node: ' + node.name); },
     "default-db": function(node) { fnSetDefaultDatabase(node.name); },
     "alter-db": function(node) { showAlterDBPopup(node.name); },
-    "drop-db": function(node) { showDropDBPopup(node.name); }
+    "drop-db": function(node) { showDropDBPopup(node.name); },
+    "drop-tbl": function(node) { showDropTablePopup(node.name, node); }
   });
 }
 
@@ -812,7 +852,7 @@ function generateFromTemplate(objData, templateId, $destContainer, iReplace){
 function initModals() {
   $('#mdlAlterDB').modal({
     show: false
-  })
+  });
 };
 
 $(document).ready(function() {
