@@ -222,6 +222,17 @@ func (client *Client) DropTable(database string, table string) (*Result, error) 
 	return res, err
 }
 
+//TruncateTable will truncate the table
+func (client *Client) TruncateTable(database string, table string) (*Result, error) {
+	res, err := client.Query(fmt.Sprintf(MySQLTableTruncate, database, table))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
+}
+
 //Query will execute the sql query passed as parameter, and return the resultset
 func (client *Client) Query(query string) (*Result, error) {
 	rows, err := client.db.Queryx(query)

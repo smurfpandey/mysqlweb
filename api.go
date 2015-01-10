@@ -294,6 +294,18 @@ func APIDropTable(c *gin.Context) {
 	c.Writer.WriteHeader(204)
 }
 
+//APITruncateTable truncates the table
+func APITruncateTable(c *gin.Context) {
+	_, err := dbClient.TruncateTable(c.Params.ByName("database"), c.Params.ByName("table"))
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.Writer.WriteHeader(204)
+}
+
 //APIHandleQuery handles thq query and return the resultset as JSON
 func APIHandleQuery(query string, c *gin.Context) {
 	result, err := dbClient.Query(query)

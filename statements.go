@@ -15,4 +15,5 @@ const (
 	MySQLDatabaseAlter       = "ALTER DATABASE %s CHARACTER SET %s COLLATE %s;"
 	MySQLDatabaseDrop        = "DROP DATABASE %s"
 	MySQLTableDrop           = "DROP TABLE %s.%s"
+	MySQLTableTruncate       = "TRUNCATE TABLE %s.%s"
 )
