@@ -15,14 +15,7 @@
 <body>
   <div id="main">
     <div id="nav">
-      <ul>
-        <li id="table_content">Content</li>
-        <li id="table_structure">Structure</li>
-        <li id="table_indexes">Indexes</li>
-        <li id="table_query" class="selected">SQL Query</li>
-        <li id="table_history">History</li>
-        <li id="table_connection">Connection</li>
-      </ul>
+
 
       <a href="#" id="edit_connection" class="btn btn-primary btn-sm">Edit Connection</a>
     </div>
@@ -49,15 +42,29 @@
     </div>
     <div id="body">
       <div id="input">
-        <div class="wrapper">
-          <div id="custom_query"></div>
-          <div class="actions">
-            <input type="button" id="run" value="Run Query" class="btn btn-sm btn-primary" />
-            <input type="button" id="explain" value="Explain Query" class="btn btn-sm btn-default" />
-            <input type="button" id="csv" value="Download CSV" class="btn btn-sm btn-default" />
+        <div role="tabpanel">
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#query_tab_1" aria-controls="home" role="tab" data-toggle="tab">Query 1</a></li>
+            <li role="presentation"><a href="#" id="lnkAddQueryTab">+ New Query Tab</a></li>
+          </ul>
 
-            <div id="query_progress">Please wait, query is executing...</div>
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="query_tab_1">
+              <div class="wrapper">
+                <div id="custom_query"></div>
+                <div class="actions">
+                  <input type="button" id="run" value="Run Query" class="btn btn-sm btn-primary" />
+                  <input type="button" id="explain" value="Explain Query" class="btn btn-sm btn-default" />
+                  <input type="button" id="csv" value="Download CSV" class="btn btn-sm btn-default" />
+
+                  <div id="query_progress">Please wait, query is executing...</div>
+                </div>
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
       <div id="output">
@@ -182,6 +189,7 @@
       </form>
     </div>
   </div>
+
   <ul id="tblMenu" class="dropdown-menu" style="display:none;" role="menu" aria-labelledby="dLabel">
     <li><a href="#edit"><i class="fa fa-edit"></i> Alter Table</a></li>
     <li><a href="#edit"><i class="fa fa-edit"></i> Retrieve Data</a></li>
@@ -309,6 +317,27 @@
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
+
+  <script type="text/x-handlebars-template" id="tmpl-query-tab">
+    <div role="tabpanel" class="tab-pane" id="query_tab_{{tab_id}}">
+      <div class="wrapper">
+        <div class="custom_query"></div>
+        <div class="actions">
+          <input type="button" value="Run Query" class="btn btn-sm btn-primary js-run-query" />
+          <input type="button" value="Explain Query" class="btn btn-sm btn-default js-explain-query" />
+          <input type="button" value="Download CSV" class="btn btn-sm btn-default js-export-query" />
+
+          <div id="query_progress">Please wait, query is executing...</div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script id="tmpl-query-tab-btn" type="text/x-handlebars-template">
+    <li role="presentation">
+      <a href="#query_tab_{{tab_id}}" role="tab" data-toggle="tab">Query {{tab_id}}</a>
+    </li>
+  </script>
 
   <script type="text/javascript" src="/static/js/jquery.js"></script>
   <script type="text/javascript" src="/static/js/bootstrap.js"></script>
