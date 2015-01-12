@@ -330,7 +330,7 @@
   max-width: none;
 }
 
-#custom_query {
+.query-editor {
   height: 205px;
 }
 

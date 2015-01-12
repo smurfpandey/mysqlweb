@@ -53,7 +53,7 @@
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="query_tab_1">
               <div class="wrapper">
-                <div id="custom_query"></div>
+                <div id="custom_query" class="query-editor"></div>
                 <div class="actions">
                   <input type="button" id="run" value="Run Query" class="btn btn-sm btn-primary" />
                   <input type="button" id="explain" value="Explain Query" class="btn btn-sm btn-default" />
@@ -321,7 +321,7 @@
   <script type="text/x-handlebars-template" id="tmpl-query-tab">
     <div role="tabpanel" class="tab-pane" id="query_tab_{{tab_id}}">
       <div class="wrapper">
-        <div class="custom_query"></div>
+        <div id="query_editor_{{tab_id}}" class="query-editor"></div>
         <div class="actions">
           <input type="button" value="Run Query" class="btn btn-sm btn-primary js-run-query" />
           <input type="button" value="Explain Query" class="btn btn-sm btn-default js-explain-query" />

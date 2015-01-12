@@ -1,4 +1,3 @@
-var editor;
 var connected = false;
 var $tree = $('#database-tree');
 var theTable = '';
@@ -671,7 +670,7 @@ function showTableStructure() {
   });
 }
 
-function showQueryPanel() {
+function showQueryPanel(editor) {
   setCurrentTab("table_query");
   editor.focus();
 
@@ -699,7 +698,7 @@ function showConnectionPanel() {
   });
 }
 
-function runQuery() {
+function runQuery(editor) {
   setCurrentTab("table_query");
 
   $("#run, #explain, #csv").prop("disabled", true);
@@ -727,7 +726,7 @@ function runQuery() {
   });
 }
 
-function runExplain() {
+function runExplain(editor) {
   setCurrentTab("table_query");
 
   $("#run, #explain, #csv").prop("disabled", true);
@@ -752,7 +751,7 @@ function runExplain() {
   });
 }
 
-function exportToCSV() {
+function exportToCSV(editor) {
   var query = $.trim(editor.getValue());
 
   if (query.length == 0) {
@@ -769,8 +768,8 @@ function exportToCSV() {
   win.focus();
 }
 
-function initEditor() {
-  editor = ace.edit("custom_query");
+function initEditor(editorId) {
+  var editor = ace.edit(editorId);
 
   editor.getSession().setMode("ace/mode/mysql");
   editor.getSession().setTabSize(2);
@@ -782,7 +781,7 @@ function initEditor() {
       mac: "Command-Enter"
     },
     exec: function(editor) {
-      runQuery();
+      runQuery(editor);
     }
   }, {
     name: "explain_query",
@@ -791,7 +790,7 @@ function initEditor() {
       mac: "Command-E"
     },
     exec: function(editor) {
-      runExplain();
+      runExplain(editor);
     }
   }]);
 }
@@ -1006,12 +1005,15 @@ $(document).ready(function() {
     //Insert before this button
     $(this).parent().before(tabBtnHTML);
 
+    //Initialize the ace editor
+    initEditor('query_editor_'+queryTabCounter);
+
     e.preventDefault();
   });
 
   initModals();
 
-  initEditor();
+  initEditor("custom_query");
   addShortcutTooltips();
 
   apiCall("get", "/info", {}, function(resp) {
