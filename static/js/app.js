@@ -771,6 +771,8 @@ function exportToCSV(editor) {
 function initEditor(editorId) {
   var editor = ace.edit(editorId);
 
+  $('#'+editorId).data('ace-editor', editor);
+
   editor.getSession().setMode("ace/mode/mysql");
   editor.getSession().setTabSize(2);
   editor.getSession().setUseSoftTabs(true);
@@ -1009,6 +1011,26 @@ $(document).ready(function() {
     initEditor('query_editor_'+queryTabCounter);
 
     e.preventDefault();
+  });
+
+  $('#input').on('click', '.close-query-tab', function(e){
+    //Get the tab div of this
+    var $tabButton = $(this).parent();
+    var tabId = $tabButton.attr('href').substr(1);
+    var $tabDiv = $('#' + tabId);
+    var $tabEditor = $tabDiv.find('.query-editor');
+
+    //Get editor of this tab
+    var tabEditor = $tabEditor.data('ace-editor');
+
+    //Destory the editor: Free memory
+    tabEditor.destroy();
+
+    //Remove the tab from DOM
+    $tabDiv.remove();
+
+    //Remove the tab button from DOM
+    $tabButton.parent().remove();
   });
 
   initModals();
