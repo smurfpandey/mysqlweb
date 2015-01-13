@@ -412,3 +412,11 @@
 ul.jqtree_common ul.jqtree_common {
   margin-left: 15px;
 }
+
+.close-tab {
+  margin-left: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.5em;
+  line-height: 21px;
+}

@@ -45,7 +45,10 @@
         <div role="tabpanel">
           <!-- Nav tabs -->
           <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#query_tab_1" aria-controls="home" role="tab" data-toggle="tab">Query 1</a></li>
+            <li role="presentation" class="active"><a href="#query_tab_1" aria-controls="home" role="tab" data-toggle="tab">
+              <span aria-hidden="true" class="pull-right close-tab">&times;</span>
+              Query 1
+            </a></li>
             <li role="presentation"><a href="#" id="lnkAddQueryTab">+ New Query Tab</a></li>
           </ul>
 
@@ -335,7 +338,10 @@
 
   <script id="tmpl-query-tab-btn" type="text/x-handlebars-template">
     <li role="presentation">
-      <a href="#query_tab_{{tab_id}}" role="tab" data-toggle="tab">Query {{tab_id}}</a>
+      <a href="#query_tab_{{tab_id}}" role="tab" data-toggle="tab">
+        <span aria-hidden="true" class="pull-right close-tab">&times;</span>
+        Query {{tab_id}}
+      </a>
     </li>
   </script>
 
