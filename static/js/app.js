@@ -1026,6 +1026,13 @@ $(document).ready(function() {
     //Destory the editor: Free memory
     tabEditor.destroy();
 
+    //Make previous tab active, if this tab is active
+    var isActive = $tabButton.parent().hasClass('active');
+    if (isActive) {
+      var $prevTab = $tabButton.parent().prev().find('a');
+      $prevTab.tab('show');
+    }
+
     //Remove the tab from DOM
     $tabDiv.remove();
 
