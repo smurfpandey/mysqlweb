@@ -306,6 +306,30 @@ func APITruncateTable(c *gin.Context) {
 	c.Writer.WriteHeader(204)
 }
 
+//APIProcedureDefinition get definition of a procedure
+func APIProcedureDefinition(c *gin.Context) {
+	res, err := dbClient.ProcedureDefinition("procedure", c.Params.ByName("database"), c.Params.ByName("procedure"))
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.JSON(200, res)
+}
+
+//APIFunctionDefinition get definition of a function
+func APIFunctionDefinition(c *gin.Context) {
+	res, err := dbClient.ProcedureDefinition("function", c.Params.ByName("database"), c.Params.ByName("function"))
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.JSON(200, res)
+}
+
 //APIHandleQuery handles thq query and return the resultset as JSON
 func APIHandleQuery(query string, c *gin.Context) {
 	result, err := dbClient.Query(query)

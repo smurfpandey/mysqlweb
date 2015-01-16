@@ -173,6 +173,8 @@ func startServer() {
 	router.DELETE("/databases/:database/actions/drop", APIDropDatabase)
 	router.DELETE("/databases/:database/tables/:table/actions/drop", APIDropTable)
 	router.DELETE("/databases/:database/tables/:table/actions/truncate", APITruncateTable)
+	router.GET("/databases/:database/procedures/:procedure", APIProcedureDefinition)
+	router.GET("/databases/:database/functions/:function", APIFunctionDefinition)
 
 	fmt.Println("Starting server...")
 	go router.Run(fmt.Sprintf("%v:%v", options.HttpHost, options.HttpPort))

@@ -233,6 +233,18 @@ func (client *Client) TruncateTable(database string, table string) (*Result, err
 	return res, err
 }
 
+//ProcedureDefinition will give you the create statement of procedure/function
+func (client *Client) ProcedureDefinition(procType string, database string, name string) (*Result, error) {
+	res, err := client.Query(fmt.Sprintf(MySQLProcedureDefinition, procType, database, name))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
+
+}
+
 //Query will execute the sql query passed as parameter, and return the resultset
 func (client *Client) Query(query string) (*Result, error) {
 	rows, err := client.db.Queryx(query)
