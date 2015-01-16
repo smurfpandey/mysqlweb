@@ -45,9 +45,9 @@
       <div id="input">
         <div role="tabpanel">
           <!-- Nav tabs -->
-          <ul class="nav nav-tabs" role="tablist">
+          <ul id="ulQueryTab" class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#query_tab_1" aria-controls="home" role="tab" data-toggle="tab">
-              <span aria-hidden="true" class="pull-right close-query-tab hvr-bounce-in hide">&times;</span>
+              <span aria-hidden="true" class="pull-right close-query-tab hide">&times;</span>
               Query 1
             </a></li>
             <li role="presentation"><a href="#" id="lnkAddQueryTab">+ New Query Tab</a></li>
@@ -340,7 +340,7 @@
   <script id="tmpl-query-tab-btn" type="text/x-handlebars-template">
     <li role="presentation">
       <a href="#query_tab_{{tab_id}}" role="tab" data-toggle="tab">
-        <span aria-hidden="true" class="pull-right close-query-tab hvr-bounce-in">&times;</span>
+        <span aria-hidden="true" class="pull-right close-query-tab">&times;</span>
         Query {{tab_id}}
       </a>
     </li>

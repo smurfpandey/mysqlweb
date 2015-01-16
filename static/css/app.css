@@ -424,3 +424,11 @@ ul.jqtree_common ul.jqtree_common {
 .nav-tabs>li>a{
   font-size: 16px;
 }
+
+#ulQueryTab li .close-query-tab {
+  visibility:hidden;
+}
+
+#ulQueryTab li:hover .close-query-tab {
+  visibility:visible;
+}
