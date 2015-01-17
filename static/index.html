@@ -341,7 +341,11 @@
     <li role="presentation">
       <a href="#query_tab_{{tab_id}}" id="query_tab_btn_{{tab_id}}" role="tab" data-toggle="tab">
         <span aria-hidden="true" class="pull-right close-query-tab">&times;</span>
+        {{#if tab_name}}
+        {{tab_name}}
+        {{else}}
         Query {{tab_id}}
+        {{/if}}
       </a>
     </li>
   </script>

@@ -58,14 +58,14 @@ var fnGetSelectedTable = function(){
   return theTable;
 }
 
-var fnCreateEditorTab = function(editorData) {
+var fnCreateEditorTab = function(editorName, editorData) {
   queryTabCounter++;
 
   //Create query tab
   generateFromTemplate({tab_id: queryTabCounter}, 'tmpl-query-tab', $('#input .tab-content'), false);
 
   //Create tab button
-  var tabBtnHTML = getFromTemplate({tab_id: queryTabCounter}, 'tmpl-query-tab-btn');
+  var tabBtnHTML = getFromTemplate({tab_id: queryTabCounter, tab_name: editorName}, 'tmpl-query-tab-btn');
 
   //Insert before this button
   $('#lnkAddQueryTab').parent().before(tabBtnHTML);
@@ -301,7 +301,7 @@ var showAlterProcedure = function(procName, treeNode) {
 
     var procText = data.rows[0][2];
 
-    fnCreateEditorTab(procText);
+    fnCreateEditorTab(dbName+'.'+procName, procText);
   });
 }
 
