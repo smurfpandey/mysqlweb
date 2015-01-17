@@ -325,7 +325,7 @@
   <script type="text/x-handlebars-template" id="tmpl-query-tab">
     <div role="tabpanel" class="tab-pane" id="query_tab_{{tab_id}}">
       <div class="wrapper">
-        <div id="query_editor_{{tab_id}}" class="query-editor"></div>
+        <div id="query_editor_{{tab_id}}" class="query-editor {{tab_mode}}"></div>
         <div class="actions">
           <input type="button" value="Run Query" class="btn btn-sm btn-primary js-run-query" />
           <input type="button" value="Explain Query" class="btn btn-sm btn-default js-explain-query" />

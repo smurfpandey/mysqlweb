@@ -179,7 +179,6 @@
 }
 
 #input {
-  height: 255px;
   overflow: hidden;
 }
 
@@ -235,11 +234,6 @@
 }
 
 #output {
-  position: absolute;
-  left: 0px;
-  top: 256px;
-  bottom: 0px;
-  right: 0px;
   margin: 0px;
   padding: 0px;
   overflow: auto;
@@ -332,6 +326,10 @@
 
 .query-editor {
   height: 205px;
+}
+
+.query-editor.full {
+  height: 555px;
 }
 
 #connection_window {

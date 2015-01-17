@@ -62,7 +62,7 @@ var fnCreateEditorTab = function(editorName, editorData) {
   queryTabCounter++;
 
   //Create query tab
-  generateFromTemplate({tab_id: queryTabCounter}, 'tmpl-query-tab', $('#input .tab-content'), false);
+  generateFromTemplate({tab_id: queryTabCounter, tab_mode: 'full'}, 'tmpl-query-tab', $('#input .tab-content'), false);
 
   //Create tab button
   var tabBtnHTML = getFromTemplate({tab_id: queryTabCounter, tab_name: editorName}, 'tmpl-query-tab-btn');
