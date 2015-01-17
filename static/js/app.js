@@ -52,9 +52,28 @@ function getAllCollationCharSet(cb)                     { apiCall("get", "/colla
 function alterDatabase(dbName, data, cb)                { apiCall("post", "/databases/" + dbName + "/actions/alter", data, cb); }
 function dropDatabase(dbName, cb)                       { apiCall("delete", "/databases/" + dbName + "/actions/drop", {}, cb); }
 function dropTable(dbName, tblName, cb)                 { apiCall("delete", "/databases/" + dbName + "/tables/" + tblName + "/actions/drop", {}, cb); }
+function getProcDefiniton(dbName, procName, cb)         { apiCall("get", "/databases/" + dbName + "/procedures/" + procName, {}, cb); }
 
 var fnGetSelectedTable = function(){
   return theTable;
+}
+
+var fnCreateEditorTab = function(editorData) {
+  queryTabCounter++;
+
+  //Create query tab
+  generateFromTemplate({tab_id: queryTabCounter}, 'tmpl-query-tab', $('#input .tab-content'), false);
+
+  //Create tab button
+  var tabBtnHTML = getFromTemplate({tab_id: queryTabCounter}, 'tmpl-query-tab-btn');
+
+  //Insert before this button
+  $('#lnkAddQueryTab').parent().before(tabBtnHTML);
+
+  //Initialize the ace editor
+  initEditor('query_editor_'+queryTabCounter, editorData);
+
+  $('#query_tab_btn_'+queryTabCounter).tab('show');
 }
 
 var fnRemoveNodeInTree = function (nodeName, type) {
@@ -271,6 +290,21 @@ var showDropTablePopup = function(tblName, treeNode) {
   });
 };
 
+var showAlterProcedure = function(procName, treeNode) {
+  var dbName = treeNode.parent.parent.name;
+
+  getProcDefiniton(dbName, procName, function(data){
+    if(data.error){
+      //show error
+      return;
+    }
+
+    var procText = data.rows[0][2];
+
+    fnCreateEditorTab(procText);
+  });
+}
+
 var fnSetDefaultDatabase = function(dbName) {
   theDatabase = dbName;
   setDefaultDatabase(dbName, function(){
@@ -479,7 +513,8 @@ function forTheTree(){
     "default-db": function(node) { fnSetDefaultDatabase(node.name); },
     "alter-db": function(node) { showAlterDBPopup(node.name); },
     "drop-db": function(node) { showDropDBPopup(node.name); },
-    "drop-tbl": function(node) { showDropTablePopup(node.name, node); }
+    "drop-tbl": function(node) { showDropTablePopup(node.name, node); },
+    "alter-sp": function(node) { showAlterProcedure(node.name, node); }
   });
 }
 
@@ -768,7 +803,7 @@ function exportToCSV(editor) {
   win.focus();
 }
 
-function initEditor(editorId) {
+function initEditor(editorId, editorData) {
   var editor = ace.edit(editorId);
 
   $('#'+editorId).data('ace-editor', editor);
@@ -795,6 +830,10 @@ function initEditor(editorId) {
       runExplain(editor);
     }
   }]);
+
+  if(editorData) {
+    editor.insert(editorData);
+  }
 }
 
 function addShortcutTooltips() {

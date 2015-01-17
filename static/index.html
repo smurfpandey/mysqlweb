@@ -211,7 +211,7 @@
     <li><a href="#delete"><i class="fa fa-remove"></i> Refresh All</a></li>
   </ul>
   <ul id="spMenu" class="dropdown-menu" style="display:none;" role="menu" aria-labelledby="dLabel">
-    <li><a href="#edit"><i class="fa fa-edit"></i> Edit Procedure</a></li>
+    <li><a href="#alter-sp"><i class="fa fa-edit"></i> Edit Procedure</a></li>
     <li><a href="#edit"><i class="fa fa-edit"></i> Execute</a></li>
     <li><a href="#delete"><i class="fa fa-remove"></i> Delete</a></li>
     <li class="divider"></li>
@@ -339,7 +339,7 @@
 
   <script id="tmpl-query-tab-btn" type="text/x-handlebars-template">
     <li role="presentation">
-      <a href="#query_tab_{{tab_id}}" role="tab" data-toggle="tab">
+      <a href="#query_tab_{{tab_id}}" id="query_tab_btn_{{tab_id}}" role="tab" data-toggle="tab">
         <span aria-hidden="true" class="pull-right close-query-tab">&times;</span>
         Query {{tab_id}}
       </a>
