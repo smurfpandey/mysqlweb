@@ -204,7 +204,6 @@
   border: none;
   box-shadow: none;
   background: #7eb54e;
-  float: left;
   margin-right: 10px;
 }
 
@@ -328,7 +327,7 @@
   height: 205px;
 }
 
-.query-editor.full {
+.query-editor.proc {
   height: 555px;
 }
 

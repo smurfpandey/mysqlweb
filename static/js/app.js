@@ -38,6 +38,13 @@ function apiCall(method, path, params, cb) {
   });
 }
 
+Handlebars.registerHelper('equal', function(v1, v2, options) {
+  if(v1 === v2) {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
 function getTables(cb)                                  { apiCall("get", "/tables", {}, cb); }
 function getTableStructure(table, cb)                   { apiCall("get", "/tables/" + table, {}, cb); }
 function getTablesOfDatabase(dbName, cb)                { apiCall("get", "/databases/" + dbName + "/tables", {}, cb); }
@@ -62,7 +69,7 @@ var fnCreateEditorTab = function(editorName, editorData) {
   queryTabCounter++;
 
   //Create query tab
-  generateFromTemplate({tab_id: queryTabCounter, tab_mode: 'full'}, 'tmpl-query-tab', $('#input .tab-content'), false);
+  generateFromTemplate({tab_id: queryTabCounter, tab_mode: 'proc'}, 'tmpl-query-tab', $('#input .tab-content'), false);
 
   //Create tab button
   var tabBtnHTML = getFromTemplate({tab_id: queryTabCounter, tab_name: editorName}, 'tmpl-query-tab-btn');

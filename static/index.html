@@ -326,6 +326,14 @@
     <div role="tabpanel" class="tab-pane" id="query_tab_{{tab_id}}">
       <div class="wrapper">
         <div id="query_editor_{{tab_id}}" class="query-editor {{tab_mode}}"></div>
+        {{#equal tab_mode 'proc'}}
+        <div class="actions text-right">
+          <input type="button" value="Apply" class="btn btn-sm btn-primary js-apply-proc" />
+          <input type="button" value="Cancel" class="btn btn-sm btn-default js-explain-query" />
+
+          <div id="query_progress">Please wait, query is executing...</div>
+        </div>
+        {{else}}
         <div class="actions">
           <input type="button" value="Run Query" class="btn btn-sm btn-primary js-run-query" />
           <input type="button" value="Explain Query" class="btn btn-sm btn-default js-explain-query" />
@@ -333,6 +341,7 @@
 
           <div id="query_progress">Please wait, query is executing...</div>
         </div>
+        {{/equal}}
       </div>
     </div>
   </script>
