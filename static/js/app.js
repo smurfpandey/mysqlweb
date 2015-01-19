@@ -60,6 +60,7 @@ function alterDatabase(dbName, data, cb)                { apiCall("post", "/data
 function dropDatabase(dbName, cb)                       { apiCall("delete", "/databases/" + dbName + "/actions/drop", {}, cb); }
 function dropTable(dbName, tblName, cb)                 { apiCall("delete", "/databases/" + dbName + "/tables/" + tblName + "/actions/drop", {}, cb); }
 function getProcDefiniton(dbName, procName, cb)         { apiCall("get", "/databases/" + dbName + "/procedures/" + procName, {}, cb); }
+function getFuncDefiniton(dbName, funcName, cb)         { apiCall("get", "/databases/" + dbName + "/functions/" + funcName, {}, cb); }
 
 var fnGetSelectedTable = function(){
   return theTable;
@@ -297,7 +298,7 @@ var showDropTablePopup = function(tblName, treeNode) {
   });
 };
 
-var showAlterProcedure = function(procName, treeNode) {
+var showEditProcedure = function(procName, treeNode) {
   var dbName = treeNode.parent.parent.name;
 
   getProcDefiniton(dbName, procName, function(data){
@@ -309,6 +310,21 @@ var showAlterProcedure = function(procName, treeNode) {
     var procText = data.rows[0][2];
 
     fnCreateEditorTab(dbName+'.'+procName, procText);
+  });
+}
+
+var showEditFunction = function(funcName, treeNode) {
+  var dbName = treeNode.parent.parent.name;
+
+  getFuncDefiniton(dbName, funcName, function(data){
+    if(data.error){
+      //show error
+      return;
+    }
+
+    var procText = data.rows[0][2];
+
+    fnCreateEditorTab(dbName+'.'+funcName, procText);
   });
 }
 
@@ -511,7 +527,7 @@ function forTheTree(){
     },
     {
       type: 'function',
-      menu_element: $('#funcMenu')
+      menu_element: $('#fnMenu')
     }
   ];
 
@@ -521,7 +537,8 @@ function forTheTree(){
     "alter-db": function(node) { showAlterDBPopup(node.name); },
     "drop-db": function(node) { showDropDBPopup(node.name); },
     "drop-tbl": function(node) { showDropTablePopup(node.name, node); },
-    "alter-sp": function(node) { showAlterProcedure(node.name, node); }
+    "edit-sp": function(node) { showEditProcedure(node.name, node); },
+    "edit-fn": function(node) { showEditFunction(node.name, node); }
   });
 }
 
