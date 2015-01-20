@@ -45,6 +45,10 @@ Handlebars.registerHelper('equal', function(v1, v2, options) {
   return options.inverse(this);
 });
 
+String.prototype.splice = function( idx, rem, s ) {
+    return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
+};
+
 function getTables(cb)                                  { apiCall("get", "/tables", {}, cb); }
 function getTableStructure(table, cb)                   { apiCall("get", "/tables/" + table, {}, cb); }
 function getTablesOfDatabase(dbName, cb)                { apiCall("get", "/databases/" + dbName + "/tables", {}, cb); }
