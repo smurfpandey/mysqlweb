@@ -325,6 +325,11 @@
   <script type="text/x-handlebars-template" id="tmpl-query-tab">
     <div role="tabpanel" class="tab-pane" id="query_tab_{{tab_id}}">
       <div class="wrapper">
+        {{#equal tab_mode 'proc'}}
+        <div class="editor-title">
+          <span>Name: </span><input type="text" disabled value="{{tab_title}}" />
+        </div>
+        {{/equal}}
         <div id="query_editor_{{tab_id}}" class="query-editor {{tab_mode}}"></div>
         {{#equal tab_mode 'proc'}}
         <div class="actions text-right">

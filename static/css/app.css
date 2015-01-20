@@ -331,6 +331,17 @@
   height: 555px;
 }
 
+.editor-title {
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.editor-title input {
+  width: 95%;
+  padding: 2px;
+  font-size: 12px;
+}
+
 #connection_window {
   z-index: 3;
   position: fixed;

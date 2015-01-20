@@ -66,11 +66,12 @@ var fnGetSelectedTable = function(){
   return theTable;
 }
 
-var fnCreateEditorTab = function(editorName, editorData) {
+var fnCreateEditorTab = function(editorName, editorData, editorTitle) {
   queryTabCounter++;
 
   //Create query tab
-  generateFromTemplate({tab_id: queryTabCounter, tab_mode: 'proc'}, 'tmpl-query-tab', $('#input .tab-content'), false);
+  generateFromTemplate({tab_id: queryTabCounter, tab_mode: 'proc', tab_title: editorTitle},
+   'tmpl-query-tab', $('#input .tab-content'), false);
 
   //Create tab button
   var tabBtnHTML = getFromTemplate({tab_id: queryTabCounter, tab_name: editorName}, 'tmpl-query-tab-btn');
@@ -309,7 +310,7 @@ var showEditProcedure = function(procName, treeNode) {
 
     var procText = data.rows[0][2];
 
-    fnCreateEditorTab(dbName+'.'+procName, procText);
+    fnCreateEditorTab(dbName+'.'+procName, procText, procName);
   });
 }
 
@@ -324,7 +325,7 @@ var showEditFunction = function(funcName, treeNode) {
 
     var procText = data.rows[0][2];
 
-    fnCreateEditorTab(dbName+'.'+funcName, procText);
+    fnCreateEditorTab(dbName+'.'+funcName, procText, funcName);
   });
 }
 
