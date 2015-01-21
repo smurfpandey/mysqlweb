@@ -24,8 +24,8 @@ This is a web-based browser for MySQL database server. Its written in Go and wor
 - ~~List functions of database~~
 - Context menus
 - Redesign the query tab
-  - A simple query tab, that will allow users to write any SQL  query.
-  - No separate tabs for content,
+  - ~~A simple query tab, that will allow users to write any SQL  query.~~
+  - ~~No separate tabs for content~~
 
 ## Contributing
 
