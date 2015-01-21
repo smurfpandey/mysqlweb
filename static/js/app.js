@@ -70,11 +70,12 @@ var fnGetSelectedTable = function(){
   return theTable;
 }
 
-var fnCreateEditorTab = function(editorName, editorData, editorTitle) {
+var fnCreateEditorTab = function(editorName, editorData, editorTitle, objData) {
   queryTabCounter++;
 
   //Create query tab
-  generateFromTemplate({tab_id: queryTabCounter, tab_mode: 'proc', tab_title: editorTitle},
+  generateFromTemplate({tab_id: queryTabCounter, tab_mode: 'proc',
+      tab_title: editorTitle, proc_name: objData.proc_name, db_name: objData.db_name},
    'tmpl-query-tab', $('#input .tab-content'), false);
 
   //Create tab button
@@ -314,7 +315,7 @@ var showEditProcedure = function(procName, treeNode) {
 
     var procText = data.rows[0][2];
 
-    fnCreateEditorTab(dbName+'.'+procName, procText, procName);
+    fnCreateEditorTab(dbName+'.'+procName, procText, procName, {proc_name: procName, db_name: dbName});
   });
 }
 
@@ -329,7 +330,7 @@ var showEditFunction = function(funcName, treeNode) {
 
     var procText = data.rows[0][2];
 
-    fnCreateEditorTab(dbName+'.'+funcName, procText, funcName);
+    fnCreateEditorTab(dbName+'.'+funcName, procText, funcName, {proc_name: procName, db_name: dbName});
   });
 }
 
@@ -547,12 +548,37 @@ function forTheTree(){
   });
 }
 
+
+
 function executeQuery(query, cb) {
   apiCall("post", "/query", { query: query }, cb);
 }
 
 function explainQuery(query, cb) {
   apiCall("post", "/explain", { query: query }, cb);
+}
+
+function editProcedure(procName, procDef, dbName, cb) {
+  var newDef = 'USE `'+ dbName +'`;';
+  newDef += '\r\n';
+  newDef += 'DROP procedure IF EXISTS `' + dbName + '.' +procName + '`;';
+  newDef += '\r\n';
+
+  newDef += 'DELIMITER $$';
+  newDef += '\r\n';
+  newDef += 'USE `'+ dbName +'`$$';
+  newDef += '\r\n';
+  //append dbname to procname
+  //To make sure we do not create proc in some other database
+
+  var mehIndex = procDef.indexOf('PROCEDURE `');
+
+  newDef += procDef.splice(mehIndex+11, 0, dbName + '.');
+
+  newDef += '$$\r\n\r\n';
+  newDef += 'DELIMITER ;';
+
+  executeQuery(newDef, cb);
 }
 
 function loadTables() {
@@ -1106,6 +1132,20 @@ $(document).ready(function() {
 
     //Remove the tab button from DOM
     $tabButton.parent().remove();
+  });
+
+  $('#input').on('click', '.js-apply-proc', function(e){
+    var $thisQueryDiv = $(this).parent().prev();
+
+    var thisEditor = $thisQueryDiv.data('ace-editor');
+    var procDef = $.trim(thisEditor.getValue());
+
+    var procName = $thisQueryDiv.data('procname');
+    var dbName = $thisQueryDiv.data('dbname');
+
+    editProcedure(procName, procDef, dbName, function(data){
+      console.log(data);
+    });
   });
 
   initModals();
