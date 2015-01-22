@@ -290,6 +290,21 @@ func (client *Client) Query(query string) (*Result, error) {
 	return &result, nil
 }
 
+func (client *Client) Execute(query string) (int64, error) {
+	res, err := client.db.Exec(query)
+
+	if err != nil {
+		return -1, err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return -1, err
+	}
+
+	return rowsAffected, nil
+}
+
 //Format the resultset
 func (res *Result) Format() []map[string]interface{} {
 	var items []map[string]interface{}

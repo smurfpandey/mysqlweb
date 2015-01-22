@@ -59,16 +59,17 @@ function getHistory(cb)                                 { apiCall("get", "/histo
 function getDatabases(cb)                               { apiCall("get", "/databases", {}, cb); }
 function setDefaultDatabase(dbName, cb)                 { apiCall("post", "/databases/" + dbName + "/actions/default", {}, cb); }
 function getProcedureParameters(procedure, dbName, cb)  { apiCall("get", "/procedures/" + procedure + "/parameters?database=" + dbName, {}, cb); }
-function getAllCollationCharSet(cb)                     { apiCall("get", "/collation", {}, cb) }
+function getAllCollationCharSet(cb)                     { apiCall("get", "/collation", {}, cb); }
 function alterDatabase(dbName, data, cb)                { apiCall("post", "/databases/" + dbName + "/actions/alter", data, cb); }
 function dropDatabase(dbName, cb)                       { apiCall("delete", "/databases/" + dbName + "/actions/drop", {}, cb); }
 function dropTable(dbName, tblName, cb)                 { apiCall("delete", "/databases/" + dbName + "/tables/" + tblName + "/actions/drop", {}, cb); }
 function getProcDefiniton(dbName, procName, cb)         { apiCall("get", "/databases/" + dbName + "/procedures/" + procName, {}, cb); }
 function getFuncDefiniton(dbName, funcName, cb)         { apiCall("get", "/databases/" + dbName + "/functions/" + funcName, {}, cb); }
+function editProcedure(dbName, procName, procDef, cb)   { apiCall("post", "/databases/" + dbName + "/procedures/" + procName, {definition: procDef}, cb); }
 
 var fnGetSelectedTable = function(){
   return theTable;
-}
+};
 
 var fnCreateEditorTab = function(editorName, editorData, editorTitle, objData) {
   queryTabCounter++;
@@ -88,7 +89,7 @@ var fnCreateEditorTab = function(editorName, editorData, editorTitle, objData) {
   initEditor('query_editor_'+queryTabCounter, editorData);
 
   $('#query_tab_btn_'+queryTabCounter).tab('show');
-}
+};
 
 var fnRemoveNodeInTree = function (nodeName, type) {
   //Get all nodes with name as database name
@@ -126,7 +127,7 @@ var fnShowTheDatabase = function(){
   //Make it bold
   var $nodeEle = $(myNode[0].element);
   $nodeEle.addClass('selected-db');
-}
+};
 
 var setNoLoadOnDemand = function(node) {
   $tree.tree(
@@ -136,7 +137,7 @@ var setNoLoadOnDemand = function(node) {
         load_on_demand: false
     }
   );
-}
+};
 
 var showAlterDBPopup = function(nodeName) {
   $('#mdlAlterDB').modal('show');
@@ -156,7 +157,7 @@ var showAlterDBPopup = function(nodeName) {
     $('#ddlCollList').html(strCollList).selectpicker('refresh');
   };
 
-  if(charCollData.length == 0){
+  if(charCollData.length === 0){
     //Load all the collation in dropdown
     getAllCollationCharSet(function(data){
       //data.row.[i][1] = character set
@@ -230,7 +231,7 @@ var showAlterDBPopup = function(nodeName) {
     });
   });
 
-}
+};
 
 var showDropDBPopup = function (dbName) {
   var $thisModel = $('#mdlDropDB');
@@ -265,7 +266,7 @@ var showDropDBPopup = function (dbName) {
       }
     });
   });
-}
+};
 
 var showDropTablePopup = function(tblName, treeNode) {
   var $thisModel = $('#mdlDropTable');
@@ -317,7 +318,7 @@ var showEditProcedure = function(procName, treeNode) {
 
     fnCreateEditorTab(dbName+'.'+procName, procText, procName, {proc_name: procName, db_name: dbName});
   });
-}
+};
 
 var showEditFunction = function(funcName, treeNode) {
   var dbName = treeNode.parent.parent.name;
@@ -332,7 +333,7 @@ var showEditFunction = function(funcName, treeNode) {
 
     fnCreateEditorTab(dbName+'.'+funcName, procText, funcName, {proc_name: procName, db_name: dbName});
   });
-}
+};
 
 var fnSetDefaultDatabase = function(dbName) {
   theDatabase = dbName;
@@ -340,7 +341,7 @@ var fnSetDefaultDatabase = function(dbName) {
     //Highglight this database node
     fnShowTheDatabase();
   });
-}
+};
 
 function forTheTree(){
   $('#database-tree').bind('tree.toggle',function(e) {
@@ -448,7 +449,7 @@ function forTheTree(){
     else if (dbNode.type === 'procedure' ||
              dbNode.type === 'function') {
       var procName = dbNode.name;
-      var dbName = dbNode.parent.parent.name;
+      dbName = dbNode.parent.parent.name;
 
       getProcedureParameters(procName, dbName, function(data){
         var objData = [];
@@ -558,29 +559,6 @@ function explainQuery(query, cb) {
   apiCall("post", "/explain", { query: query }, cb);
 }
 
-function editProcedure(procName, procDef, dbName, cb) {
-  var newDef = 'USE `'+ dbName +'`;';
-  newDef += '\r\n';
-  newDef += 'DROP procedure IF EXISTS `' + dbName + '.' +procName + '`;';
-  newDef += '\r\n';
-
-  newDef += 'DELIMITER $$';
-  newDef += '\r\n';
-  newDef += 'USE `'+ dbName +'`$$';
-  newDef += '\r\n';
-  //append dbname to procname
-  //To make sure we do not create proc in some other database
-
-  var mehIndex = procDef.indexOf('PROCEDURE `');
-
-  newDef += procDef.splice(mehIndex+11, 0, dbName + '.');
-
-  newDef += '$$\r\n\r\n';
-  newDef += 'DELIMITER ;';
-
-  executeQuery(newDef, cb);
-}
-
 function loadTables() {
   $("#tables li").remove();
 
@@ -616,7 +594,7 @@ function loadDatabases() {
 }
 
 function escapeHtml(str) {
-  if (str != null || str != undefined) {
+  if (str !== null || str !== undefined) {
     return jQuery("<div/>").text(str).html();
   }
 
@@ -661,7 +639,7 @@ function buildTable(results) {
 
   results.rows.forEach(function(row) {
     var r = "";
-    for (i in row) { r += "<td><div>" + escapeHtml(row[i]) + "</div></td>"; }
+    for (var i in row) { r += "<td><div>" + escapeHtml(row[i]) + "</div></td>"; }
     rows += "<tr>" + r + "</tr>";
   });
 
@@ -677,7 +655,7 @@ function showQueryHistory() {
   getHistory(function(data) {
     var rows = [];
 
-    for(i in data) {
+    for(var i in data) {
       rows.unshift([parseInt(i) + 1, data[i]]);
     }
 
@@ -693,7 +671,7 @@ function showQueryHistory() {
 function showTableIndexes() {
   var name = fnGetSelectedTable();
 
-  if (name.length == 0) {
+  if (name.length === 0) {
     alert("Please select a table!");
     return;
   }
@@ -711,7 +689,7 @@ function showTableIndexes() {
 function showTableInfo() {
   var name = fnGetSelectedTable();
 
-  if (name.length == 0) {
+  if (name.length === 0) {
     alert("Please select a table!");
     return;
   }
@@ -729,7 +707,7 @@ function showTableInfo() {
 function showTableContent() {
   var name = fnGetSelectedTable();
 
-  if (name.length == 0) {
+  if (name.length === 0) {
     alert("Please select a table!");
     return;
   }
@@ -749,7 +727,7 @@ function showTableContent() {
 function showTableStructure() {
   var name = fnGetSelectedTable();
 
-  if (name.length == 0) {
+  if (name.length === 0) {
     alert("Please select a table!");
     return;
   }
@@ -1143,7 +1121,7 @@ $(document).ready(function() {
     var procName = $thisQueryDiv.data('procname');
     var dbName = $thisQueryDiv.data('dbname');
 
-    editProcedure(procName, procDef, dbName, function(data){
+    editProcedure(dbName, procName, procDef, function(data){
       console.log(data);
     });
   });
