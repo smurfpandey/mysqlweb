@@ -22,3 +22,7 @@ func startRuntimeProfiler() {
 		time.Sleep(time.Minute)
 	}
 }
+
+func splice(s string, idx int, rem int, sAdd string) string {
+	return (s[0:idx] + sAdd + s[(idx+rem):len(s)])
+}
