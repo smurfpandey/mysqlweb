@@ -17,4 +17,5 @@ const (
 	MySQLTableDrop           = "DROP TABLE %s.%s"
 	MySQLTableTruncate       = "TRUNCATE TABLE %s.%s"
 	MySQLProcedureDefinition = "SHOW CREATE %s %s.%s"
+	MySQLProcedureDrop			 = "DROP %s IF EXISTS %s.%s"
 )

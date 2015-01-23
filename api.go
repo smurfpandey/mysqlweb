@@ -336,36 +336,14 @@ func APICreateProcedure(c *gin.Context) {
 	procName := c.Params.ByName("procedure")
 	procDef := c.Request.FormValue("definition")
 
-	//Set database
-	defaultDBQuery := fmt.Sprintf("use %s;", dbName)
-	_, err := dbClient.Execute(defaultDBQuery)
-	if err != nil {
-		c.JSON(400, NewError(err))
-		return
-	}
-
-	//Drop if exists
-	procDropStmnt := "DROP PROCEDURE IF EXISTS " + dbName + "." + procName
-
-	_, err = dbClient.Execute(procDropStmnt)
+	_, err := dbClient.ProcedureCreate("PROCEDURE", dbName, procName, procDef)
 
 	if err != nil {
 		c.JSON(400, NewError(err))
 		return
 	}
 
-	//Create the new procedure
-	mehIndex := strings.Index(procDef, "PROCEDURE `")
-	newDef := splice(procDef, mehIndex+11, 0, dbName+".")
-
-	res, err := dbClient.Query(newDef)
-
-	if err != nil {
-		c.JSON(400, NewError(err))
-		return
-	}
-
-	c.JSON(200, res)
+	c.Writer.WriteHeader(200)
 }
 
 //APIHandleQuery handles thq query and return the resultset as JSON

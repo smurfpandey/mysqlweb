@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -243,6 +244,58 @@ func (client *Client) ProcedureDefinition(procType string, database string, name
 
 	return res, err
 
+}
+
+func (client *Client) ProcedureDrop(procType string, database string, name string) (bool, error) {
+	_, err := client.Execute(fmt.Sprintf(MySQLProcedureDrop, procType, database, name))
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, err
+}
+
+func (client *Client) ProcedureCreate(procType string, database string, name string, definition string) (bool, error) {
+	trans, err := client.db.Begin()
+
+	if err != nil {
+		return false, err
+	}
+
+	//set this as default database
+	_, err = trans.Exec(fmt.Sprintf("use %s;", database))
+
+	//Drop existing procedure
+	_, err = trans.Exec(fmt.Sprintf(MySQLProcedureDrop, procType, database, name))
+
+	if err != nil {
+		return false, err
+	}
+
+	err = trans.Commit()
+
+	if err != nil {
+		return false, err
+	}
+
+	trans, err = client.db.Begin()
+
+	if err != nil {
+		return false, err
+	}
+
+	//Create new definition
+	mehIndex := strings.Index(definition, procType+" `")
+	newDef := splice(definition, mehIndex+10, 0, "`"+database+"`.")
+
+	_, err = trans.Exec(newDef)
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 //Query will execute the sql query passed as parameter, and return the resultset
