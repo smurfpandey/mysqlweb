@@ -273,18 +273,6 @@ func (client *Client) ProcedureCreate(procType string, database string, name str
 		return false, err
 	}
 
-	err = trans.Commit()
-
-	if err != nil {
-		return false, err
-	}
-
-	trans, err = client.db.Begin()
-
-	if err != nil {
-		return false, err
-	}
-
 	//Create new definition
 	mehIndex := strings.Index(definition, procType+" `")
 	newDef := splice(definition, mehIndex+10, 0, "`"+database+"`.")
