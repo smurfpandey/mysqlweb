@@ -102,6 +102,11 @@ function editProcedure(dbName, procName, procDef, cb) {
     definition: procDef
   }, cb);
 }
+function editFunction(dbName, fnName, fnDef, cb) {
+  apiCall("post", "/databases/" + dbName + "/functions/" + fnName, {
+    definition: fnDef
+  }, cb);
+}
 
 var fnGetSelectedTable = function() {
   return theTable;
@@ -116,7 +121,8 @@ var fnCreateEditorTab = function(editorName, editorData, editorTitle, objData) {
     tab_mode: 'proc',
     tab_title: editorTitle,
     proc_name: objData.proc_name,
-    db_name: objData.db_name
+    db_name: objData.db_name,
+    proc_type: objData.proc_type
   },
     'tmpl-query-tab', $('#input .tab-content'), false);
 
@@ -360,7 +366,8 @@ var showEditProcedure = function(procName, treeNode) {
 
     fnCreateEditorTab(dbName + '.' + procName, procText, procName, {
       proc_name: procName,
-      db_name: dbName
+      db_name: dbName,
+      proc_type: 'PROC'
     });
   });
 };
@@ -377,8 +384,9 @@ var showEditFunction = function(funcName, treeNode) {
     var procText = data.rows[0][2];
 
     fnCreateEditorTab(dbName + '.' + funcName, procText, funcName, {
-      proc_name: procName,
-      db_name: dbName
+      proc_name: funcName,
+      db_name: dbName,
+      proc_type: 'FUNC'
     });
   });
 };
@@ -1216,23 +1224,52 @@ $(document).ready(function() {
     var procName = $thisQueryDiv.data('procname');
     var dbName = $thisQueryDiv.data('dbname');
 
-    editProcedure(dbName, procName, procDef, function(data) {
-      if (data.error) {
-        swal({
-          title: "Error!",
-          text: data.error,
-          type: "error",
-          confirmButtonText: "Cool"
+    var procType = $(this).data('proctype');
+
+    switch (procType) {
+      case "PROC":{
+        editProcedure(dbName, procName, procDef, function(data) {
+          if (data.error) {
+            swal({
+              title: "Error!",
+              text: data.error,
+              type: "error",
+              confirmButtonText: "Cool"
+            });
+          } else {
+            swal({
+              title: "Nice!",
+              text: "Procedure saved successfully",
+              type: "success",
+              confirmButtonText: "Cool"
+            });
+          }
         });
-      } else {
-        swal({
-          title: "Nice!",
-          text: "Procedure saved successfully",
-          type: "success",
-          confirmButtonText: "Cool"
-        });
+        break;
       }
-    });
+      case "FUNC":{
+        editFunction(dbName, procName, procDef, function(data) {
+          if (data.error) {
+            swal({
+              title: "Error!",
+              text: data.error,
+              type: "error",
+              confirmButtonText: "Cool"
+            });
+          } else {
+            swal({
+              title: "Nice!",
+              text: "Procedure saved successfully",
+              type: "success",
+              confirmButtonText: "Cool"
+            });
+          }
+        });
+        break;
+      }
+    }
+
+
   });
 
   initModals();

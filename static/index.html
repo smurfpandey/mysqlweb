@@ -335,7 +335,7 @@
         <div id="query_editor_{{tab_id}}" class="query-editor {{tab_mode}}" data-procname="{{proc_name}}" data-dbname="{{db_name}}"></div>
         {{#equal tab_mode 'proc'}}
         <div class="actions text-right">
-          <input type="button" value="Apply" class="btn btn-sm btn-primary js-apply-proc" />
+          <input type="button" value="Apply" data-proctype="{{proc_type}}" class="btn btn-sm btn-primary js-apply-proc" />
           <input type="button" value="Cancel" class="btn btn-sm btn-default js-explain-query" />
 
           <div id="query_progress">Please wait, query is executing...</div>

@@ -346,6 +346,22 @@ func APICreateProcedure(c *gin.Context) {
 	c.Writer.WriteHeader(200)
 }
 
+//APICreateFunction creates/edits a function
+func APICreateFunction(c *gin.Context) {
+	dbName := c.Params.ByName("database")
+	procName := c.Params.ByName("function")
+	procDef := c.Request.FormValue("definition")
+
+	_, err := dbClient.ProcedureCreate("FUNCTION", dbName, procName, procDef)
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.Writer.WriteHeader(200)
+}
+
 //APIHandleQuery handles thq query and return the resultset as JSON
 func APIHandleQuery(query string, c *gin.Context) {
 	result, err := dbClient.Query(query)

@@ -274,8 +274,12 @@ func (client *Client) ProcedureCreate(procType string, database string, name str
 	}
 
 	//Create new definition
+	yoIndex := 10
+	if procType == "FUNCTION" {
+		yoIndex = 9
+	}
 	mehIndex := strings.Index(definition, procType+" `")
-	newDef := splice(definition, mehIndex+10, 0, "`"+database+"`.")
+	newDef := splice(definition, mehIndex+yoIndex, 0, "`"+database+"`.")
 
 	_, err = trans.Exec(newDef)
 
