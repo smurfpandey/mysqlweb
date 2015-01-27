@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"reflect"
-	"strings"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -274,14 +273,14 @@ func (client *Client) ProcedureCreate(procType string, database string, name str
 	}
 
 	//Create new definition
-	yoIndex := 10
-	if procType == "FUNCTION" {
-		yoIndex = 9
-	}
-	mehIndex := strings.Index(definition, procType+" `")
-	newDef := splice(definition, mehIndex+yoIndex, 0, "`"+database+"`.")
+	//yoIndex := 10
+	//if procType == "FUNCTION" {
+	//	yoIndex = 9
+	//}
+	//mehIndex := strings.Index(definition, procType+" `")
+	//newDef := splice(definition, mehIndex+yoIndex, 0, "`"+database+"`.")
 
-	_, err = trans.Exec(newDef)
+	_, err = trans.Exec(definition)
 
 	if err != nil {
 		return false, err
