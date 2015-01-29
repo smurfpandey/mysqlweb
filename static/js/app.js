@@ -395,6 +395,12 @@ var showEditFunction = function (funcName, treeNode) {
 var fnGetProcName = function (procText) {
   //Get start point
   var startIndex = 17;
+
+  var mehProc = procText.toLowerCase();
+  if (mehProc.indexOf('create function') > -1) {
+    startIndex = 16;
+  }
+  
   var lastIndex = procText.indexOf('(');  //30
 
   var procLength = lastIndex - startIndex;
@@ -402,11 +408,11 @@ var fnGetProcName = function (procText) {
   var procName = procText.substring(startIndex, lastIndex);
 
   return $.trim(procName);
-  
+
 }
 
 var showCreateProcedure = function (dbName) {
-  
+
   var procDef = 'CREATE PROCEDURE new_procedure()';
   procDef += '\r\n';
   procDef += 'BEGIN';
@@ -422,7 +428,28 @@ var showCreateProcedure = function (dbName) {
     proc_type: 'PROC',
     is_new: true
   });
+};
 
+var showCreateFunction = function (dbName) {
+  var procDef = 'CREATE FUNCTION new_function()';
+  procDef += '\r\n';
+  procDef += 'RETURNS INTEGER';
+  procDef += '\r\n';
+  procDef += 'BEGIN';
+  procDef += '\r\n';
+  procDef += '\r\n';
+  procDef += 'RETURN 1;';
+  procDef += '\r\n'; 
+  procDef += 'END';
+
+  var procName = 'new_function';
+
+  fnCreateEditorTab(dbName + '.' + procName, procDef, procName, {
+    proc_name: procName,
+    db_name: dbName,
+    proc_type: 'FUNC',
+    is_new: true
+  });
 };
 
 var fnSetDefaultDatabase = function (dbName) {
@@ -656,7 +683,10 @@ function forTheTree() {
       showEditFunction(node.name, node);
     },
     "create-sp": function (node) {
-      showCreateProcedure(node.name, node);
+      showCreateProcedure(node.name);
+    },
+    "create-fn": function (node) {
+      showCreateFunction(node.name);
     }
   });
 }
@@ -1310,6 +1340,8 @@ $(document).ready(function () {
               type: "success",
               confirmButtonText: "Cool"
             });
+
+            $thisQueryDiv.data('isnew', false);
           }
         });
         break;
