@@ -3,7 +3,7 @@ package main
 const (
 	MySQLInfo                = "SELECT VERSION(), USER(), DATABASE()"
 	MySQLDatabases           = "SELECT SCHEMA_NAME, DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA ORDER BY schema_name;"
-	MySQLDatabaseTables      = "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = '%s' ORDER BY TABLE_NAME;"
+	MySQLDatabaseTables      = "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = '%s' AND TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME;"
 	MySQLDatabaseProcedures  = "SELECT ROUTINE_NAME FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE= 'PROCEDURE' AND ROUTINE_SCHEMA= '%s' ORDER BY ROUTINE_NAME;"
 	MySQLDatabaseFunctions   = "SELECT ROUTINE_NAME FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE= 'FUNCTION' AND ROUTINE_SCHEMA= '%s' ORDER BY ROUTINE_NAME;"
 	MySQLTables              = "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'test' ORDER BY TABLE_NAME;"
@@ -17,5 +17,5 @@ const (
 	MySQLTableDrop           = "DROP TABLE %s.%s"
 	MySQLTableTruncate       = "TRUNCATE TABLE %s.%s"
 	MySQLProcedureDefinition = "SHOW CREATE %s %s.%s"
-	MySQLProcedureDrop			 = "DROP %s IF EXISTS %s.%s"
+	MySQLProcedureDrop       = "DROP %s IF EXISTS %s.%s"
 )
