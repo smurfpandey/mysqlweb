@@ -95,6 +95,23 @@ func (client *Client) DatabaseTables(database string) ([]string, error) {
 	return tables, nil
 }
 
+//DatabaseViews will give you list of views belonging to the database
+func (client *Client) DatabaseViews(database string) ([]string, error) {
+	res, err := client.Query(fmt.Sprintf(MySQLDatabaseViews, database))
+
+	if err != nil {
+		return nil, err
+	}
+
+	var tables []string
+
+	for _, row := range res.Rows {
+		tables = append(tables, row[0].(string))
+	}
+
+	return tables, nil
+}
+
 //DatabaseProcedures returns a list of all the stored procedures in the database
 func (client *Client) DatabaseProcedures(database string) ([]string, error) {
 	res, err := client.Query(fmt.Sprintf(MySQLDatabaseProcedures, database))

@@ -106,6 +106,18 @@ func APIGetDatabaseTables(c *gin.Context) {
 	c.JSON(200, res)
 }
 
+//APIGetDatabaseViews will give the views of a database
+func APIGetDatabaseViews(c *gin.Context) {
+	res, err := dbClient.DatabaseViews(c.Params.ByName("database"))
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.JSON(200, res)
+}
+
 //APIGetDatabaseProcedures will give the stored procedures of a database
 func APIGetDatabaseProcedures(c *gin.Context) {
 	res, err := dbClient.DatabaseProcedures(c.Params.ByName("database"))
