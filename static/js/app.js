@@ -12,6 +12,11 @@ var dbChildNode = [
     type: 'tbl-holder'
   },
   {
+    label: 'View',
+    load_on_demand: true,
+    type: 'vw-holder'
+  },
+  {
     label: 'Procedure',
     load_on_demand: true,
     type: 'sp-holder'
@@ -29,23 +34,23 @@ function apiCall(method, path, params, cb) {
     method: method,
     cache: false,
     data: params,
-    success: function (data) {
+    success: function(data) {
       cb(data);
     },
-    error: function (xhr, status, data) {
+    error: function(xhr, status, data) {
       cb(jQuery.parseJSON(xhr.responseText));
     }
   });
 }
 
-Handlebars.registerHelper('equal', function (v1, v2, options) {
+Handlebars.registerHelper('equal', function(v1, v2, options) {
   if (v1 === v2) {
     return options.fn(this);
   }
   return options.inverse(this);
 });
 
-String.prototype.splice = function (idx, rem, s) {
+String.prototype.splice = function(idx, rem, s) {
   return (this.slice(0, idx) + s + this.slice(idx + Math.abs(rem)));
 };
 
@@ -57,6 +62,9 @@ function getTableStructure(table, cb) {
 }
 function getTablesOfDatabase(dbName, cb) {
   apiCall("get", "/databases/" + dbName + "/tables", {}, cb);
+}
+function getViewsOfDatabase(dbName, cb) {
+  apiCall("get", "/databases/" + dbName + "/views", {}, cb);
 }
 function getProceduresOfDatabase(dbName, cb) {
   apiCall("get", "/databases/" + dbName + "/procedures", {}, cb);
@@ -108,11 +116,11 @@ function editFunction(dbName, fnName, fnDef, cb) {
   }, cb);
 }
 
-var fnGetSelectedTable = function () {
+var fnGetSelectedTable = function() {
   return theTable;
 };
 
-var fnCreateEditorTab = function (editorName, editorData, editorTitle, objData) {
+var fnCreateEditorTab = function(editorName, editorData, editorTitle, objData) {
   queryTabCounter++;
 
   //Create query tab
@@ -142,7 +150,7 @@ var fnCreateEditorTab = function (editorName, editorData, editorTitle, objData) 
   $('#query_tab_btn_' + queryTabCounter).tab('show');
 };
 
-var fnRemoveNodeInTree = function (nodeName, type) {
+var fnRemoveNodeInTree = function(nodeName, type) {
   //Get all nodes with name as database name
 
   var arrFirst = $tree.tree('getNodeByName', nodeName);
@@ -155,7 +163,7 @@ var fnRemoveNodeInTree = function (nodeName, type) {
   $tree.tree('removeNode', arrFirst);
 };
 
-var fnShowTheDatabase = function () {
+var fnShowTheDatabase = function() {
   //Remove previous one
   $('.selected-db').removeClass('selected-db');
 
@@ -166,7 +174,7 @@ var fnShowTheDatabase = function () {
   //Chances are we might get nodes of type table as well as database
   //Let's apply filter again, this time for type database
   //Just in case
-  var myNode = arrFirst.filter(function (el) {
+  var myNode = arrFirst.filter(function(el) {
     return el.type == 'database';
   });
 
@@ -180,7 +188,7 @@ var fnShowTheDatabase = function () {
   $nodeEle.addClass('selected-db');
 };
 
-var setNoLoadOnDemand = function (node) {
+var setNoLoadOnDemand = function(node) {
   $tree.tree(
     'updateNode',
     node,
@@ -190,18 +198,18 @@ var setNoLoadOnDemand = function (node) {
   );
 };
 
-var showAlterDBPopup = function (nodeName) {
+var showAlterDBPopup = function(nodeName) {
   $('#mdlAlterDB').modal('show');
   $('#dvAlterDBMsg').hide().text('');
 
-  var loadCollation = function (charName) {
+  var loadCollation = function(charName) {
     //Get collation for this charset
-    var thisObj = _.find(charCollData, function (objData) {
+    var thisObj = _.find(charCollData, function(objData) {
       return objData.character_set === charName;
     });
 
     var strCollList = '';
-    _.each(thisObj.collation, function (val) {
+    _.each(thisObj.collation, function(val) {
       strCollList += '<option>' + val + '</option>';
     });
 
@@ -210,33 +218,33 @@ var showAlterDBPopup = function (nodeName) {
 
   if (charCollData.length === 0) {
     //Load all the collation in dropdown
-    getAllCollationCharSet(function (data) {
+    getAllCollationCharSet(function(data) {
       //data.row.[i][1] = character set
       //data.row.[i][0] = collation
 
 
-      var filteredData = _.uniq(data.rows, function (val) {
+      var filteredData = _.uniq(data.rows, function(val) {
         return val[1];
       });
 
       var charset = [];
-      _.each(filteredData, function (val) {
+      _.each(filteredData, function(val) {
         charset.push(val[1]);
       });
 
       charCollData = [];
       //Take one char_set
-      _.each(charset, function (charName) {
+      _.each(charset, function(charName) {
         var charCollObj = {};
         charCollObj.character_set = charName;
         charCollObj.collation = [];
-        var thisCharCollation = _.each(data.rows, function (val) {
+        var thisCharCollation = _.each(data.rows, function(val) {
           if (val[1] === charName) return charCollObj.collation.push(val[0]);
         });
         charCollData.push(charCollObj);
       });
 
-      charset.forEach(function (val) {
+      charset.forEach(function(val) {
         strCharsetOptions += '<option>' + val + '</option>';
       });
 
@@ -252,7 +260,7 @@ var showAlterDBPopup = function (nodeName) {
   $('#db_alter_name').val(nodeName);
 
   //event listeners for select change
-  $('#ddlCharSet').off('change').on('change', function (e) {
+  $('#ddlCharSet').off('change').on('change', function(e) {
     var $this = $(this);
     var selectedCharset = $this.val();
 
@@ -261,7 +269,7 @@ var showAlterDBPopup = function (nodeName) {
   });
 
 
-  $('#btnAlterDatabase').off('click').on('click', function (e) {
+  $('#btnAlterDatabase').off('click').on('click', function(e) {
     var dbName = $('#db_alter_name').val();
     var charsetName = $('#ddlCharSet').val();
     var collationName = $('#ddlCollList').val();
@@ -270,7 +278,7 @@ var showAlterDBPopup = function (nodeName) {
       collation: collationName
     };
 
-    alterDatabase(dbName, reqData, function (results) {
+    alterDatabase(dbName, reqData, function(results) {
       if (results.error) {
         //Show erroe mesage
         $('#dvAlterDBMsg').show().text(result.error);
@@ -282,7 +290,7 @@ var showAlterDBPopup = function (nodeName) {
 
 };
 
-var showDropDBPopup = function (dbName) {
+var showDropDBPopup = function(dbName) {
   var $thisModel = $('#mdlDropDB');
   $thisModel.modal('show');
 
@@ -290,7 +298,7 @@ var showDropDBPopup = function (dbName) {
   $('#db_delete_name').val('');
   $('#dvDropDbMsg').hide().text('');
 
-  $('#btnDropDatabase').off('click').on('click', function (e) {
+  $('#btnDropDatabase').off('click').on('click', function(e) {
     //Make sure this confirm dbname is correct
     var confirmDBName = $('#db_delete_name').val();
     var origDBName = $('#spDeleteDb').text();
@@ -299,7 +307,7 @@ var showDropDBPopup = function (dbName) {
       return;
     }
 
-    dropDatabase(dbName, function (result) {
+    dropDatabase(dbName, function(result) {
 
       if (typeof (result) === 'undefined') {
         //remove this ndoe from the tree
@@ -317,7 +325,7 @@ var showDropDBPopup = function (dbName) {
   });
 };
 
-var showDropTablePopup = function (tblName, treeNode) {
+var showDropTablePopup = function(tblName, treeNode) {
   var $thisModel = $('#mdlDropTable');
   $thisModel.modal('show');
 
@@ -327,7 +335,7 @@ var showDropTablePopup = function (tblName, treeNode) {
   $('#tbl_delete_name').val('');
   $('#dvDropTableMsg').hide().text('');
 
-  $('#btnDropTable').off('click').on('click', function (e) {
+  $('#btnDropTable').off('click').on('click', function(e) {
     //Make sure this confirm dbname is correct
     var confirmTblName = $('#tbl_delete_name').val();
     var origTblName = $('#spDeleteTable').text();
@@ -336,7 +344,7 @@ var showDropTablePopup = function (tblName, treeNode) {
       return;
     }
 
-    dropTable(dbName, tblName, function (result) {
+    dropTable(dbName, tblName, function(result) {
 
       if (typeof (result) === 'undefined') {
         //remove this ndoe from the tree
@@ -354,10 +362,10 @@ var showDropTablePopup = function (tblName, treeNode) {
   });
 };
 
-var showEditProcedure = function (procName, treeNode) {
+var showEditProcedure = function(procName, treeNode) {
   var dbName = treeNode.parent.parent.name;
 
-  getProcDefiniton(dbName, procName, function (data) {
+  getProcDefiniton(dbName, procName, function(data) {
     if (data.error) {
       //show error
       return;
@@ -373,10 +381,10 @@ var showEditProcedure = function (procName, treeNode) {
   });
 };
 
-var showEditFunction = function (funcName, treeNode) {
+var showEditFunction = function(funcName, treeNode) {
   var dbName = treeNode.parent.parent.name;
 
-  getFuncDefiniton(dbName, funcName, function (data) {
+  getFuncDefiniton(dbName, funcName, function(data) {
     if (data.error) {
       //show error
       return;
@@ -392,7 +400,7 @@ var showEditFunction = function (funcName, treeNode) {
   });
 };
 
-var fnGetProcName = function (procText) {
+var fnGetProcName = function(procText) {
   //Get start point
   var startIndex = 17;
 
@@ -400,8 +408,8 @@ var fnGetProcName = function (procText) {
   if (mehProc.indexOf('create function') > -1) {
     startIndex = 16;
   }
-  
-  var lastIndex = procText.indexOf('(');  //30
+
+  var lastIndex = procText.indexOf('('); //30
 
   var procLength = lastIndex - startIndex;
 
@@ -411,7 +419,7 @@ var fnGetProcName = function (procText) {
 
 }
 
-var showCreateProcedure = function (dbName) {
+var showCreateProcedure = function(dbName) {
 
   var procDef = 'CREATE PROCEDURE new_procedure()';
   procDef += '\r\n';
@@ -430,7 +438,7 @@ var showCreateProcedure = function (dbName) {
   });
 };
 
-var showCreateFunction = function (dbName) {
+var showCreateFunction = function(dbName) {
   var procDef = 'CREATE FUNCTION new_function()';
   procDef += '\r\n';
   procDef += 'RETURNS INTEGER';
@@ -439,7 +447,7 @@ var showCreateFunction = function (dbName) {
   procDef += '\r\n';
   procDef += '\r\n';
   procDef += 'RETURN 1;';
-  procDef += '\r\n'; 
+  procDef += '\r\n';
   procDef += 'END';
 
   var procName = 'new_function';
@@ -452,16 +460,16 @@ var showCreateFunction = function (dbName) {
   });
 };
 
-var fnSetDefaultDatabase = function (dbName) {
+var fnSetDefaultDatabase = function(dbName) {
   theDatabase = dbName;
-  setDefaultDatabase(dbName, function () {
+  setDefaultDatabase(dbName, function() {
     //Highglight this database node
     fnShowTheDatabase();
   });
 };
 
 function forTheTree() {
-  $('#database-tree').bind('tree.toggle', function (e) {
+  $('#database-tree').bind('tree.toggle', function(e) {
     var dbNode = e.node;
     var dbName = dbNode.parent.name;
 
@@ -472,7 +480,7 @@ function forTheTree() {
     }
 
     if (dbNode.type === 'tbl-holder') {
-      getTablesOfDatabase(dbName, function (data) {
+      getTablesOfDatabase(dbName, function(data) {
         var objData = [];
 
         if (data === null) {
@@ -481,7 +489,7 @@ function forTheTree() {
           return;
         }
 
-        data.forEach(function (val) {
+        data.forEach(function(val) {
           objData.push({
             label: val,
             type: 'table',
@@ -495,8 +503,8 @@ function forTheTree() {
         });
         $tree.tree('openNode', dbNode);
       });
-    } else if (dbNode.type === 'sp-holder') {
-      getProceduresOfDatabase(dbName, function (data) {
+    } else if (dbNode.type === 'vw-holder') {
+      getViewsOfDatabase(dbName, function(data) {
         var objData = [];
 
         if (data === null) {
@@ -505,7 +513,31 @@ function forTheTree() {
           return;
         }
 
-        data.forEach(function (val) {
+        data.forEach(function(val) {
+          objData.push({
+            label: val,
+            type: 'view',
+            load_on_demand: false
+          });
+        });
+
+        $tree.tree('loadData', objData, dbNode);
+        $tree.tree('updateNode', dbNode, {
+          data_loaded: true,
+        });
+        $tree.tree('openNode', dbNode);
+      });
+    } else if (dbNode.type === 'sp-holder') {
+      getProceduresOfDatabase(dbName, function(data) {
+        var objData = [];
+
+        if (data === null) {
+          console.log('No procedures in database: ' + dbName);
+          setNoLoadOnDemand(dbNode);
+          return;
+        }
+
+        data.forEach(function(val) {
           objData.push({
             label: val,
             type: 'procedure',
@@ -520,7 +552,7 @@ function forTheTree() {
         $tree.tree('openNode', dbNode);
       });
     } else if (dbNode.type === 'fn-holder') {
-      getFunctionsOfDatabase(dbName, function (data) {
+      getFunctionsOfDatabase(dbName, function(data) {
         var objData = [];
 
         if (data === null) {
@@ -529,7 +561,7 @@ function forTheTree() {
           return;
         }
 
-        data.forEach(function (val) {
+        data.forEach(function(val) {
           objData.push({
             label: val,
             type: 'function',
@@ -545,7 +577,7 @@ function forTheTree() {
       });
     } else if (dbNode.type === 'table') {
       var tblName = dbNode.name;
-      getTableStructure(tblName, function (data) {
+      getTableStructure(tblName, function(data) {
         var objData = [];
 
         if (data.rows === null) {
@@ -554,7 +586,7 @@ function forTheTree() {
           return;
         }
 
-        data.rows.forEach(function (val) {
+        data.rows.forEach(function(val) {
           objData.push({
             label: val[0] + ' (' + val[1] + ')',
             type: 'column'
@@ -572,7 +604,7 @@ function forTheTree() {
       var procName = dbNode.name;
       dbName = dbNode.parent.parent.name;
 
-      getProcedureParameters(procName, dbName, function (data) {
+      getProcedureParameters(procName, dbName, function(data) {
         var objData = [];
 
         if (data.rows === null) {
@@ -581,7 +613,7 @@ function forTheTree() {
           return;
         }
 
-        data.rows.forEach(function (val) {
+        data.rows.forEach(function(val) {
 
           var ordinalPos = parseInt(val[3], 10);
           var paramText = '';
@@ -605,7 +637,7 @@ function forTheTree() {
     }
   });
 
-  $('#database-tree').bind('tree.click', function (e) {
+  $('#database-tree').bind('tree.click', function(e) {
     var dbNode = e.node;
     var nodeName = dbNode.name;
 
@@ -620,7 +652,7 @@ function forTheTree() {
 
   //Double click on a database node, to set it as default
   //tree.dblclick
-  $tree.on('tree.dblclick', function (e) {
+  $tree.on('tree.dblclick', function(e) {
     e.preventDefault();
 
     var dbNode = e.node;
@@ -634,10 +666,10 @@ function forTheTree() {
   });
 
   //Listen when data is refreshed inside the tree
-  $tree.on('tree.refresh', function (e) {
+  $tree.on('tree.refresh', function(e) {
     fnShowTheDatabase();
   });
-  $tree.on('tree.open', function (e) {
+  $tree.on('tree.open', function(e) {
     fnShowTheDatabase();
   });
 
@@ -661,31 +693,31 @@ function forTheTree() {
   ];
 
   $tree.jqTreeContextMenu(menuArray, {
-    "edit": function (node) {
+    "edit": function(node) {
       alert('Edit node: ' + node.name);
     },
-    "default-db": function (node) {
+    "default-db": function(node) {
       fnSetDefaultDatabase(node.name);
     },
-    "alter-db": function (node) {
+    "alter-db": function(node) {
       showAlterDBPopup(node.name);
     },
-    "drop-db": function (node) {
+    "drop-db": function(node) {
       showDropDBPopup(node.name);
     },
-    "drop-tbl": function (node) {
+    "drop-tbl": function(node) {
       showDropTablePopup(node.name, node);
     },
-    "edit-sp": function (node) {
+    "edit-sp": function(node) {
       showEditProcedure(node.name, node);
     },
-    "edit-fn": function (node) {
+    "edit-fn": function(node) {
       showEditFunction(node.name, node);
     },
-    "create-sp": function (node) {
+    "create-sp": function(node) {
       showCreateProcedure(node.name);
     },
-    "create-fn": function (node) {
+    "create-fn": function(node) {
       showCreateFunction(node.name);
     }
   });
@@ -708,8 +740,8 @@ function explainQuery(query, cb) {
 function loadTables() {
   $("#tables li").remove();
 
-  getTables(function (data) {
-    data.forEach(function (item) {
+  getTables(function(data) {
+    data.forEach(function(item) {
       $('<li data-jstree="{"children":true}"><span>' + item + '</span></li>').appendTo("#tables");
     });
   });
@@ -718,11 +750,11 @@ function loadTables() {
 function loadDatabases() {
   $('#database-tree').empty();
 
-  getDatabases(function (data) {
+  getDatabases(function(data) {
     //generateFromTemplate({database: data}, 'tmpl-database-tree', $('#database-tree'), true);
     var objData = [];
 
-    data.forEach(function (val) {
+    data.forEach(function(val) {
       objData.push({
         label: val,
         type: 'database',
@@ -781,11 +813,11 @@ function buildTable(results) {
   var cols = "";
   var rows = "";
 
-  results.columns.forEach(function (col) {
+  results.columns.forEach(function(col) {
     cols += "<th data='" + col + "'>" + col + "</th>";
   });
 
-  results.rows.forEach(function (row) {
+  results.rows.forEach(function(row) {
     var r = "";
     for (var i in row) {
       r += "<td><div>" + escapeHtml(row[i]) + "</div></td>";
@@ -802,7 +834,7 @@ function setCurrentTab(id) {
 }
 
 function showQueryHistory() {
-  getHistory(function (data) {
+  getHistory(function(data) {
     var rows = [];
 
     for (var i in data) {
@@ -829,7 +861,7 @@ function showTableIndexes() {
     return;
   }
 
-  getTableIndexes(name, function (data) {
+  getTableIndexes(name, function(data) {
     setCurrentTab("table_indexes");
     buildTable(data);
 
@@ -847,7 +879,7 @@ function showTableInfo() {
     return;
   }
 
-  apiCall("get", "/tables/" + name + "/info", {}, function (data) {
+  apiCall("get", "/tables/" + name + "/info", {}, function(data) {
     $(".table-information ul").show();
     $("#table_total_size").text(data.total_size);
     $("#table_data_size").text(data.data_size);
@@ -867,7 +899,7 @@ function showTableContent() {
 
   var query = "SELECT * FROM " + name + " LIMIT 100;";
 
-  executeQuery(query, function (data) {
+  executeQuery(query, function(data) {
     buildTable(data);
     setCurrentTab("table_content");
 
@@ -885,7 +917,7 @@ function showTableStructure() {
     return;
   }
 
-  getTableStructure(name, function (data) {
+  getTableStructure(name, function(data) {
     setCurrentTab("table_structure");
     buildTable(data);
   });
@@ -902,7 +934,7 @@ function showQueryPanel(editor) {
 function showConnectionPanel() {
   setCurrentTab("table_connection");
 
-  apiCall("get", "/info", {}, function (data) {
+  apiCall("get", "/info", {}, function(data) {
     var rows = [];
 
     for (key in data) {
@@ -933,7 +965,7 @@ function runQuery(editor) {
     return;
   }
 
-  executeQuery(query, function (data) {
+  executeQuery(query, function(data) {
     buildTable(data);
 
     $("#run, #explain, #csv").prop("disabled", false);
@@ -961,7 +993,7 @@ function runExplain(editor) {
     return;
   }
 
-  explainQuery(query, function (data) {
+  explainQuery(query, function(data) {
     buildTable(data);
 
     $("#run, #explain, #csv").prop("disabled", false);
@@ -1003,16 +1035,16 @@ function initEditor(editorId, editorData) {
       win: "Ctrl-Enter",
       mac: "Command-Enter"
     },
-    exec: function (editor) {
+    exec: function(editor) {
       runQuery(editor);
     }
-  }, {
+    }, {
     name: "explain_query",
     bindKey: {
       win: "Ctrl-E",
       mac: "Command-E"
     },
-    exec: function (editor) {
+    exec: function(editor) {
       runExplain(editor);
     }
   }]);
@@ -1090,44 +1122,44 @@ function initModals() {
 }
 ;
 
-$(document).ready(function () {
-  $("#table_content").on("click", function () {
+$(document).ready(function() {
+  $("#table_content").on("click", function() {
     showTableContent();
   });
-  $("#table_structure").on("click", function () {
+  $("#table_structure").on("click", function() {
     showTableStructure();
   });
-  $("#table_indexes").on("click", function () {
+  $("#table_indexes").on("click", function() {
     showTableIndexes();
   });
-  $("#table_history").on("click", function () {
+  $("#table_history").on("click", function() {
     showQueryHistory();
   });
-  $("#table_query").on("click", function () {
+  $("#table_query").on("click", function() {
     showQueryPanel();
   });
-  $("#table_connection").on("click", function () {
+  $("#table_connection").on("click", function() {
     showConnectionPanel();
   });
 
-  $("#run").on("click", function () {
+  $("#run").on("click", function() {
     runQuery();
   });
 
-  $("#explain").on("click", function () {
+  $("#explain").on("click", function() {
     runExplain();
   });
 
-  $("#csv").on("click", function () {
+  $("#csv").on("click", function() {
     exportToCSV();
   });
 
-  $("#results").on("click", "tr", function () {
+  $("#results").on("click", "tr", function() {
     $("#results tr.selected").removeClass();
     $(this).addClass("selected");
   });
 
-  $("#results").on("dblclick", "td > div", function () {
+  $("#results").on("dblclick", "td > div", function() {
     if ($(this).has("textarea").length > 0) {
       return;
     }
@@ -1149,14 +1181,14 @@ $(document).ready(function () {
     $(this).html(textarea).css("max-height", "200px");
   });
 
-  $("#tables").on("click", "li", function () {
+  $("#tables").on("click", "li", function() {
     $("#tables li.selected").removeClass("selected");
     $(this).addClass("selected");
     showTableContent();
     showTableInfo();
   });
 
-  $("#edit_connection").on("click", function () {
+  $("#edit_connection").on("click", function() {
     if (connected) {
       $("#close_connection_window").show();
     }
@@ -1164,23 +1196,23 @@ $(document).ready(function () {
     showConnectionSettings();
   });
 
-  $("#close_connection_window").on("click", function () {
+  $("#close_connection_window").on("click", function() {
     $("#connection_window").hide();
   });
 
-  $("#connection_url").on("change", function () {
+  $("#connection_url").on("change", function() {
     if ($(this).val().indexOf("localhost") != -1) {
       $("#connection_ssl").val("disable");
     }
   });
 
-  $("#pg_host").on("change", function () {
+  $("#pg_host").on("change", function() {
     if ($(this).val().indexOf("localhost") != -1) {
       $("#connection_ssl").val("disable");
     }
   });
 
-  $(".connection-group-switch button").on("click", function () {
+  $(".connection-group-switch button").on("click", function() {
     $(".connection-group-switch button").removeClass("active");
     $(this).addClass("active");
 
@@ -1202,7 +1234,7 @@ $(document).ready(function () {
     }
   });
 
-  $("#connection_form").on("submit", function (e) {
+  $("#connection_form").on("submit", function(e) {
     e.preventDefault();
 
     var button = $(this).children("button");
@@ -1217,23 +1249,23 @@ $(document).ready(function () {
 
     apiCall("post", "/connect", {
       url: url
-    }, function (resp) {
-      button.prop("disabled", false).text("Connect");
+    }, function(resp) {
+        button.prop("disabled", false).text("Connect");
 
-      if (resp.error) {
-        connected = false;
-        $("#connection_error").text(resp.error).show();
-      } else {
-        connected = true;
-        $("#connection_window").hide();
-        //loadTables();
-        loadDatabases();
-        $("#main").show();
-      }
-    });
+        if (resp.error) {
+          connected = false;
+          $("#connection_error").text(resp.error).show();
+        } else {
+          connected = true;
+          $("#connection_window").hide();
+          //loadTables();
+          loadDatabases();
+          $("#main").show();
+        }
+      });
   });
 
-  $('#lnkAddQueryTab').on('click', function (e) {
+  $('#lnkAddQueryTab').on('click', function(e) {
     queryTabCounter++;
 
     //Create query tab
@@ -1255,7 +1287,7 @@ $(document).ready(function () {
     e.preventDefault();
   });
 
-  $('#input').on('click', '.close-query-tab', function (e) {
+  $('#input').on('click', '.close-query-tab', function(e) {
     //Get the tab div of this
     var $tabButton = $(this).parent();
     var tabId = $tabButton.attr('href').substr(1);
@@ -1282,7 +1314,7 @@ $(document).ready(function () {
     $tabButton.parent().remove();
   });
 
-  $('#input').on('click', '.js-apply-proc', function (e) {
+  $('#input').on('click', '.js-apply-proc', function(e) {
     var $thisQueryDiv = $(this).parent().prev();
 
     var thisEditor = $thisQueryDiv.data('ace-editor');
@@ -1303,7 +1335,7 @@ $(document).ready(function () {
 
     switch (procType) {
       case "PROC": {
-        editProcedure(dbName, procName, procDef, function (data) {
+        editProcedure(dbName, procName, procDef, function(data) {
           if (data.error) {
             swal({
               title: "Error!",
@@ -1325,7 +1357,7 @@ $(document).ready(function () {
         break;
       }
       case "FUNC": {
-        editFunction(dbName, procName, procDef, function (data) {
+        editFunction(dbName, procName, procDef, function(data) {
           if (data.error) {
             swal({
               title: "Error!",
@@ -1358,7 +1390,7 @@ $(document).ready(function () {
 
   $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
 
-  apiCall("get", "/info", {}, function (resp) {
+  apiCall("get", "/info", {}, function(resp) {
     if (resp.error) {
       connected = false;
       showConnectionSettings();
