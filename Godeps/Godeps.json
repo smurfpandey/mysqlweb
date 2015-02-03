@@ -1,0 +1,30 @@
+{
+	"ImportPath": "github.com/smurfpandey/mysqlweb",
+	"GoVersion": "go1.3",
+	"Deps": [
+		{
+			"ImportPath": "github.com/gin-gonic/gin",
+			"Comment": "v0.4-8-g3b079bb",
+			"Rev": "3b079bb6f79ae501e73a5401c41b589f6616b61e"
+		},
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.2-26-g9543750",
+			"Rev": "9543750295406ef070f7de8ae9c43ccddd44e15e"
+		},
+		{
+			"ImportPath": "github.com/jessevdk/go-flags",
+			"Comment": "v1-280-g37e89eb",
+			"Rev": "37e89eb6730ccfebfa05c17940954e4308719317"
+		},
+		{
+			"ImportPath": "github.com/jmoiron/sqlx",
+			"Comment": "sqlx-v1.0-52-g7172c4f",
+			"Rev": "7172c4f697fe8b4743fc8e9410fa161fc4623628"
+		},
+		{
+			"ImportPath": "github.com/julienschmidt/httprouter",
+			"Rev": "6db904312c78e5595a8d48c6b74fce77f407a33a"
+		}
+	]
+}
