@@ -374,6 +374,18 @@ func APICreateFunction(c *gin.Context) {
 	c.Writer.WriteHeader(200)
 }
 
+//APIViewDefinition gets the definition of a view
+func APIViewDefinition(c *gin.Context) {
+	res, err := dbClient.ViewDefinition(c.Params.ByName("database"), c.Params.ByName("view"))
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.JSON(200, res)
+}
+
 //APIHandleQuery handles thq query and return the resultset as JSON
 func APIHandleQuery(query string, c *gin.Context) {
 	result, err := dbClient.Query(query)

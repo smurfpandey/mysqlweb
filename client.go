@@ -259,7 +259,6 @@ func (client *Client) ProcedureDefinition(procType string, database string, name
 	}
 
 	return res, err
-
 }
 
 func (client *Client) ProcedureDrop(procType string, database string, name string) (bool, error) {
@@ -304,6 +303,16 @@ func (client *Client) ProcedureCreate(procType string, database string, name str
 	}
 
 	return true, nil
+}
+
+func (client *Client) ViewDefinition(database string, name string) (*Result, error) {
+	res, err := client.Query(fmt.Sprintf(MySQLViewDefinition, database, name))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
 }
 
 //Query will execute the sql query passed as parameter, and return the resultset

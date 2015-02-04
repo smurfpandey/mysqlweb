@@ -19,4 +19,5 @@ const (
 	MySQLTableTruncate       = "TRUNCATE TABLE %s.%s"
 	MySQLProcedureDefinition = "SHOW CREATE %s %s.%s"
 	MySQLProcedureDrop       = "DROP %s IF EXISTS %s.%s"
+	MySQLViewDefinition      = "SHOW CREATE VIEW %s.%s"
 )
