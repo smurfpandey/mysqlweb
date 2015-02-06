@@ -115,6 +115,10 @@ function editFunction(dbName, fnName, fnDef, cb) {
     definition: fnDef
   }, cb);
 }
+function getViewDefiniton(dbName, viewName, cb) {
+  apiCall("get", "/databases/" + dbName + "/views/" + viewName, {}, cb);
+}
+
 
 var fnGetSelectedTable = function() {
   return theTable;
@@ -400,6 +404,25 @@ var showEditFunction = function(funcName, treeNode) {
   });
 };
 
+var showEditView = function(viewName, treeNode) {
+  var dbName = treeNode.parent.parent.name;
+
+  getViewDefiniton(dbName, viewName, function(data) {
+    if (data.error) {
+      //show error
+      return;
+    }
+
+    var procText = data.rows[0][1];
+
+    fnCreateEditorTab(dbName + '.' + viewName, procText, viewName, {
+      proc_name: viewName,
+      db_name: dbName,
+      proc_type: 'VIEW'
+    });
+  });
+};
+
 var fnGetProcName = function(procText) {
   //Get start point
   var startIndex = 17;
@@ -417,7 +440,7 @@ var fnGetProcName = function(procText) {
 
   return $.trim(procName);
 
-}
+};
 
 var showCreateProcedure = function(dbName) {
 
@@ -689,6 +712,10 @@ function forTheTree() {
     {
       type: 'function',
       menu_element: $('#fnMenu')
+    },
+    {
+      type: 'view',
+      menu_element: $('#vwMenu')
     }
   ];
 
@@ -719,6 +746,9 @@ function forTheTree() {
     },
     "create-fn": function(node) {
       showCreateFunction(node.name);
+    },
+    "edit-vw": function(node) {
+      showEditView(node.name, node);
     }
   });
 }
