@@ -491,6 +491,42 @@ var fnSetDefaultDatabase = function(dbName) {
   });
 };
 
+function loadDatabases() {
+  getDatabases(function(data) {
+    //generateFromTemplate({database: data}, 'tmpl-database-tree', $('#database-tree'), true);
+    var objData = [];
+
+    data.forEach(function(val) {
+      objData.push({
+        label: val,
+        type: 'database',
+        children: dbChildNode
+      });
+    });
+
+    //Check if the tree alreay exists
+    var thisTree = $('#database-tree').data('simple_widget_tree');
+
+    if (typeof (thisTree) === 'object') {
+      //Just load data
+      $('#database-tree').tree('loadData', objData);
+    } else {
+      $('#database-tree').empty();
+      //Make a jsTree
+      $('#database-tree').tree({
+        data: objData
+      });
+
+      forTheTree();
+    }
+
+
+
+    //Highlisht the selected database, if any
+    fnShowTheDatabase();
+  });
+}
+
 function forTheTree() {
   $('#database-tree').bind('tree.toggle', function(e) {
     var dbNode = e.node;
@@ -749,6 +785,9 @@ function forTheTree() {
     },
     "edit-vw": function(node) {
       showEditView(node.name, node);
+    },
+    "refresh-all": function(node) {
+      loadDatabases();
     }
   });
 }
@@ -777,31 +816,7 @@ function loadTables() {
   });
 }
 
-function loadDatabases() {
-  $('#database-tree').empty();
 
-  getDatabases(function(data) {
-    //generateFromTemplate({database: data}, 'tmpl-database-tree', $('#database-tree'), true);
-    var objData = [];
-
-    data.forEach(function(val) {
-      objData.push({
-        label: val,
-        type: 'database',
-        children: dbChildNode
-      });
-    });
-    //Make a jsTree
-    $('#database-tree').tree({
-      data: objData
-    });
-
-    forTheTree();
-
-    //Highlisht the selected database, if any
-    fnShowTheDatabase();
-  });
-}
 
 function escapeHtml(str) {
   if (str !== null || str !== undefined) {
@@ -967,7 +982,7 @@ function showConnectionPanel() {
   apiCall("get", "/info", {}, function(data) {
     var rows = [];
 
-    for (key in data) {
+    for (var key in data) {
       rows.push([key, data[key]]);
     }
 
@@ -989,7 +1004,7 @@ function runQuery(editor) {
 
   var query = $.trim(editor.getValue());
 
-  if (query.length == 0) {
+  if (query.length === 0) {
     $("#run, #explain, #csv").prop("disabled", false);
     $("#query_progress").hide();
     return;
@@ -1017,7 +1032,7 @@ function runExplain(editor) {
 
   var query = $.trim(editor.getValue());
 
-  if (query.length == 0) {
+  if (query.length === 0) {
     $("#run, #explain, #csv").prop("disabled", false);
     $("#query_progress").hide();
     return;
@@ -1037,7 +1052,7 @@ function runExplain(editor) {
 function exportToCSV(editor) {
   var query = $.trim(editor.getValue());
 
-  if (query.length == 0) {
+  if (query.length === 0) {
     return;
   }
 
@@ -1110,7 +1125,7 @@ function getConnectionString() {
     var pass = $("#pg_password").val();
     var db = $("#pg_db").val();
 
-    if (port.length == 0) {
+    if (port.length === 0) {
       port = "3306";
     }
     if (db.length > 0) {
@@ -1150,7 +1165,6 @@ function initModals() {
     show: false
   });
 }
-;
 
 $(document).ready(function() {
   $("#table_content").on("click", function() {
@@ -1270,7 +1284,7 @@ $(document).ready(function() {
     var button = $(this).children("button");
     var url = getConnectionString();
 
-    if (url.length == 0) {
+    if (url.length === 0) {
       return;
     }
 
@@ -1358,7 +1372,7 @@ $(document).ready(function() {
     //if new procedure, get procedure name from proc text
     var isNewProc = $thisQueryDiv.data('isnew');
 
-    if (isNewProc == true) {
+    if (isNewProc === true) {
       procName = fnGetProcName(procDef);
       $thisQueryDiv.data('procname', procName);
     }
@@ -1411,6 +1425,10 @@ $(document).ready(function() {
     }
 
 
+  });
+
+  $('#refresh-list').on('click', function(e) {
+    loadDatabases();
   });
 
   initModals();

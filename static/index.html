@@ -7,13 +7,13 @@
   <meta http-equiv="Content-Language" content="en">
   <link rel="stylesheet" href="/static/css/bootstrap.css" />
   <link rel="stylesheet" href="/static/css/bootstrap-select.min.css" />
+  <link rel="stylesheet" href="/static/css/font-awesome.css" />
   <link rel="stylesheet" href="/static/css/jqtree.css" />
   <link rel="stylesheet" href="/static/css/hover.css" />
   <link rel="stylesheet" href="/static/css/sweet-alert.css" />
   <link rel="stylesheet" href="/static/css/ie9.css" />
   <link rel="stylesheet" href="/static/css/app.css" />
   <link rel="icon" type="image/x-icon" href="/static/img/icon.ico" />
-
 </head>
 <body>
   <div id="main">
@@ -23,7 +23,7 @@
     <div id="sidebar">
       <div class="tables-list">
         <div class="wrap">
-          <div class="title">Database</div>
+          <div class="title">Database <i id="refresh-list" class="fa fa-refresh"></i></div>
           <div id="database-tree">
             <ul id="databases"></ul>
           </div>
@@ -203,7 +203,7 @@
     <li><a href="#edit"><i class="fa fa-edit"></i> Truncate Data</a></li>
     <li><a href="#drop-tbl"><i class="fa fa-remove"></i> Drop Table</a></li>
     <li class="divider"></li>
-    <li><a href="#delete"><i class="fa fa-remove"></i> Refresh All</a></li>
+    <li><a href="#refresh-all"><i class="fa fa-remove"></i> Refresh All</a></li>
   </ul>
   <ul id="dbMenu" class="dropdown-menu" style="display:none;" role="menu" aria-labelledby="dLabel">
     <li><a href="#default-db"><i class="fa fa-edit"></i> Set as Default </a></li>
@@ -214,28 +214,28 @@
     <li><a href="#create-sp"><i class="fa fa-remove"></i> Create Procedure</a></li>
     <li><a href="#create-fn"><i class="fa fa-remove"></i> Create Function</a></li>
     <li class="divider"></li>
-    <li><a href="#delete"><i class="fa fa-remove"></i> Refresh All</a></li>
+    <li><a href="#refresh-all"><i class="fa fa-remove"></i> Refresh All</a></li>
   </ul>
   <ul id="spMenu" class="dropdown-menu" style="display:none;" role="menu" aria-labelledby="dLabel">
     <li><a href="#edit-sp"><i class="fa fa-edit"></i> Edit Procedure</a></li>
     <li><a href="#edit"><i class="fa fa-edit"></i> Execute</a></li>
     <li><a href="#delete"><i class="fa fa-remove"></i> Delete</a></li>
     <li class="divider"></li>
-    <li><a href="#delete"><i class="fa fa-remove"></i> Refresh All</a></li>
+    <li><a href="#refresh-all"><i class="fa fa-remove"></i> Refresh All</a></li>
   </ul>
   <ul id="fnMenu" class="dropdown-menu" style="display:none;" role="menu" aria-labelledby="dLabel">
     <li><a href="#edit-fn"><i class="fa fa-edit"></i> Edit Function</a></li>
     <li><a href="#edit"><i class="fa fa-edit"></i> Execute</a></li>
     <li><a href="#delete"><i class="fa fa-remove"></i> Delete</a></li>
     <li class="divider"></li>
-    <li><a href="#delete"><i class="fa fa-remove"></i> Refresh All</a></li>
+    <li><a href="#refresh-all"><i class="fa fa-remove"></i> Refresh All</a></li>
   </ul>
   <ul id="vwMenu" class="dropdown-menu" style="display:none;" role="menu" aria-labelledby="dLabel">
     <li><a href="#edit-vw"><i class="fa fa-edit"></i> Alter View</a></li>
     <li><a href="#edit"><i class="fa fa-edit"></i> Execute</a></li>
     <li><a href="#delete"><i class="fa fa-remove"></i> Delete</a></li>
     <li class="divider"></li>
-    <li><a href="#delete"><i class="fa fa-remove"></i> Refresh All</a></li>
+    <li><a href="#refresh-all"><i class="fa fa-remove"></i> Refresh All</a></li>
   </ul>
 
   <!-- Modal for alter database -->

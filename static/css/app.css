@@ -86,6 +86,12 @@
   background: #31373d;
 }
 
+#sidebar .title i {
+  float: right;
+  line-height: 30px;
+  cursor: pointer;
+}
+
 #sidebar div.tables-list {
   position: absolute;
   right: 0;
