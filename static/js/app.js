@@ -366,6 +366,13 @@ var showDropTablePopup = function(tblName, treeNode) {
   });
 };
 
+var showCreateTablePopup = function(treeNode) {
+  var $thisModel = $('#mdlCreateTable');
+  $thisModel.modal('show');
+
+  var dbName = treeNode.parent.parent.name;
+};
+
 var showEditProcedure = function(procName, treeNode) {
   var dbName = treeNode.parent.parent.name;
 
@@ -1162,6 +1169,11 @@ function generateFromTemplate(objData, templateId, $destContainer, iReplace) {
 
 function initModals() {
   $('#mdlAlterDB').modal({
+    show: false
+  });
+
+  $('.js-myModal').modal({
+    backdrop: 'static',
     show: false
   });
 }

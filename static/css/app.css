@@ -446,3 +446,13 @@ ul.jqtree_common ul.jqtree_common {
 #ulQueryTab li:hover .close-query-tab {
   visibility:visible;
 }
+
+strong.form-control {
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.control-label {
+  font-weight: normal;
+}
