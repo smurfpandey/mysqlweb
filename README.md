@@ -11,10 +11,8 @@ This is a web-based browser for MySQL database server. Its written in Go and wor
 
 ## How to run
 
-1. Download/Clone the repository
-2. Run "build.bat" on Windows
-3. This will create a new executable named "mysqlweb"
-4. Execute mysqlweb, then open http://localhost:8080/ in your browser
+1. Download the [precompiled binary](https://github.com/smurfpandey/mysqlweb/releases) for your operating system.
+2. Execute mysqlweb, then open http://localhost:8080/ in your browser
 
 
 ## TODO
