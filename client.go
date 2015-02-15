@@ -47,6 +47,11 @@ func NewClientFromURL(url string) (*Client, error) {
 	return &Client{db: db}, nil
 }
 
+//Close disconnects a existing connection
+func (client *Client) Close() error {
+	return client.db.Close()
+}
+
 //Test if we have a working connection with the database
 func (client *Client) Test() error {
 	return client.db.Ping()

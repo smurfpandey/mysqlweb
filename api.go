@@ -82,6 +82,16 @@ func APIConnect(c *gin.Context) {
 	c.JSON(200, info.Format()[0])
 }
 
+func APIClose(c *gin.Context) {
+	err := dbClient.Close()
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+	}
+
+	c.Writer.WriteHeader(204)
+}
+
 //APIGetDatabases will get you all databases in system
 func APIGetDatabases(c *gin.Context) {
 	names, err := dbClient.Databases()

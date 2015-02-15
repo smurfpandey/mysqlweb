@@ -151,6 +151,7 @@ func startServer() {
 
 	router.GET("/", APIHome)
 	router.POST("/connect", APIConnect)
+	router.DELETE("/disconnect", APIClose)
 	router.GET("/databases", APIGetDatabases)
 	router.GET("/databases/:database/tables", APIGetDatabaseTables)
 	router.GET("/databases/:database/views", APIGetDatabaseViews)
