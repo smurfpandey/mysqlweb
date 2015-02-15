@@ -118,6 +118,9 @@ function editFunction(dbName, fnName, fnDef, cb) {
 function getViewDefiniton(dbName, viewName, cb) {
   apiCall("get", "/databases/" + dbName + "/views/" + viewName, {}, cb);
 }
+function closeConnection(cb) {
+  apiCall("delete", "/disconnect", {}, cb);
+}
 
 
 var fnGetSelectedTable = function() {
@@ -379,6 +382,12 @@ var showEditProcedure = function(procName, treeNode) {
   getProcDefiniton(dbName, procName, function(data) {
     if (data.error) {
       //show error
+      swal({
+        title: "Error!",
+        text: data.error,
+        type: "error",
+        confirmButtonText: "Ohho!"
+      });
       return;
     }
 
@@ -1244,12 +1253,27 @@ $(document).ready(function() {
     showTableInfo();
   });
 
-  $("#edit_connection").on("click", function() {
+  $("#close_connection").on("click", function() {
     if (connected) {
-      $("#close_connection_window").show();
-    }
+      closeConnection(function(data) {
+        if (typeof (data) === 'undefined') {
+          connected = false;
+          showConnectionSettings();
+          return;
+        }
 
-    showConnectionSettings();
+        if (data.error) {
+          swal({
+            title: "Error!",
+            text: data.error,
+            type: "error",
+            confirmButtonText: "Kool"
+          });
+        } else {
+
+        }
+      });
+    }
   });
 
   $("#close_connection_window").on("click", function() {
