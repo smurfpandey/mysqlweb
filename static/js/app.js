@@ -1015,13 +1015,11 @@ function showConnectionPanel() {
 function runQuery(editor) {
   setCurrentTab("table_query");
 
-  $("#run, #explain, #csv").prop("disabled", true);
   $("#query_progress").show();
 
   var query = $.trim(editor.getValue());
 
   if (query.length === 0) {
-    $("#run, #explain, #csv").prop("disabled", false);
     $("#query_progress").hide();
     return;
   }
@@ -1029,7 +1027,6 @@ function runQuery(editor) {
   executeQuery(query, function(data) {
     buildTable(data);
 
-    $("#run, #explain, #csv").prop("disabled", false);
     $("#query_progress").hide();
     $("#input").show();
     $("#output").removeClass("full");
@@ -1043,13 +1040,11 @@ function runQuery(editor) {
 function runExplain(editor) {
   setCurrentTab("table_query");
 
-  $("#run, #explain, #csv").prop("disabled", true);
   $("#query_progress").show();
 
   var query = $.trim(editor.getValue());
 
   if (query.length === 0) {
-    $("#run, #explain, #csv").prop("disabled", false);
     $("#query_progress").hide();
     return;
   }
@@ -1057,7 +1052,6 @@ function runExplain(editor) {
   explainQuery(query, function(data) {
     buildTable(data);
 
-    $("#run, #explain, #csv").prop("disabled", false);
     $("#query_progress").hide();
     $("#input").show();
     $("#output").removeClass("full");
@@ -1207,12 +1201,18 @@ $(document).ready(function() {
     showConnectionPanel();
   });
 
-  $("#run").on("click", function() {
-    runQuery();
+  $('#body').on('click', '.js-run-query', function() {
+    var $editor = $(this).parent().prev();
+    var editor = $editor.data('ace-editor');
+
+    runQuery(editor);
   });
 
-  $("#explain").on("click", function() {
-    runExplain();
+  $('#body').on('click', '.js-explain-query', function() {
+    var $editor = $(this).parent().prev();
+    var editor = $editor.data('ace-editor');
+
+    runExplain(editor);
   });
 
   $("#csv").on("click", function() {
