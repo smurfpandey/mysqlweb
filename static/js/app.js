@@ -127,13 +127,13 @@ var fnGetSelectedTable = function() {
   return theTable;
 };
 
-var fnCreateEditorTab = function(editorName, editorData, editorTitle, objData) {
+var fnCreateEditorTab = function(editorName, editorData, editorTitle, objData, executeNow) {
   queryTabCounter++;
 
   //Create query tab
   generateFromTemplate({
     tab_id: queryTabCounter,
-    tab_mode: 'proc',
+    tab_mode: objData.mode || 'proc',
     tab_title: editorTitle,
     proc_name: objData.proc_name,
     db_name: objData.db_name,
@@ -155,6 +155,11 @@ var fnCreateEditorTab = function(editorName, editorData, editorTitle, objData) {
   initEditor('query_editor_' + queryTabCounter, editorData);
 
   $('#query_tab_btn_' + queryTabCounter).tab('show');
+
+  if (executeNow) {
+    //Execute now
+    $('#query_editor_' + queryTabCounter).next().find('.js-run-query').trigger('click');
+  }
 };
 
 var fnRemoveNodeInTree = function(nodeName, type) {
@@ -543,6 +548,20 @@ function loadDatabases() {
   });
 }
 
+var fnRetrieveTableData = function(tblName, treeNode) {
+  var dbName = treeNode.parent.parent.name;
+
+  var selectQuery = 'SELECT * FROM ' + dbName + '.' + tblName + ' LIMIT 1000;';
+
+  fnCreateEditorTab(dbName + '.' + tblName, selectQuery, tblName, {
+    proc_name: tblName,
+    db_name: dbName,
+    proc_type: 'QUERY',
+    is_new: true,
+    mode: 'tbl'
+  }, true);
+};
+
 function forTheTree() {
   $('#database-tree').bind('tree.toggle', function(e) {
     var dbNode = e.node;
@@ -804,6 +823,9 @@ function forTheTree() {
     },
     "refresh-all": function(node) {
       loadDatabases();
+    },
+    "select-tbl": function(node) {
+      fnRetrieveTableData(node.name, node);
     }
   });
 }
