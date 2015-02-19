@@ -14,6 +14,7 @@ var MimeTypes = map[string]string{
 	".css":  "text/css",
 	".js":   "application/javascript",
 	".icon": "image-x-icon",
+	".svg":  "image/svg+xml",
 }
 
 //Error struct
