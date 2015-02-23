@@ -1039,7 +1039,16 @@ function runQuery(editor) {
 
   $("#query_progress").show();
 
-  var query = $.trim(editor.getValue());
+  var query = ''; //$.trim(editor.getValue());
+
+  //Check if text is selected.
+  //If yes, then execute that selectionm only;
+
+  var selectedText = editor.session.getTextRange(editor.getSelectionRange());
+
+  if (selectedText.length > 0) {
+    query = selectedText;
+  }
 
   if (query.length === 0) {
     $("#query_progress").hide();
