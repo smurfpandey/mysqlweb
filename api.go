@@ -385,6 +385,18 @@ func APICreateFunction(c *gin.Context) {
 	c.Writer.WriteHeader(200)
 }
 
+//APIDropProcedure drops the procedure
+func APIDropProcedure(c *gin.Context) {
+	_, err := dbClient.DropProcedure("PROCEDURE", c.Params.ByName("database"), c.Params.ByName("procedure"))
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.Writer.WriteHeader(204)
+}
+
 //APIViewDefinition gets the definition of a view
 func APIViewDefinition(c *gin.Context) {
 	res, err := dbClient.ViewDefinition(c.Params.ByName("database"), c.Params.ByName("view"))

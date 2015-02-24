@@ -179,6 +179,7 @@ func startServer() {
 	router.GET("/databases/:database/functions/:function", APIFunctionDefinition)
 	router.POST("/databases/:database/procedures/:procedure", APICreateProcedure)
 	router.POST("/databases/:database/functions/:function", APICreateFunction)
+	router.DELETE("/databases/:database/procedures/:procedure/actions/drop", APIDropProcedure)
 	router.GET("/databases/:database/views/:view", APIViewDefinition)
 
 	fmt.Println("Starting server...")

@@ -266,7 +266,7 @@ func (client *Client) ProcedureDefinition(procType string, database string, name
 	return res, err
 }
 
-func (client *Client) ProcedureDrop(procType string, database string, name string) (bool, error) {
+func (client *Client) DropProcedure(procType string, database string, name string) (bool, error) {
 	_, err := client.Execute(fmt.Sprintf(MySQLProcedureDrop, procType, database, name))
 
 	if err != nil {
