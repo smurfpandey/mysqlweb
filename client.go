@@ -151,28 +151,6 @@ func (client *Client) DatabaseFunctions(database string) ([]string, error) {
 	return tables, nil
 }
 
-//Tables will return list of tables in test database
-func (client *Client) Tables() ([]string, error) {
-	res, err := client.Query(MySQLTables)
-
-	if err != nil {
-		return nil, err
-	}
-
-	var tables []string
-
-	for _, row := range res.Rows {
-		tables = append(tables, row[0].(string))
-	}
-
-	return tables, nil
-}
-
-//Table will return coulmns of a table
-func (client *Client) Table(table string) (*Result, error) {
-	return client.Query(fmt.Sprintf(MySQLTable, table))
-}
-
 //TableInfo will return info like data used, row count etc.
 func (client *Client) TableInfo(table string) (*Result, error) {
 	return client.Query(fmt.Sprintf(MySQLTableInfo, table))

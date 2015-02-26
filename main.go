@@ -114,12 +114,6 @@ func initClient() {
 		exitWithMessage(err.Error())
 	}
 
-	fmt.Println("Checking tables...")
-	_, err = client.Tables()
-	if err != nil {
-		exitWithMessage(err.Error())
-	}
-
 	dbClient = client
 }
 
@@ -160,8 +154,6 @@ func startServer() {
 	router.GET("/databases/:database/functions", APIGetDatabaseFunctions)
 	router.POST("/databases/:database/actions/default", APISetDefaultDatabase)
 	router.GET("/info", APIInfo)
-	router.GET("/tables", APIGetTables)
-	router.GET("/tables/:table", APIGetTable)
 	router.GET("/tables/:table/info", APIGetTableInfo)
 	router.GET("/tables/:table/indexes", APITableIndexes)
 	router.GET("/query", APIRunQuery)

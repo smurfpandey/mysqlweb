@@ -54,9 +54,6 @@ String.prototype.splice = function(idx, rem, s) {
   return (this.slice(0, idx) + s + this.slice(idx + Math.abs(rem)));
 };
 
-function getTables(cb) {
-  apiCall("get", "/tables", {}, cb);
-}
 function getTableStructure(dbName, tblName, cb) {
   apiCall("get", "databases/" + dbName + "/tables/" + tblName + "/column", {}, cb);
 }
@@ -845,18 +842,6 @@ function explainQuery(query, cb) {
   }, cb);
 }
 
-function loadTables() {
-  $("#tables li").remove();
-
-  getTables(function(data) {
-    data.forEach(function(item) {
-      $('<li data-jstree="{"children":true}"><span>' + item + '</span></li>').appendTo("#tables");
-    });
-  });
-}
-
-
-
 function escapeHtml(str) {
   if (str !== null || str !== undefined) {
     return jQuery("<div/>").text(str).html();
@@ -1371,7 +1356,6 @@ $(document).ready(function() {
         } else {
           connected = true;
           $("#connection_window").hide();
-          //loadTables();
           loadDatabases();
           $("#main").show();
         }
@@ -1513,7 +1497,6 @@ $(document).ready(function() {
       showConnectionSettings();
     } else {
       connected = true;
-      //loadTables();
       theDatabase = resp['DATABASE()'];
       loadDatabases();
       $("#main").show();

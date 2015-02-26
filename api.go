@@ -185,30 +185,6 @@ func APIExplainQuery(c *gin.Context) {
 	APIHandleQuery(fmt.Sprintf("EXPLAIN %s", query), c)
 }
 
-//APIGetTables will fetch the tables in our
-func APIGetTables(c *gin.Context) {
-	names, err := dbClient.Tables()
-
-	if err != nil {
-		c.JSON(400, NewError(err))
-		return
-	}
-
-	c.JSON(200, names)
-}
-
-//APIGetTable get a single table
-func APIGetTable(c *gin.Context) {
-	res, err := dbClient.Table(c.Params.ByName("table"))
-
-	if err != nil {
-		c.JSON(400, NewError(err))
-		return
-	}
-
-	c.JSON(200, res)
-}
-
 func APIGetColumnOfTable(c *gin.Context) {
 	res, err := dbClient.TableColumns(c.Params.ByName("database"), c.Params.ByName("table"))
 
