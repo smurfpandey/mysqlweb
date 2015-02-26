@@ -209,6 +209,17 @@ func APIGetTable(c *gin.Context) {
 	c.JSON(200, res)
 }
 
+func APIGetColumnOfTable(c *gin.Context) {
+	res, err := dbClient.TableColumns(c.Params.ByName("database"), c.Params.ByName("table"))
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.JSON(200, res)
+}
+
 //APIGetTableInfo returns info about table like row_count, data size etc.
 func APIGetTableInfo(c *gin.Context) {
 	res, err := dbClient.TableInfo(c.Params.ByName("table"))

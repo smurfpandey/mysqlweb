@@ -154,6 +154,7 @@ func startServer() {
 	router.DELETE("/disconnect", APIClose)
 	router.GET("/databases", APIGetDatabases)
 	router.GET("/databases/:database/tables", APIGetDatabaseTables)
+	router.GET("/databases/:database/tables/:table/column", APIGetColumnOfTable)
 	router.GET("/databases/:database/views", APIGetDatabaseViews)
 	router.GET("/databases/:database/procedures", APIGetDatabaseProcedures)
 	router.GET("/databases/:database/functions", APIGetDatabaseFunctions)

@@ -189,6 +189,16 @@ func (client *Client) TableIndexes(table string) (*Result, error) {
 	return res, err
 }
 
+func (client *Client) TableColumns(database string, table string) (*Result, error) {
+	res, err := client.Query(fmt.Sprintf(MySQLTableColumns, database, table))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
+}
+
 //ProcedureParameters returns all the paramaters of a stored procedure
 func (client *Client) ProcedureParameters(procedure string, database string) (*Result, error) {
 	res, err := client.Query(fmt.Sprintf(MySQLProcedureParameters, procedure, database))

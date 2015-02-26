@@ -57,8 +57,8 @@ String.prototype.splice = function(idx, rem, s) {
 function getTables(cb) {
   apiCall("get", "/tables", {}, cb);
 }
-function getTableStructure(table, cb) {
-  apiCall("get", "/tables/" + table, {}, cb);
+function getTableStructure(dbName, tblName, cb) {
+  apiCall("get", "databases/" + dbName + "/tables/" + tblName + "/column", {}, cb);
 }
 function getTablesOfDatabase(dbName, cb) {
   apiCall("get", "/databases/" + dbName + "/tables", {}, cb);
@@ -671,7 +671,8 @@ function forTheTree() {
       });
     } else if (dbNode.type === 'table') {
       var tblName = dbNode.name;
-      getTableStructure(tblName, function(data) {
+      dbName = dbNode.parent.parent.name;
+      getTableStructure(dbName, tblName, function(data) {
         var objData = [];
 
         if (data.rows === null) {
