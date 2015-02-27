@@ -49,6 +49,8 @@ func NewClientFromURL(url string) (*Client, error) {
 
 //Close disconnects a existing connection
 func (client *Client) Close() error {
+	//Clear history
+	client.history = nil
 	return client.db.Close()
 }
 
