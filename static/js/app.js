@@ -509,9 +509,9 @@ var fnSetDefaultDatabase = function(dbName) {
   });
 };
 
-function fnSetConnectionInfo() {
-  var currentServer = $('#pg_host').val();
-  var currentUser = $('#pg_user').val();
+function fnSetConnectionInfo(user, host) {
+  var currentServer = host || $('#pg_host').val();
+  var currentUser = user || $('#pg_user').val();
   $('#current-server').text(currentUser + '@' + currentServer);
 }
 
@@ -1509,7 +1509,10 @@ $(document).ready(function() {
       loadDatabases();
       $("#main").show();
 
-      fnSetConnectionInfo();
+      var hostName = resp.host;
+      var userName = resp.user;
+
+      fnSetConnectionInfo(userName, hostName);
     }
   });
 });

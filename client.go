@@ -13,6 +13,8 @@ import (
 type Client struct {
 	db      *sqlx.DB
 	history []string
+	host    string
+	user    string
 }
 
 //Row will hold rows of our SQL table
@@ -26,13 +28,9 @@ type Result struct {
 
 //NewClient will create a new client
 func NewClient() (*Client, error) {
-	db, err := sqlx.Open("mysql", getConnectionString())
+	url := getConnectionString()
 
-	if err != nil {
-		return nil, err
-	}
-
-	return &Client{db: db}, nil
+	return NewClientFromURL(url)
 }
 
 //NewClientFromURL will create a new mysql client using the URL provided in parameters
@@ -44,7 +42,9 @@ func NewClientFromURL(url string) (*Client, error) {
 		return nil, err
 	}
 
-	return &Client{db: db}, nil
+	user, host := getHostUser(url)
+
+	return &Client{db: db, host: host, user: user}, nil
 }
 
 //Close disconnects a existing connection

@@ -227,7 +227,12 @@ func APIInfo(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, res.Format()[0])
+	formatedRes := res.Format()[0]
+
+	formatedRes["host"] = dbClient.host
+	formatedRes["user"] = dbClient.user
+
+	c.JSON(200, formatedRes)
 }
 
 //APITableIndexes returns the indexs of a table
