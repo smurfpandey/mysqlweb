@@ -10,6 +10,7 @@
   height: 50px;
   box-shadow: inset 0 -1px 0 0 #b8b7b5;
   background: #d8d7d6;
+  padding: 10px;
 }
 
 #nav ul {
@@ -359,10 +360,12 @@
   display: none;
 }
 
+#conn-info {
+  display: inline-block;
+}
+
 #close_connection {
-  position: fixed;
-  right: 8px;
-  top: 10px;
+  float: right;
 }
 
 #close_connection_window {

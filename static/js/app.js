@@ -509,6 +509,12 @@ var fnSetDefaultDatabase = function(dbName) {
   });
 };
 
+function fnSetConnectionInfo() {
+  var currentServer = $('#pg_host').val();
+  var currentUser = $('#pg_user').val();
+  $('#current-server').text(currentUser + '@' + currentServer);
+}
+
 function loadDatabases() {
   getDatabases(function(data) {
     //generateFromTemplate({database: data}, 'tmpl-database-tree', $('#database-tree'), true);
@@ -1358,6 +1364,8 @@ $(document).ready(function() {
           $("#connection_window").hide();
           loadDatabases();
           $("#main").show();
+          //
+          fnSetConnectionInfo();
         }
       });
   });
@@ -1500,6 +1508,8 @@ $(document).ready(function() {
       theDatabase = resp['DATABASE()'];
       loadDatabases();
       $("#main").show();
+
+      fnSetConnectionInfo();
     }
   });
 });
