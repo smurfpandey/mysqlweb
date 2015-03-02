@@ -51,6 +51,8 @@ func NewClientFromURL(url string) (*Client, error) {
 func (client *Client) Close() error {
 	//Clear history
 	client.history = nil
+	client.host = ""
+	client.user = ""
 	return client.db.Close()
 }
 
