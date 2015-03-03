@@ -195,6 +195,8 @@ var fnShowTheDatabase = function() {
   //Make it bold
   var $nodeEle = $(myNode[0].element);
   $nodeEle.addClass('selected-db');
+
+  $('#current-database').text(theDatabase);
 };
 
 var setNoLoadOnDemand = function(node) {
