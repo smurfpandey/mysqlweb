@@ -1144,7 +1144,13 @@ function addShortcutTooltips() {
 
 function showConnectionSettings() {
   $("#connection_window").show();
-  $('#pg_password').hidePassword(true);
+  $('#pg_password').hidePassword(true, {
+    toggle: {
+      attr: {
+        tabIndex: -1
+      }
+    }
+  });
 }
 
 function getConnectionString() {
