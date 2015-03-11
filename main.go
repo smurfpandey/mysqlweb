@@ -174,6 +174,7 @@ func startServer() {
 	router.POST("/databases/:database/functions/:function", APICreateFunction)
 	router.DELETE("/databases/:database/procedures/:procedure/actions/drop", APIDropProcedure)
 	router.GET("/databases/:database/views/:view", APIViewDefinition)
+	router.GET("/search/:query", APISearch)
 
 	fmt.Println("Starting server...")
 	go router.Run(fmt.Sprintf("%v:%v", options.HttpHost, options.HttpPort))

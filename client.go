@@ -312,6 +312,36 @@ func (client *Client) ViewDefinition(database string, name string) (*Result, err
 	return res, err
 }
 
+func (client *Client) Search(query string) (*Result, error) {
+	//Search in table list
+	resTbl, err := client.Query(fmt.Sprintf(MySQLSearchTable, query))
+
+	if err != nil {
+		return nil, err
+	}
+
+	resProc, err := client.Query(fmt.Sprintf(MySQLSearchProcedure, query))
+
+	if err != nil {
+		return nil, err
+	}
+
+	resFunc, err := client.Query(fmt.Sprintf(MySQLSearchFunction, query))
+
+	if err != nil {
+		return nil, err
+	}
+
+	resMerge := Result{
+		Columns: resTbl.Columns,
+		Rows:    append(resTbl.Rows, resProc.Rows...),
+	}
+
+	resMerge.Rows = append(resMerge.Rows, resFunc.Rows...)
+
+	return &resMerge, err
+}
+
 //Query will execute the sql query passed as parameter, and return the resultset
 func (client *Client) Query(query string) (*Result, error) {
 	rows, err := client.db.Queryx(query)

@@ -401,6 +401,17 @@ func APIViewDefinition(c *gin.Context) {
 	c.JSON(200, res)
 }
 
+func APISearch(c *gin.Context) {
+	res, err := dbClient.Search(c.Params.ByName("query"))
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.JSON(200, res)
+}
+
 //APIHandleQuery handles thq query and return the resultset as JSON
 func APIHandleQuery(query string, c *gin.Context) {
 	result, err := dbClient.Query(query)
