@@ -459,3 +459,7 @@ strong.form-control {
 .control-label {
   font-weight: normal;
 }
+
+#sidebar .search{
+  margin: 5px;
+}
