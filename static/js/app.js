@@ -1502,8 +1502,17 @@ $(document).ready(function() {
     loadDatabases();
   });
 
+  $('#txtSearch').on('keypress', function(e) {
+    if (e.keyCode === 13) {
+      $('#btnSearchDB').trigger('click');
+    }
+  });
   $('#btnSearchDB').on('click', function(e) {
     var searchQuery = $.trim($('#txtSearch').val());
+
+    if (searchQuery.length === 0) {
+      return;
+    }
 
     apiSearchDatabase(searchQuery, function(data) {
       if (data.error) {
@@ -1535,22 +1544,26 @@ $(document).ready(function() {
         var dbTable = {
           label: 'Table',
           type: 'tbl-holder',
-          children: []
+          children: [],
+          data_loaded: true
         };
         var dbProc = {
           label: 'Procedure',
           children: [],
-          type: 'sp-holder'
+          type: 'sp-holder',
+          data_loaded: true
         };
         var dbFunc = {
           label: 'Function',
           children: [],
-          type: 'fn-holder'
+          type: 'fn-holder',
+          data_loaded: true
         };
         var dbView = {
           label: 'View',
           children: [],
-          type: 'vw-holder'
+          type: 'vw-holder',
+          data_loaded: true
         };
 
 
@@ -1558,17 +1571,20 @@ $(document).ready(function() {
           if (val.type === 'TBL') {
             dbTable.children.push({
               label: val.name,
-              type: 'table'
+              type: 'table',
+              load_on_demand: true
             });
           } else if (val.type === 'PROC') {
             dbProc.children.push({
               label: val.name,
-              type: 'procedure'
+              type: 'procedure',
+              load_on_demand: true
             });
           } else if (val.type === 'FUNC') {
             dbFunc.children.push({
               label: val.name,
-              type: 'function'
+              type: 'function',
+              load_on_demand: true
             });
           }
         });
@@ -1576,7 +1592,8 @@ $(document).ready(function() {
         objTree.push({
           label: dbName,
           type: 'database',
-          children: [dbTable, dbProc, dbFunc]
+          children: [dbTable, dbProc, dbFunc],
+          data_loaded: true
         });
       });
       console.log(objTree);
@@ -1600,7 +1617,18 @@ $(document).ready(function() {
       );
 
       $tree.tree('selectNode', null);
+
+      //Show the clear search option
+      $('#dvClearSearch').removeClass('hide');
     });
+  });
+
+  $('#btnClearSearch').on('click', function(e) {
+    loadDatabases();
+    //Show the clear search option
+    $('#dvClearSearch').addClass('hide');
+    $('#txtSearch').val('');
+    e.preventDefault();
   });
 
   initModals();
