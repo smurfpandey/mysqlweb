@@ -28,7 +28,7 @@ func splice(s string, idx int, rem int, sAdd string) string {
 	return (s[0:idx] + sAdd + s[(idx+rem):len(s)])
 }
 
-func getHostUser(url string) (string, string) {
+func getHostUserFromConnString(url string) (string, string) {
 	colonIndx := strings.Index(url, ":")
 	userName := url[0:colonIndx]
 

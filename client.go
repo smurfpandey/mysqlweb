@@ -42,7 +42,7 @@ func NewClientFromURL(url string) (*Client, error) {
 		return nil, err
 	}
 
-	user, host := getHostUser(url)
+	user, host := getHostUserFromConnString(url)
 
 	return &Client{db: db, host: host, user: user}, nil
 }

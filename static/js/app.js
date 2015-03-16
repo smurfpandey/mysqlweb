@@ -118,6 +118,9 @@ function getViewDefiniton(dbName, viewName, cb) {
 function closeConnection(cb) {
   apiCall("delete", "/disconnect", {}, cb);
 }
+function apiSearchDatabase(query, cb) {
+  apiCall("get", "/search/" + query, {}, cb);
+}
 
 
 var fnGetSelectedTable = function() {
@@ -298,7 +301,6 @@ var showAlterDBPopup = function(nodeName) {
       }
     });
   });
-
 };
 
 var showDropDBPopup = function(dbName) {
@@ -1118,7 +1120,7 @@ function initEditor(editorId, editorData) {
     exec: function(editor) {
       runQuery(editor);
     }
-    }, {
+  }, {
     name: "explain_query",
     bindKey: {
       win: "Ctrl-E",
@@ -1362,20 +1364,20 @@ $(document).ready(function() {
     apiCall("post", "/connect", {
       url: url
     }, function(resp) {
-        button.prop("disabled", false).text("Connect");
+      button.prop("disabled", false).text("Connect");
 
-        if (resp.error) {
-          connected = false;
-          $("#connection_error").text(resp.error).show();
-        } else {
-          connected = true;
-          $("#connection_window").hide();
-          loadDatabases();
-          $("#main").show();
-          //
-          fnSetConnectionInfo();
-        }
-      });
+      if (resp.error) {
+        connected = false;
+        $("#connection_error").text(resp.error).show();
+      } else {
+        connected = true;
+        $("#connection_window").hide();
+        loadDatabases();
+        $("#main").show();
+        //
+        fnSetConnectionInfo();
+      }
+    });
   });
 
   $('#lnkAddQueryTab').on('click', function(e) {
@@ -1468,7 +1470,7 @@ $(document).ready(function() {
           }
         });
         break;
-      }
+        }
       case "FUNC": {
         editFunction(dbName, procName, procDef, function(data) {
           if (data.error) {
@@ -1490,7 +1492,7 @@ $(document).ready(function() {
           }
         });
         break;
-      }
+        }
     }
 
 
@@ -1498,6 +1500,107 @@ $(document).ready(function() {
 
   $('#refresh-list').on('click', function(e) {
     loadDatabases();
+  });
+
+  $('#btnSearchDB').on('click', function(e) {
+    var searchQuery = $.trim($('#txtSearch').val());
+
+    apiSearchDatabase(searchQuery, function(data) {
+      if (data.error) {
+        return;
+      }
+
+      var objData = {};
+      var arrDB = [];
+
+      data.rows.forEach(function(val) {
+        var dbName = val[1];
+
+        var objDBObject = {};
+        objDBObject.name = val[0];
+        objDBObject.type = val[2];
+
+        var a = objData[dbName];
+
+        if (typeof (a) === "undefined") {
+          objData[dbName] = [];
+          arrDB.push(dbName);
+        }
+
+        objData[dbName].push(objDBObject);
+      });
+
+      var objTree = [];
+      arrDB.forEach(function(dbName) {
+        var dbTable = {
+          label: 'Table',
+          type: 'tbl-holder',
+          children: []
+        };
+        var dbProc = {
+          label: 'Procedure',
+          children: [],
+          type: 'sp-holder'
+        };
+        var dbFunc = {
+          label: 'Function',
+          children: [],
+          type: 'fn-holder'
+        };
+        var dbView = {
+          label: 'View',
+          children: [],
+          type: 'vw-holder'
+        };
+
+
+        objData[dbName].forEach(function(val) {
+          if (val.type === 'TBL') {
+            dbTable.children.push({
+              label: val.name,
+              type: 'table'
+            });
+          } else if (val.type === 'PROC') {
+            dbProc.children.push({
+              label: val.name,
+              type: 'procedure'
+            });
+          } else if (val.type === 'FUNC') {
+            dbFunc.children.push({
+              label: val.name,
+              type: 'function'
+            });
+          }
+        });
+
+        objTree.push({
+          label: dbName,
+          type: 'database',
+          children: [dbTable, dbProc, dbFunc]
+        });
+      });
+      console.log(objTree);
+
+      $tree.tree('loadData', objTree);
+
+      //Open all nodes
+      //https://github.com/mbraak/jqTree/issues/206
+      var tree = $tree.tree('getTree');
+
+      tree.iterate(
+        function(node, level) {
+          if (!node.hasChildren()) {
+            // This will open the folder
+            $tree.tree('selectNode', node);
+            return false;
+          }
+
+          return true;
+        }
+      );
+
+      $tree.tree('selectNode', null);
+    });
   });
 
   initModals();
