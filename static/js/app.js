@@ -1515,7 +1515,7 @@ $(document).ready(function() {
     }
 
     apiSearchDatabase(searchQuery, function(data) {
-      if (data.error) {
+      if (data.error || data.rows == null) {
         return;
       }
 
