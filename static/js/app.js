@@ -140,7 +140,7 @@ var fnCreateEditorTab = function(editorName, editorData, editorTitle, objData, e
     proc_type: objData.proc_type,
     is_new: objData.is_new
   },
-    'tmpl-query-tab', $('#input .tab-content'), false);
+    'tmpl-query-tab', $('#body .tab-content'), false);
 
   //Create tab button
   var tabBtnHTML = getFromTemplate({
@@ -866,26 +866,26 @@ function unescapeHtml(str) {
   return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
 }
 
-function resetTable() {
-  $("#results").
+function resetTable($result) {
+  $result.
     attr("data-mode", "").
     text("").
     removeClass("empty").
     removeClass("no-crop");
 }
 
-function buildTable(results) {
-  resetTable();
+function buildTable(results, $result) {
+  resetTable($result);
 
   if (results.error) {
-    $("<tr><td>ERROR: " + results.error + "</tr></tr>").appendTo("#results");
-    $("#results").addClass("empty");
+    $("<tr><td>ERROR: " + results.error + "</tr></tr>").appendTo($result);
+    $result.addClass("empty");
     return;
   }
 
   if (!results.rows) {
-    $("<tr><td>No records found</tr></tr>").appendTo("#results");
-    $("#results").addClass("empty");
+    $("<tr><td>No records found</tr></tr>").appendTo($result);
+    $result.addClass("empty");
     return;
   }
 
@@ -904,7 +904,7 @@ function buildTable(results) {
     rows += "<tr>" + r + "</tr>";
   });
 
-  $("<thead>" + cols + "</thead><tbody>" + rows + "</tobdy>").appendTo("#results");
+  $("<thead>" + cols + "</thead><tbody>" + rows + "</tobdy>").appendTo($result);
 }
 
 function setCurrentTab(id) {
@@ -1030,7 +1030,7 @@ function showConnectionPanel() {
   });
 }
 
-function runQuery(editor) {
+function runQuery(editor, $editor) {
   setCurrentTab("table_query");
 
   $("#query_progress").show();
@@ -1051,12 +1051,15 @@ function runQuery(editor) {
     return;
   }
 
+  var $input = $editor.parents('.input');
+  var $results = $input.next().find('.results');
+
   executeQuery(query, function(data) {
-    buildTable(data);
+    buildTable(data, $results);
 
     $("#query_progress").hide();
-    $("#input").show();
-    $("#output").removeClass("full");
+    //$("#input").show();
+    //$("#output").removeClass("full");
 
     if (query.toLowerCase().indexOf("explain") != -1) {
       $("#results").addClass("no-crop");
@@ -1106,7 +1109,8 @@ function exportToCSV(editor) {
 function initEditor(editorId, editorData) {
   var editor = ace.edit(editorId);
 
-  $('#' + editorId).data('ace-editor', editor);
+  var $editor = $('#' + editorId);
+  $editor.data('ace-editor', editor);
 
   editor.getSession().setMode("ace/mode/mysql");
   editor.getSession().setTabSize(2);
@@ -1118,7 +1122,7 @@ function initEditor(editorId, editorData) {
       mac: "Command-Enter"
     },
     exec: function(editor) {
-      runQuery(editor);
+      runQuery(editor, $editor);
     }
   }, {
     name: "explain_query",
@@ -1228,9 +1232,6 @@ $(document).ready(function() {
   $("#table_history").on("click", function() {
     showQueryHistory();
   });
-  $("#table_query").on("click", function() {
-    showQueryPanel();
-  });
   $("#table_connection").on("click", function() {
     showConnectionPanel();
   });
@@ -1239,7 +1240,7 @@ $(document).ready(function() {
     var $editor = $(this).parent().prev();
     var editor = $editor.data('ace-editor');
 
-    runQuery(editor);
+    runQuery(editor, $editor);
   });
 
   $('#body').on('click', '.js-explain-query', function() {
@@ -1386,7 +1387,7 @@ $(document).ready(function() {
     //Create query tab
     generateFromTemplate({
       tab_id: queryTabCounter
-    }, 'tmpl-query-tab', $('#input .tab-content'), false);
+    }, 'tmpl-query-tab', $('#body .tab-content'), false);
 
     //Create tab button
     var tabBtnHTML = getFromTemplate({
@@ -1402,7 +1403,7 @@ $(document).ready(function() {
     e.preventDefault();
   });
 
-  $('#input').on('click', '.close-query-tab', function(e) {
+  $('#body').on('click', '.close-query-tab', function(e) {
     //Get the tab div of this
     var $tabButton = $(this).parent();
     var tabId = $tabButton.attr('href').substr(1);
@@ -1429,7 +1430,7 @@ $(document).ready(function() {
     $tabButton.parent().remove();
   });
 
-  $('#input').on('click', '.js-apply-proc', function(e) {
+  $('#body').on('click', '.js-apply-proc', function(e) {
     var $thisQueryDiv = $(this).parent().prev();
 
     var thisEditor = $thisQueryDiv.data('ace-editor');
@@ -1515,7 +1516,7 @@ $(document).ready(function() {
     }
 
     apiSearchDatabase(searchQuery, function(data) {
-      if (data.error || data.rows == null) {
+      if (data.error || data.rows === null) {
         return;
       }
 

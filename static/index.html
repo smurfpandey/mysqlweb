@@ -58,7 +58,6 @@
       </div>
     </div>
     <div id="body">
-      <div id="input">
         <div role="tabpanel">
           <!-- Nav tabs -->
           <ul id="ulQueryTab" class="nav nav-tabs" role="tablist">
@@ -75,25 +74,27 @@
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="query_tab_1">
               <div class="wrapper">
-                <div id="custom_query" class="query-editor"></div>
-                <div class="actions">
-                  <input type="button" value="Run Query" class="btn btn-sm btn-primary js-run-query" />
-                  <input type="button" value="Explain Query" class="btn btn-sm btn-default js-explain-query" />
-                  <input type="button" id="csv" value="Download CSV" class="btn btn-sm btn-default" />
+                <div class="input">
+                  <div id="custom_query" class="query-editor"></div>
+                  <div class="actions">
+                    <input type="button" value="Run Query" class="btn btn-sm btn-primary js-run-query" />
+                    <input type="button" value="Explain Query" class="btn btn-sm btn-default js-explain-query" />
+                    <input type="button" id="csv" value="Download CSV" class="btn btn-sm btn-default" />
 
-                  <div id="query_progress">Please wait, query is executing...</div>
+                    <div id="query_progress">Please wait, query is executing...</div>
+                  </div>
+                </div>
+                <div class="output">
+                  <div class="wrapper">
+                    <table class="table results"></table>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
         </div>
-      </div>
-      <div id="output">
-        <div class="wrapper">
-          <table id="results" class="table"></table>
-        </div>
-      </div>
+
     </div>
   </div>
 
@@ -436,28 +437,35 @@
   <script type="text/x-handlebars-template" id="tmpl-query-tab">
     <div role="tabpanel" class="tab-pane" id="query_tab_{{tab_id}}">
       <div class="wrapper">
-        {{#equal tab_mode 'proc'}}
-        <div class="editor-title">
-          <span>Name: </span><input type="text" disabled value="{{tab_title}}" />
-        </div>
-        {{/equal}}
-        <div id="query_editor_{{tab_id}}" class="query-editor {{tab_mode}}" data-isnew="{{is_new}}" data-procname=" {{proc_name}}" data-dbname="{{db_name}}"></div>
-        {{#equal tab_mode 'proc'}}
-        <div class="actions text-right">
-          <input type="button" value="Apply" data-proctype="{{proc_type}}" class="btn btn-sm btn-primary js-apply-proc" />
-          <input type="button" value="Cancel" class="btn btn-sm btn-default" />
+        <div class="input">
+          {{#equal tab_mode 'proc'}}
+          <div class="editor-title">
+            <span>Name: </span><input type="text" disabled value="{{tab_title}}" />
+          </div>
+          {{/equal}}
+          <div id="query_editor_{{tab_id}}" class="query-editor {{tab_mode}}" data-isnew="{{is_new}}" data-procname=" {{proc_name}}" data-dbname="{{db_name}}"></div>
+          {{#equal tab_mode 'proc'}}
+          <div class="actions text-right">
+            <input type="button" value="Apply" data-proctype="{{proc_type}}" class="btn btn-sm btn-primary js-apply-proc" />
+            <input type="button" value="Cancel" class="btn btn-sm btn-default" />
 
-          <div id="query_progress">Please wait, query is executing...</div>
-        </div>
-        {{else}}
-        <div class="actions">
-          <input type="button" value="Run Query" class="btn btn-sm btn-primary js-run-query" />
-          <input type="button" value="Explain Query" class="btn btn-sm btn-default js-explain-query" />
-          <input type="button" value="Download CSV" class="btn btn-sm btn-default js-export-query" />
+            <div id="query_progress">Please wait, query is executing...</div>
+          </div>
+          {{else}}
+          <div class="actions">
+            <input type="button" value="Run Query" class="btn btn-sm btn-primary js-run-query" />
+            <input type="button" value="Explain Query" class="btn btn-sm btn-default js-explain-query" />
+            <input type="button" value="Download CSV" class="btn btn-sm btn-default js-export-query" />
 
-          <div id="query_progress">Please wait, query is executing...</div>
+            <div id="query_progress">Please wait, query is executing...</div>
+          </div>
+          {{/equal}}
         </div>
-        {{/equal}}
+        <div class="output">
+          <div class="wrapper">
+            <table class="table results"></table>
+          </div>
+        </div>
       </div>
     </div>
   </script>
