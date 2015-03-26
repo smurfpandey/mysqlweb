@@ -433,6 +433,18 @@ func APIHandleQuery(query string, c *gin.Context) {
 	c.JSON(200, result)
 }
 
+func APIBookmarks(c *gin.Context) {
+	bookmarks, err := readBookmakrs(getBookmarkPath())
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.JSON(200, bookmarks)
+
+}
+
 //APIServeAsset serves the static assets
 func APIServeAsset(c *gin.Context) {
 	file := fmt.Sprintf(
