@@ -125,6 +125,9 @@ function getAllBookmarks(cb) {
   apiCall("get", "/bookmarks", {}, cb);
 }
 
+function saveBookmark(bookmarkName, bookmarkData, cb) {
+  apiCall("post", "/bookmarks/" + bookmarkName, bookmarkData, cb);
+}
 
 var fnGetSelectedTable = function() {
   return theTable;
@@ -1362,6 +1365,8 @@ $(document).ready(function() {
         $(".connection-standard-group").show();
         $(".connection-ssh-group").hide();
         $('.connection-bookmark-group').hide();
+
+        $('#dvConnectionFormBtns').removeClass('hide');
         return;
       case "ssh":
         $(".connection-scheme-group").hide();
@@ -1376,6 +1381,8 @@ $(document).ready(function() {
         $('.connection-bookmark-group').show();
         //Load all the bookmarks
         fnLoadAllBookmarks();
+        //Hide the buttons
+        $('#dvConnectionFormBtns').addClass('hide');
         return;
     }
   });
@@ -1661,6 +1668,80 @@ $(document).ready(function() {
     $('#dvClearSearch').addClass('hide');
     $('#txtSearch').val('');
     e.preventDefault();
+  });
+
+  $('#ulBookmarks').on('click', '.js-bookmark-link', function(e) {
+    e.preventDefault();
+
+    //Get this bookmark and populate the connection string form
+    var $this = $(this);
+    var userName = $this.data('username');
+    var host = $this.data('host');
+    var port = $this.data('port');
+    var database = $this.data('database');
+
+    $('#pg_host').val(host);
+    $('#pg_user').val(userName);
+    $('#pg_db').val(database);
+    $('#pg_port').val(port);
+
+    //Show the standard box
+    $('#btnStandardConBox').trigger('click');
+
+    //Set the focus on password field
+    $('#pg_password').focus();
+  });
+
+  $('#btnSaveBookmark').on('click', function(e) {
+    swal({
+      title: "Save bookmark?",
+      text: "Name of your bookmark:",
+      type: "input",
+      showCancelButton: true,
+      closeOnConfirm: false,
+      animation: "slide-from-top",
+      inputPlaceholder: "Bookmark name?"
+    }, function(bookmarkName) {
+      if (bookmarkName === false) return false;
+      if (bookmarkName === "") {
+        swal.showInputError("You need to write something!");
+        return false;
+      }
+
+      //Save the bookmark with this name
+      var host = $('#pg_host').val();
+      var userName = $('#pg_user').val();
+      var port = $('#pg_port').val();
+      var database = $('#pg_db').val();
+
+      if (!host && !userName && !port && !database) {
+        swal.showInputError("You need to provide connection details also!");
+        return false;
+      }
+
+      var objData = {
+        host: host,
+        port: port || 3306,
+        user: userName,
+        database: database
+      };
+
+      saveBookmark(bookmarkName, objData, function(data) {
+        if (typeof (result) === 'undefined') {
+          //Bookmark saved
+          swal.close();
+
+          //Show bookmarks tab
+          $('#btnBookmarkConBox').trigger('click');
+          return true;
+        }
+
+        if (data.error) {
+          swal.showInputError('Oops! Error: ' + data.error);
+          return false;
+        }
+      });
+    });
   });
 
   initModals();
