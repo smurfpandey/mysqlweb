@@ -107,7 +107,7 @@
           <div class="btn-group btn-group-sm connection-group-switch">
             <button type="button" data="scheme" class="btn btn-default">Scheme</button>
             <button type="button" data="standard" class="btn btn-default active">Standard</button>
-            <!--<button type="button" data="ssh" class="btn btn-default">SSH</button>-->
+            <button type="button" data="bookmark" class="btn btn-default">Bookmarks</button>
           </div>
         </div>
 
@@ -198,6 +198,11 @@
             <div class="col-sm-9">
               <input type="text" id="pg_host" class="form-control" placeholder="optional" />
             </div>
+          </div>
+        </div>
+
+        <div class="connection-bookmark-group">
+          <div id="ulBookmarks" class="list-group">
           </div>
         </div>
 
@@ -481,6 +486,17 @@
         {{/if}}
       </a>
     </li>
+  </script>
+
+  <script id="tmpl-bookmark-list" type="text/x-handlebars-template">
+    {{#each bookmarks}}
+    <a href="#" class="list-group-item js-bookmark-link">
+      <p><strong>{{name}}</strong></p>
+      {{#with conn_info}}
+      <span href="#" class="js-bookmark-link">{{Username}}@{{Host}}:{{Port}}/{{Database}}</span>
+      {{/with}}
+    </a>
+    {{/each}}
   </script>
 
   <script type="text/javascript" src="/static/js/jquery.js"></script>

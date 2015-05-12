@@ -121,6 +121,9 @@ function closeConnection(cb) {
 function apiSearchDatabase(query, cb) {
   apiCall("get", "/search/" + query, {}, cb);
 }
+function getAllBookmarks(cb) {
+  apiCall("get", "/bookmarks", {}, cb);
+}
 
 
 var fnGetSelectedTable = function() {
@@ -1219,6 +1222,23 @@ function initModals() {
   });
 }
 
+function fnLoadAllBookmarks() {
+  getAllBookmarks(function(data) {
+    if (data.error) {
+      swal({
+        title: "Error!",
+        text: data.error,
+        type: "error",
+        confirmButtonText: "Ohooo!"
+      });
+      return;
+    }
+
+    //Show a list of available bookmarks
+    generateFromTemplate(data, 'tmpl-bookmark-list', $('#ulBookmarks'), true);
+  });
+}
+
 $(document).ready(function() {
   $("#table_content").on("click", function() {
     showTableContent();
@@ -1335,16 +1355,27 @@ $(document).ready(function() {
       case "scheme":
         $(".connection-scheme-group").show();
         $(".connection-standard-group").hide();
+        $('.connection-bookmark-group').hide();
         return;
       case "standard":
         $(".connection-scheme-group").hide();
         $(".connection-standard-group").show();
         $(".connection-ssh-group").hide();
+        $('.connection-bookmark-group').hide();
         return;
       case "ssh":
         $(".connection-scheme-group").hide();
         $(".connection-standard-group").show();
         $(".connection-ssh-group").show();
+        $('.connection-bookmark-group').hide();
+        return;
+      case "bookmark":
+        $(".connection-scheme-group").hide();
+        $(".connection-standard-group").hide();
+        $(".connection-ssh-group").hide();
+        $('.connection-bookmark-group').show();
+        //Load all the bookmarks
+        fnLoadAllBookmarks();
         return;
     }
   });
