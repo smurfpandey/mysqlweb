@@ -124,10 +124,13 @@ function apiSearchDatabase(query, cb) {
 function getAllBookmarks(cb) {
   apiCall("get", "/bookmarks", {}, cb);
 }
-
 function saveBookmark(bookmarkName, bookmarkData, cb) {
   apiCall("post", "/bookmarks/" + bookmarkName, bookmarkData, cb);
 }
+function deleteBookmark(bookmarkName, cb) {
+  apiCall("delete", "/bookmarks/" + bookmarkName, {}, cb);
+}
+
 
 var fnGetSelectedTable = function() {
   return theTable;
@@ -1714,8 +1717,8 @@ $(document).ready(function() {
       var port = $('#pg_port').val();
       var database = $('#pg_db').val();
 
-      if (!host && !userName && !port && !database) {
-        swal.showInputError("You need to provide connection details also!");
+      if (!host || !userName || !port || !database) {
+        swal.showInputError("You need to provide all connection details!");
         return false;
       }
 
@@ -1727,7 +1730,7 @@ $(document).ready(function() {
       };
 
       saveBookmark(bookmarkName, objData, function(data) {
-        if (typeof (result) === 'undefined') {
+        if (typeof (data) === 'undefined') {
           //Bookmark saved
           swal.close();
 
@@ -1742,6 +1745,33 @@ $(document).ready(function() {
         }
       });
     });
+  });
+
+  $('#ulBookmarks').on('click', '.js-delete-bookmark', function(e) {
+    e.stopPropagation();
+
+    var $this = $(this);
+    var bookmarkName = $this.data('bookmarkname');
+
+    bookmarkName = encodeURIComponent(bookmarkName);
+
+    deleteBookmark(bookmarkName, function(data) {
+      if (typeof (data) === 'undefined') {
+        //Bookmark deleted
+        $this.parents('.js-bookmark-link').remove();
+        return;
+      }
+
+      if (data.error) {
+        swal({
+          title: "Error!",
+          text: data.error,
+          type: "error",
+          confirmButtonText: "Ohoo!"
+        });
+      }
+    });
+
   });
 
   initModals();

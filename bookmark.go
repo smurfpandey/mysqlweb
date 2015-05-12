@@ -112,3 +112,18 @@ func saveBookmark(objBookmark Bookmark, path string) (int, error) {
 
 	return 1, nil
 }
+
+func deleteBookmark(bookmarkName string, path string) error {
+
+	fileName := bookmarkName + ".json"
+
+	fullFilePath := filepath.FromSlash(path + "/" + fileName)
+
+	err := os.Remove(fullFilePath)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

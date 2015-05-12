@@ -492,9 +492,12 @@
   <script id="tmpl-bookmark-list" type="text/x-handlebars-template">
     {{#each bookmarks}}
     {{#with conn_info}}
-    <a href="#" class="list-group-item js-bookmark-link" data-username="{{Username}}" data-host="{{Host}}" data-port="{{Port}}" data-database="{{Database}}">
-      <p><strong>{{../name}}</strong></p>
-      <span href="#">{{Username}}@{{Host}}:{{Port}}/{{Database}}</span>
+    <a href="#" class="list-group-item js-bookmark-link clearfix bookmark-list-item" data-username="{{Username}}" data-host="{{Host}}" data-port="{{Port}}" data-database="{{Database}}">
+      <div class="pull-left">
+        <div><strong>{{../name}}</strong></div>
+        <span href="#">{{Username}}@{{Host}}:{{Port}}/{{Database}}</span>
+      </div>
+      <span href="#" class="pull-right delete-bookmark js-delete-bookmark" data-bookmarkname="{{../name}}" title="Delete this bookmark">&times;</span>
     </a>
     {{/with}}
     {{/each}}

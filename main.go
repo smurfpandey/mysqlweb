@@ -177,6 +177,7 @@ func startServer() {
 	router.GET("/search/:query", APISearch)
 	router.GET("/bookmarks", APIGetBookmarks)
 	router.POST("/bookmarks/:name", APISaveBookmark)
+	router.DELETE("/bookmarks/:name", APIDeleteBookmark)
 
 	fmt.Println("Starting server...")
 	go router.Run(fmt.Sprintf("%v:%v", options.HttpHost, options.HttpPort))

@@ -479,6 +479,19 @@ func APISaveBookmark(c *gin.Context) {
 	c.Writer.WriteHeader(204)
 }
 
+func APIDeleteBookmark(c *gin.Context) {
+	bookName := c.Params.ByName("name")
+
+	err := deleteBookmark(bookName, getBookmarkPath())
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.Writer.WriteHeader(204)
+}
+
 //APIServeAsset serves the static assets
 func APIServeAsset(c *gin.Context) {
 	file := fmt.Sprintf(
