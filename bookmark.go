@@ -35,7 +35,17 @@ func fileBaseName(path string) string {
 
 func getBookmarkPath() string {
 	path, _ := homedir.Dir()
-	return fmt.Sprintf("%s/.mysqlweb/bookmark", path)
+	bookmarkPath := fmt.Sprintf("%s/.mysqlweb/bookmark", path)
+
+	//Check if this path exists
+	isExists, _ := ExistsFileFolder(bookmarkPath)
+
+	//If no, then create directory
+	if !isExists {
+		os.MkdirAll(bookmarkPath, 0777)
+	}
+
+	return bookmarkPath
 }
 
 func readBookmarks(path string) (Bookmarks, error) {

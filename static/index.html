@@ -497,6 +497,11 @@
       {{/with}}
     </a>
     {{/each}}
+    {{#unless bookmarks}}
+    <a class="list-group-item text-center">
+      No bookmarks available
+    </a>
+    {{/unless}}
   </script>
 
   <script type="text/javascript" src="/static/js/jquery.js"></script>

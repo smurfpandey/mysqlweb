@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"runtime"
 	"strings"
 	"time"
@@ -41,4 +42,16 @@ func getHostUserFromConnString(url string) (string, string) {
 	hostName = hostName[0:colonIndx]
 
 	return userName, hostName
+}
+
+// exists returns whether the given file or directory exists or not
+func ExistsFileFolder(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
 }
