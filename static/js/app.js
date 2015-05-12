@@ -1717,7 +1717,7 @@ $(document).ready(function() {
       var port = $('#pg_port').val();
       var database = $('#pg_db').val();
 
-      if (!host || !userName || !port || !database) {
+      if (!host || !userName || !database) {
         swal.showInputError("You need to provide all connection details!");
         return false;
       }
