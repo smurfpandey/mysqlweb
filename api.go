@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -431,6 +432,64 @@ func APIHandleQuery(query string, c *gin.Context) {
 	}
 
 	c.JSON(200, result)
+}
+
+func APIGetBookmarks(c *gin.Context) {
+	bookmarks, err := readBookmarks(getBookmarkPath())
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.JSON(200, bookmarks)
+
+}
+
+func APISaveBookmark(c *gin.Context) {
+	bookName := c.Params.ByName("name")
+
+	conHost := c.Request.FormValue("host")
+	strConPort := c.Request.FormValue("port")
+	intConPort, err := strconv.Atoi(strConPort)
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+	conUser := c.Request.FormValue("user")
+	conDatabase := c.Request.FormValue("database")
+
+	objBookmark := Bookmark{
+		Name: bookName,
+		Connection: Connection{
+			Host:     conHost,
+			Port:     intConPort,
+			Username: conUser,
+			Database: conDatabase,
+		},
+	}
+
+	i, err := saveBookmark(objBookmark, getBookmarkPath())
+
+	if i == -1 {
+		c.JSON(400, NewError(errors.New("A connection with this name already exists")))
+		return
+	}
+
+	c.Writer.WriteHeader(204)
+}
+
+func APIDeleteBookmark(c *gin.Context) {
+	bookName := c.Params.ByName("name")
+
+	err := deleteBookmark(bookName, getBookmarkPath())
+
+	if err != nil {
+		c.JSON(400, NewError(err))
+		return
+	}
+
+	c.Writer.WriteHeader(204)
 }
 
 //APIServeAsset serves the static assets

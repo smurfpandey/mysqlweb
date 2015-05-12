@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="/static/css/font-awesome.css" />
   <link rel="stylesheet" href="/static/css/jqtree.css" />
   <link rel="stylesheet" href="/static/css/hover.css" />
-  <link rel="stylesheet" href="/static/css/sweet-alert.css" />
+  <link rel="stylesheet" href="/static/css/sweetalert.css" />
   <link rel="stylesheet" href="/static/css/ie9.css" />
   <link rel="stylesheet" href="/static/css/example.wink.css" />
   <link rel="stylesheet" href="/static/css/app.css" />
@@ -105,9 +105,9 @@
       <form role="form" class="form-horizontal" id="connection_form">
         <div class="text-center">
           <div class="btn-group btn-group-sm connection-group-switch">
-            <button type="button" data="scheme" class="btn btn-default">Scheme</button>
-            <button type="button" data="standard" class="btn btn-default active">Standard</button>
-            <!--<button type="button" data="ssh" class="btn btn-default">SSH</button>-->
+            <button type="button" data="scheme" class="btn btn-default hide">Scheme</button>
+            <button id='btnStandardConBox' type="button" data="standard" class="btn btn-default active">Standard</button>
+            <button id="btnBookmarkConBox" type="button" data="bookmark" class="btn btn-default">Bookmarks</button>
           </div>
         </div>
 
@@ -201,12 +201,18 @@
           </div>
         </div>
 
+        <div class="connection-bookmark-group">
+          <div id="ulBookmarks" class="list-group">
+          </div>
+        </div>
+
         <div id="connection_error" class="alert alert-danger"></div>
 
-        <div class="form-group">
+        <div id="dvConnectionFormBtns" class="form-group">
           <div class="col-sm-12">
             <button type="submit" class="btn btn-block btn-primary">Connect</button>
             <button type="reset" id="close_connection_window" class="btn btn-block btn-default">Cancel</button>
+            <input type="button" id="btnSaveBookmark" class="btn btn-block btn-default" value="Save as Bookmark" />
           </div>
         </div>
       </form>
@@ -483,6 +489,25 @@
     </li>
   </script>
 
+  <script id="tmpl-bookmark-list" type="text/x-handlebars-template">
+    {{#each bookmarks}}
+    {{#with conn_info}}
+    <a href="#" class="list-group-item js-bookmark-link clearfix bookmark-list-item" data-username="{{Username}}" data-host="{{Host}}" data-port="{{Port}}" data-database="{{Database}}">
+      <div class="pull-left">
+        <div><strong>{{../name}}</strong></div>
+        <span href="#">{{Username}}@{{Host}}:{{Port}}/{{Database}}</span>
+      </div>
+      <span href="#" class="pull-right delete-bookmark js-delete-bookmark" data-bookmarkname="{{../name}}" title="Delete this bookmark">&times;</span>
+    </a>
+    {{/with}}
+    {{/each}}
+    {{#unless bookmarks}}
+    <a class="list-group-item text-center">
+      No bookmarks available
+    </a>
+    {{/unless}}
+  </script>
+
   <script type="text/javascript" src="/static/js/jquery.js"></script>
   <script type="text/javascript" src="/static/js/bootstrap.js"></script>
   <script type="text/javascript" src="/static/js/bootstrap-select.min.js"></script>
@@ -493,7 +518,7 @@
   <script type="text/javascript" src="/static/js/jqTreeContextMenu.js"></script>
   <script type="text/javascript" src="/static/js/handlebars-v2.0.0.js"></script>
   <script type="text/javascript" src="/static/js/lodash.min.js"></script>
-  <script type="text/javascript" src="/static/js/sweet-alert.js"></script>
+  <script type="text/javascript" src="/static/js/sweetalert.min.js"></script>
   <script type="text/javascript" src="/static/js/jquery.blockUI.min.js"></script>
   <script type="text/javascript" src="/static/js/hideShowPassword.js"></script>
   <script type="text/javascript" src="/static/js/app.js"></script>

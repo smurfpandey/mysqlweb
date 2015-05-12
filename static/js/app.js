@@ -121,6 +121,15 @@ function closeConnection(cb) {
 function apiSearchDatabase(query, cb) {
   apiCall("get", "/search/" + query, {}, cb);
 }
+function getAllBookmarks(cb) {
+  apiCall("get", "/bookmarks", {}, cb);
+}
+function saveBookmark(bookmarkName, bookmarkData, cb) {
+  apiCall("post", "/bookmarks/" + bookmarkName, bookmarkData, cb);
+}
+function deleteBookmark(bookmarkName, cb) {
+  apiCall("delete", "/bookmarks/" + bookmarkName, {}, cb);
+}
 
 
 var fnGetSelectedTable = function() {
@@ -1219,6 +1228,23 @@ function initModals() {
   });
 }
 
+function fnLoadAllBookmarks() {
+  getAllBookmarks(function(data) {
+    if (data.error) {
+      swal({
+        title: "Error!",
+        text: data.error,
+        type: "error",
+        confirmButtonText: "Ohooo!"
+      });
+      return;
+    }
+
+    //Show a list of available bookmarks
+    generateFromTemplate(data, 'tmpl-bookmark-list', $('#ulBookmarks'), true);
+  });
+}
+
 $(document).ready(function() {
   $("#table_content").on("click", function() {
     showTableContent();
@@ -1335,16 +1361,31 @@ $(document).ready(function() {
       case "scheme":
         $(".connection-scheme-group").show();
         $(".connection-standard-group").hide();
+        $('.connection-bookmark-group').hide();
         return;
       case "standard":
         $(".connection-scheme-group").hide();
         $(".connection-standard-group").show();
         $(".connection-ssh-group").hide();
+        $('.connection-bookmark-group').hide();
+
+        $('#dvConnectionFormBtns').removeClass('hide');
         return;
       case "ssh":
         $(".connection-scheme-group").hide();
         $(".connection-standard-group").show();
         $(".connection-ssh-group").show();
+        $('.connection-bookmark-group').hide();
+        return;
+      case "bookmark":
+        $(".connection-scheme-group").hide();
+        $(".connection-standard-group").hide();
+        $(".connection-ssh-group").hide();
+        $('.connection-bookmark-group').show();
+        //Load all the bookmarks
+        fnLoadAllBookmarks();
+        //Hide the buttons
+        $('#dvConnectionFormBtns').addClass('hide');
         return;
     }
   });
@@ -1630,6 +1671,107 @@ $(document).ready(function() {
     $('#dvClearSearch').addClass('hide');
     $('#txtSearch').val('');
     e.preventDefault();
+  });
+
+  $('#ulBookmarks').on('click', '.js-bookmark-link', function(e) {
+    e.preventDefault();
+
+    //Get this bookmark and populate the connection string form
+    var $this = $(this);
+    var userName = $this.data('username');
+    var host = $this.data('host');
+    var port = $this.data('port');
+    var database = $this.data('database');
+
+    $('#pg_host').val(host);
+    $('#pg_user').val(userName);
+    $('#pg_db').val(database);
+    $('#pg_port').val(port);
+
+    //Show the standard box
+    $('#btnStandardConBox').trigger('click');
+
+    //Set the focus on password field
+    $('#pg_password').focus();
+  });
+
+  $('#btnSaveBookmark').on('click', function(e) {
+    swal({
+      title: "Save bookmark?",
+      text: "Name of your bookmark:",
+      type: "input",
+      showCancelButton: true,
+      closeOnConfirm: false,
+      animation: "slide-from-top",
+      inputPlaceholder: "Bookmark name?"
+    }, function(bookmarkName) {
+      if (bookmarkName === false) return false;
+      if (bookmarkName === "") {
+        swal.showInputError("You need to write something!");
+        return false;
+      }
+
+      //Save the bookmark with this name
+      var host = $('#pg_host').val();
+      var userName = $('#pg_user').val();
+      var port = $('#pg_port').val();
+      var database = $('#pg_db').val();
+
+      if (!host || !userName || !database) {
+        swal.showInputError("You need to provide all connection details!");
+        return false;
+      }
+
+      var objData = {
+        host: host,
+        port: port || 3306,
+        user: userName,
+        database: database
+      };
+
+      saveBookmark(bookmarkName, objData, function(data) {
+        if (typeof (data) === 'undefined') {
+          //Bookmark saved
+          swal.close();
+
+          //Show bookmarks tab
+          $('#btnBookmarkConBox').trigger('click');
+          return true;
+        }
+
+        if (data.error) {
+          swal.showInputError('Oops! Error: ' + data.error);
+          return false;
+        }
+      });
+    });
+  });
+
+  $('#ulBookmarks').on('click', '.js-delete-bookmark', function(e) {
+    e.stopPropagation();
+
+    var $this = $(this);
+    var bookmarkName = $this.data('bookmarkname');
+
+    bookmarkName = encodeURIComponent(bookmarkName);
+
+    deleteBookmark(bookmarkName, function(data) {
+      if (typeof (data) === 'undefined') {
+        //Bookmark deleted
+        $this.parents('.js-bookmark-link').remove();
+        return;
+      }
+
+      if (data.error) {
+        swal({
+          title: "Error!",
+          text: data.error,
+          type: "error",
+          confirmButtonText: "Ohoo!"
+        });
+      }
+    });
+
   });
 
   initModals();

@@ -463,3 +463,15 @@ strong.form-control {
 #sidebar .search{
   margin: 5px;
 }
+
+.bookmark-list-item .delete-bookmark{
+  visibility: hidden;
+}
+
+.bookmark-list-item:hover .delete-bookmark{
+  visibility: visible;
+}
+
+.delete-bookmark{
+  font-size: 30px;
+}
