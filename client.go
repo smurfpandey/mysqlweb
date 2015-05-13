@@ -7,6 +7,7 @@ import (
 	"reflect"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/nu7hatch/gouuid"
 )
 
 //Client is our SQL client
@@ -27,24 +28,34 @@ type Result struct {
 }
 
 //NewClient will create a new client
-func NewClient() (*Client, error) {
+func NewClient() (string, error) {
 	url := getConnectionString()
 
 	return NewClientFromURL(url)
 }
 
 //NewClientFromURL will create a new mysql client using the URL provided in parameters
-func NewClientFromURL(url string) (*Client, error) {
+func NewClientFromURL(url string) (string, error) {
 	fmt.Println(url)
 	db, err := sqlx.Open("mysql", url)
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	user, host := getHostUserFromConnString(url)
 
-	return &Client{db: db, host: host, user: user}, nil
+	u4, err := uuid.NewV4()
+	if err != nil {
+		fmt.Println("error:", err)
+		return "", err
+	}
+
+	strUuid := u4.String()
+
+	dbClientMap[strUuid] = &Client{db: db, host: host, user: user}
+
+	return strUuid, nil
 }
 
 //Close disconnects a existing connection

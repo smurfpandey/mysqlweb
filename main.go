@@ -33,7 +33,8 @@ var options struct {
 	SkipOpen bool   `short:"s" long:"skip-open" description:"Skip browser open on start"`
 }
 
-var dbClient *Client
+//var dbClient *Client
+var dbClientMap map[string]*Client
 
 func exitWithMessage(message string) {
 	fmt.Println("Error:", message)
@@ -103,18 +104,18 @@ func initClient() {
 		return
 	}
 
-	client, err := NewClient()
+	clientKey, err := NewClient()
 	if err != nil {
 		exitWithMessage(err.Error())
 	}
 
 	fmt.Println("Connecting to server...")
+	client := dbClientMap[clientKey]
+
 	err = client.Test()
 	if err != nil {
 		exitWithMessage(err.Error())
 	}
-
-	dbClient = client
 }
 
 func initOptions() {
@@ -174,7 +175,7 @@ func startServer() {
 	router.POST("/databases/:database/functions/:function", APICreateFunction)
 	router.DELETE("/databases/:database/procedures/:procedure/actions/drop", APIDropProcedure)
 	router.GET("/databases/:database/views/:view", APIViewDefinition)
-	router.GET("/search/:query", APISearch)
+	router.GET("/search/:query", apiSearch)
 	router.GET("/bookmarks", APIGetBookmarks)
 	router.POST("/bookmarks/:name", APISaveBookmark)
 	router.DELETE("/bookmarks/:name", APIDeleteBookmark)
@@ -209,11 +210,10 @@ func main() {
 	initOptions()
 
 	fmt.Println("mysqlweb version", VERSION)
-	initClient()
 
-	if dbClient != nil {
-		defer dbClient.db.Close()
-	}
+	dbClientMap = make(map[string]*Client)
+
+	initClient()
 
 	if !options.Debug {
 		gin.SetMode("release")

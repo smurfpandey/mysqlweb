@@ -5,6 +5,7 @@ var theDatabase = '';
 var charCollData = [];
 var strCharsetOptions = '';
 var queryTabCounter = 1;
+var dbConnId = '';
 var dbChildNode = [
   {
     label: 'Table',
@@ -34,6 +35,9 @@ function apiCall(method, path, params, cb) {
     method: method,
     cache: false,
     data: params,
+    headers: {
+      "X-CONN-ID": dbConnId
+    },
     success: function(data) {
       cb(data);
     },
@@ -1412,6 +1416,7 @@ $(document).ready(function() {
         connected = false;
         $("#connection_error").text(resp.error).show();
       } else {
+        dbConnId = resp.connId;
         connected = true;
         $("#connection_window").hide();
         loadDatabases();
