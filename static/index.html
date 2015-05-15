@@ -206,6 +206,8 @@
           </div>
         </div>
 
+
+
         <div id="connection_error" class="alert alert-danger"></div>
 
         <div id="dvConnectionFormBtns" class="form-group">
@@ -214,6 +216,21 @@
             <button type="reset" id="close_connection_window" class="btn btn-block btn-default">Cancel</button>
             <input type="button" id="btnSaveBookmark" class="btn btn-block btn-default" value="Save as Bookmark" />
           </div>
+        </div>
+      </form>
+      <form id="frmExistingConn" class="hide">
+        <div class="text-center">
+          <h4>Open connections</h4>
+        </div>
+
+        <hr />
+        <div class="connection-existing-group">
+          <div id="ulExistingConn" class="list-group">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <input id="btnShowConnPanel" type="button" class="btn btn-default btn-block" value="Create new connection" />
         </div>
       </form>
     </div>
@@ -497,7 +514,7 @@
         <div><strong>{{../name}}</strong></div>
         <span href="#">{{Username}}@{{Host}}:{{Port}}/{{Database}}</span>
       </div>
-      <span href="#" class="pull-right delete-bookmark js-delete-bookmark" data-bookmarkname="{{../name}}" title="Delete this bookmark">&times;</span>
+      <span class="pull-right delete-bookmark js-delete-bookmark" data-bookmarkname="{{../name}}" title="Delete this bookmark">&times;</span>
     </a>
     {{/with}}
     {{/each}}
@@ -506,6 +523,16 @@
       No bookmarks available
     </a>
     {{/unless}}
+  </script>
+  <script id="tmpl-connection-list" type="text/x-handlebars-template">
+    {{#each connections}}
+    <div class="list-group-item clearfix">
+      <div class="pull-left">
+        <span href="#">{{Username}}@{{Host}}:{{Port}}/{{Database}}</span>
+      </div>
+      <a href="#" class="pull-right btn btn-primary js-join-connection" data-connid="{{ConnID}}" data-username="{{Username}}" data-host="{{Host}}" data-database="{{Database}}" title="Use this connection">Use this</a>
+    </div>
+    {{/each}}
   </script>
 
   <script type="text/javascript" src="/static/js/jquery.js"></script>

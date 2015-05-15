@@ -29,6 +29,25 @@ var dbChildNode = [
   }
 ];
 
+function getFromTemplate(objData, templateId) {
+  var source = $("#" + templateId).html();
+  var template = Handlebars.compile(source);
+  var html = template(objData);
+
+  return html;
+}
+
+function generateFromTemplate(objData, templateId, $destContainer, iReplace) {
+  var html = getFromTemplate(objData, templateId);
+
+  if (iReplace) {
+    $destContainer.html(html);
+  } else {
+    $destContainer.append(html);
+  }
+}
+
+
 function apiCall(method, path, params, cb) {
   $.ajax({
     url: path,
@@ -1165,6 +1184,8 @@ function addShortcutTooltips() {
 
 function showConnectionSettings() {
   $("#connection_window").show();
+  $('#connection_form').removeClass('hide');
+  $('#frmExistingConn').addClass('hide');
   $('#pg_password').hidePassword(true, {
     toggle: {
       attr: {
@@ -1174,7 +1195,11 @@ function showConnectionSettings() {
   });
 }
 function showAvailableConnections(connections) {
-
+  $("#connection_window").show();
+  $('#connection_form').addClass('hide');
+  $('#frmExistingConn').removeClass('hide');
+  //Show a list of available connections
+  generateFromTemplate(connections, 'tmpl-connection-list', $('#ulExistingConn'), true);
 }
 
 function getConnectionString() {
@@ -1206,23 +1231,6 @@ function getConnectionString() {
   return url;
 }
 
-function getFromTemplate(objData, templateId) {
-  var source = $("#" + templateId).html();
-  var template = Handlebars.compile(source);
-  var html = template(objData);
-
-  return html;
-}
-
-function generateFromTemplate(objData, templateId, $destContainer, iReplace) {
-  var html = getFromTemplate(objData, templateId);
-
-  if (iReplace) {
-    $destContainer.html(html);
-  } else {
-    $destContainer.append(html);
-  }
-}
 
 function initModals() {
   $('#mdlAlterDB').modal({
@@ -1782,6 +1790,27 @@ $(document).ready(function() {
 
   });
 
+  $('#btnShowConnPanel').on('click', function(e) {
+    showConnectionSettings();
+  });
+
+  $('#ulExistingConn').on('click', '.js-join-connection', function(e) {
+    var $this = $(this);
+    var connId = $this.data('connid');
+    var userName = $this.data('username');
+    var host = $this.data('host');
+    theDatabase = $this.data('database');
+    dbConnId = connId;
+    connected = true;
+    $("#connection_window").hide();
+    loadDatabases();
+    $("#main").show();
+    //
+    fnSetConnectionInfo(userName, host);
+
+
+  });
+
   initModals();
 
   initEditor("custom_query");
@@ -1796,8 +1825,8 @@ $(document).ready(function() {
 
       //If connections are available, then show
       //else, showConnectionSettings
-      if (resp.connections) {
-        showAvailableConnections();
+      if (resp.connections && resp.connections.length > 0) {
+        showAvailableConnections(resp);
       } else {
         showConnectionSettings();
       }

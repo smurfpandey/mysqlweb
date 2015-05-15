@@ -56,7 +56,7 @@ func getConnParametersFromString(url string) (string, string, string, int) {
 	hostName := url[hostStart:hostEnd]
 
 	colonIndx = strings.Index(hostName, ":")
-	strPort := hostName[colonIndx:]
+	strPort := hostName[colonIndx+1:]
 	hostName = hostName[0:colonIndx]
 
 	port, _ := strconv.Atoi(strPort)

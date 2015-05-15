@@ -99,13 +99,24 @@ func APIConnect(c *gin.Context) {
 
 func APIClose(c *gin.Context) {
 	//Read client id from the headers
-	yoConnID := c.Request.Header.Get("X-CONN-ID")
-	dbClient := dbClientMap[yoConnID]
+	dbClientKey := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[dbClientKey]
 
 	err := dbClient.Close()
 
 	if err != nil {
 		c.JSON(400, NewError(err))
+	}
+
+	//Remove from
+	delete(dbClientMap, dbClientKey)
+	for index, element := range dbConnArr {
+		thisConnId := element.ConnID
+
+		if thisConnId == dbClientKey {
+			dbConnArr = append(dbConnArr[:index], dbConnArr[index+1:]...)
+			break
+		}
 	}
 
 	c.Writer.WriteHeader(204)
