@@ -14,7 +14,7 @@ import (
 )
 
 //Current version of the app
-const VERSION = "0.6.1"
+const VERSION = "0.7.1"
 
 var options struct {
 	Version  bool   `short:"v" long:"version" description:"Print version"`
@@ -33,7 +33,9 @@ var options struct {
 	SkipOpen bool   `short:"s" long:"skip-open" description:"Skip browser open on start"`
 }
 
-var dbClient *Client
+//var dbClient *Client
+var dbClientMap map[string]*Client
+var dbConnArr []Connection
 
 func exitWithMessage(message string) {
 	fmt.Println("Error:", message)
@@ -102,19 +104,30 @@ func initClient() {
 	if connectionSettingsBlank() {
 		return
 	}
-
-	client, err := NewClient()
+	url := getConnectionString()
+	clientKey, err := NewClientFromURL(url)
 	if err != nil {
 		exitWithMessage(err.Error())
 	}
 
 	fmt.Println("Connecting to server...")
+	client := dbClientMap[clientKey]
+
 	err = client.Test()
 	if err != nil {
 		exitWithMessage(err.Error())
 	}
 
-	dbClient = client
+	user, host, database, port := getConnParametersFromString(url)
+	dbConn := Connection{
+		Host:     host,
+		Port:     port,
+		Username: user,
+		Database: database,
+		ConnID:   clientKey,
+	}
+
+	dbConnArr = append(dbConnArr, dbConn)
 }
 
 func initOptions() {
@@ -174,7 +187,7 @@ func startServer() {
 	router.POST("/databases/:database/functions/:function", APICreateFunction)
 	router.DELETE("/databases/:database/procedures/:procedure/actions/drop", APIDropProcedure)
 	router.GET("/databases/:database/views/:view", APIViewDefinition)
-	router.GET("/search/:query", APISearch)
+	router.GET("/search/:query", apiSearch)
 	router.GET("/bookmarks", APIGetBookmarks)
 	router.POST("/bookmarks/:name", APISaveBookmark)
 	router.DELETE("/bookmarks/:name", APIDeleteBookmark)
@@ -209,11 +222,10 @@ func main() {
 	initOptions()
 
 	fmt.Println("mysqlweb version", VERSION)
-	initClient()
 
-	if dbClient != nil {
-		defer dbClient.db.Close()
-	}
+	dbClientMap = make(map[string]*Client)
+
+	initClient()
 
 	if !options.Debug {
 		gin.SetMode("release")

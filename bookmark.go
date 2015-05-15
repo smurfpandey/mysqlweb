@@ -17,6 +17,7 @@ type Connection struct {
 	Port     int
 	Username string
 	Database string
+	ConnID   string
 }
 
 type Bookmark struct {

@@ -23,6 +23,10 @@ type Error struct {
 	Message string `json:"error"`
 }
 
+type Info struct {
+	Connection []Connection `json:"connections"`
+}
+
 //NewError creates new Error struct from go's error
 func NewError(err error) Error {
 	return Error{err.Error()}
@@ -59,11 +63,13 @@ func APIConnect(c *gin.Context) {
 		return
 	}
 
-	client, err := NewClientFromURL(url)
+	clientKey, err := NewClientFromURL(url)
 	if err != nil {
 		c.JSON(400, Error{err.Error()})
 		return
 	}
+
+	client := dbClientMap[clientKey]
 
 	err = client.Test()
 	if err != nil {
@@ -71,24 +77,46 @@ func APIConnect(c *gin.Context) {
 		return
 	}
 
-	info, err := client.Info()
-
-	if err == nil {
-		if dbClient != nil {
-			dbClient.db.Close()
-		}
-
-		dbClient = client
+	user, host, database, port := getConnParametersFromString(url)
+	dbConn := Connection{
+		Host:     host,
+		Port:     port,
+		Username: user,
+		Database: database,
+		ConnID:   clientKey,
 	}
 
-	c.JSON(200, info.Format()[0])
+	dbConnArr = append(dbConnArr, dbConn)
+
+	info, err := client.Info()
+
+	formatedRes := info.Format()[0]
+
+	formatedRes["connId"] = clientKey
+
+	c.JSON(200, formatedRes)
 }
 
 func APIClose(c *gin.Context) {
+	//Read client id from the headers
+	dbClientKey := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[dbClientKey]
+
 	err := dbClient.Close()
 
 	if err != nil {
 		c.JSON(400, NewError(err))
+	}
+
+	//Remove from
+	delete(dbClientMap, dbClientKey)
+	for index, element := range dbConnArr {
+		thisConnId := element.ConnID
+
+		if thisConnId == dbClientKey {
+			dbConnArr = append(dbConnArr[:index], dbConnArr[index+1:]...)
+			break
+		}
 	}
 
 	c.Writer.WriteHeader(204)
@@ -96,6 +124,10 @@ func APIClose(c *gin.Context) {
 
 //APIGetDatabases will get you all databases in system
 func APIGetDatabases(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	names, err := dbClient.Databases()
 
 	if err != nil {
@@ -108,6 +140,10 @@ func APIGetDatabases(c *gin.Context) {
 
 //APIGetDatabaseTables will give the tables of a database
 func APIGetDatabaseTables(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	res, err := dbClient.DatabaseTables(c.Params.ByName("database"))
 
 	if err != nil {
@@ -120,6 +156,10 @@ func APIGetDatabaseTables(c *gin.Context) {
 
 //APIGetDatabaseViews will give the views of a database
 func APIGetDatabaseViews(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	res, err := dbClient.DatabaseViews(c.Params.ByName("database"))
 
 	if err != nil {
@@ -132,6 +172,10 @@ func APIGetDatabaseViews(c *gin.Context) {
 
 //APIGetDatabaseProcedures will give the stored procedures of a database
 func APIGetDatabaseProcedures(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	res, err := dbClient.DatabaseProcedures(c.Params.ByName("database"))
 
 	if err != nil {
@@ -144,6 +188,10 @@ func APIGetDatabaseProcedures(c *gin.Context) {
 
 //APIGetDatabaseFunctions will give the functions of a database
 func APIGetDatabaseFunctions(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	res, err := dbClient.DatabaseFunctions(c.Params.ByName("database"))
 
 	if err != nil {
@@ -187,6 +235,10 @@ func APIExplainQuery(c *gin.Context) {
 }
 
 func APIGetColumnOfTable(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	res, err := dbClient.TableColumns(c.Params.ByName("database"), c.Params.ByName("table"))
 
 	if err != nil {
@@ -199,6 +251,10 @@ func APIGetColumnOfTable(c *gin.Context) {
 
 //APIGetTableInfo returns info about table like row_count, data size etc.
 func APIGetTableInfo(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	res, err := dbClient.TableInfo(c.Params.ByName("table"))
 
 	if err != nil {
@@ -211,13 +267,27 @@ func APIGetTableInfo(c *gin.Context) {
 
 //APIHistory will return query history of current dbClient
 func APIHistory(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	c.JSON(200, dbClient.history)
 }
 
 //APIInfo returns information about the current db connecction
 func APIInfo(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	if dbClient == nil {
-		c.JSON(400, Error{"Not connected"})
+		//Also send the available connections list
+
+		formatedRes := &Info{
+			Connection: dbConnArr,
+		}
+
+		c.JSON(400, formatedRes)
 		return
 	}
 
@@ -238,6 +308,10 @@ func APIInfo(c *gin.Context) {
 
 //APITableIndexes returns the indexs of a table
 func APITableIndexes(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	res, err := dbClient.TableIndexes(c.Params.ByName("table"))
 
 	if err != nil {
@@ -250,6 +324,10 @@ func APITableIndexes(c *gin.Context) {
 
 //APIProcedureParameters returns the parameters of a procedure
 func APIProcedureParameters(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	res, err := dbClient.ProcedureParameters(c.Params.ByName("procedure"), c.Request.FormValue("database"))
 
 	if err != nil {
@@ -263,6 +341,10 @@ func APIProcedureParameters(c *gin.Context) {
 //APIGetCollationCharSet returns the character sets and collation available in
 //database
 func APIGetCollationCharSet(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	res, err := dbClient.DatabaseCollationCharSet()
 
 	if err != nil {
@@ -275,6 +357,10 @@ func APIGetCollationCharSet(c *gin.Context) {
 
 //APIAlterDatabase alter database to change charset & collation
 func APIAlterDatabase(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	res, err := dbClient.AlterDatabase(c.Params.ByName("database"),
 		c.Request.FormValue("charset"), c.Request.FormValue("collation"))
 
@@ -288,6 +374,10 @@ func APIAlterDatabase(c *gin.Context) {
 
 //APIDropDatabase drops the given database from the system
 func APIDropDatabase(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	_, err := dbClient.DropDatabase(c.Params.ByName("database"))
 
 	if err != nil {
@@ -300,6 +390,10 @@ func APIDropDatabase(c *gin.Context) {
 
 //APIDropTable will drop the table from this database
 func APIDropTable(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	_, err := dbClient.DropTable(c.Params.ByName("database"), c.Params.ByName("table"))
 
 	if err != nil {
@@ -312,6 +406,10 @@ func APIDropTable(c *gin.Context) {
 
 //APITruncateTable truncates the table
 func APITruncateTable(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	_, err := dbClient.TruncateTable(c.Params.ByName("database"), c.Params.ByName("table"))
 
 	if err != nil {
@@ -324,6 +422,10 @@ func APITruncateTable(c *gin.Context) {
 
 //APIProcedureDefinition get definition of a procedure
 func APIProcedureDefinition(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	res, err := dbClient.ProcedureDefinition("procedure", c.Params.ByName("database"), c.Params.ByName("procedure"))
 
 	if err != nil {
@@ -336,6 +438,10 @@ func APIProcedureDefinition(c *gin.Context) {
 
 //APIFunctionDefinition get definition of a function
 func APIFunctionDefinition(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	res, err := dbClient.ProcedureDefinition("function", c.Params.ByName("database"), c.Params.ByName("function"))
 
 	if err != nil {
@@ -348,6 +454,10 @@ func APIFunctionDefinition(c *gin.Context) {
 
 //APICreateProcedure creates/edits a stored procedure
 func APICreateProcedure(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	dbName := c.Params.ByName("database")
 	procName := c.Params.ByName("procedure")
 	procDef := c.Request.FormValue("definition")
@@ -364,6 +474,10 @@ func APICreateProcedure(c *gin.Context) {
 
 //APICreateFunction creates/edits a function
 func APICreateFunction(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	dbName := c.Params.ByName("database")
 	procName := c.Params.ByName("function")
 	procDef := c.Request.FormValue("definition")
@@ -380,6 +494,10 @@ func APICreateFunction(c *gin.Context) {
 
 //APIDropProcedure drops the procedure
 func APIDropProcedure(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	_, err := dbClient.DropProcedure("PROCEDURE", c.Params.ByName("database"), c.Params.ByName("procedure"))
 
 	if err != nil {
@@ -392,6 +510,10 @@ func APIDropProcedure(c *gin.Context) {
 
 //APIViewDefinition gets the definition of a view
 func APIViewDefinition(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	res, err := dbClient.ViewDefinition(c.Params.ByName("database"), c.Params.ByName("view"))
 
 	if err != nil {
@@ -402,7 +524,11 @@ func APIViewDefinition(c *gin.Context) {
 	c.JSON(200, res)
 }
 
-func APISearch(c *gin.Context) {
+func apiSearch(c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	res, err := dbClient.Search(c.Params.ByName("query"))
 
 	if err != nil {
@@ -415,6 +541,10 @@ func APISearch(c *gin.Context) {
 
 //APIHandleQuery handles thq query and return the resultset as JSON
 func APIHandleQuery(query string, c *gin.Context) {
+	//Read client id from the headers
+	yoConnID := c.Request.Header.Get("X-CONN-ID")
+	dbClient := dbClientMap[yoConnID]
+
 	result, err := dbClient.Query(query)
 
 	if err != nil {

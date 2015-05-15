@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -42,6 +43,27 @@ func getHostUserFromConnString(url string) (string, string) {
 	hostName = hostName[0:colonIndx]
 
 	return userName, hostName
+}
+
+func getConnParametersFromString(url string) (string, string, string, int) {
+	//user:password@tcp(host:port)/database
+	colonIndx := strings.Index(url, ":")
+	userName := url[0:colonIndx]
+
+	hostStart := strings.Index(url, "tcp(") + 4
+	hostEnd := strings.Index(url, ")/")
+
+	hostName := url[hostStart:hostEnd]
+
+	colonIndx = strings.Index(hostName, ":")
+	strPort := hostName[colonIndx+1:]
+	hostName = hostName[0:colonIndx]
+
+	port, _ := strconv.Atoi(strPort)
+
+	database := url[hostEnd+2:]
+
+	return userName, hostName, database, port
 }
 
 // exists returns whether the given file or directory exists or not
