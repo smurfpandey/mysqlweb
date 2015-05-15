@@ -14,7 +14,7 @@ import (
 )
 
 //Current version of the app
-const VERSION = "0.6.1"
+const VERSION = "0.7.1"
 
 var options struct {
 	Version  bool   `short:"v" long:"version" description:"Print version"`
@@ -35,6 +35,7 @@ var options struct {
 
 //var dbClient *Client
 var dbClientMap map[string]*Client
+var dbConnArr []Connection
 
 func exitWithMessage(message string) {
 	fmt.Println("Error:", message)
@@ -103,8 +104,8 @@ func initClient() {
 	if connectionSettingsBlank() {
 		return
 	}
-
-	clientKey, err := NewClient()
+	url := getConnectionString()
+	clientKey, err := NewClientFromURL(url)
 	if err != nil {
 		exitWithMessage(err.Error())
 	}
@@ -116,6 +117,17 @@ func initClient() {
 	if err != nil {
 		exitWithMessage(err.Error())
 	}
+
+	user, host, database, port := getConnParametersFromString(url)
+	dbConn := Connection{
+		Host:     host,
+		Port:     port,
+		Username: user,
+		Database: database,
+		ConnID:   clientKey,
+	}
+
+	dbConnArr = append(dbConnArr, dbConn)
 }
 
 func initOptions() {

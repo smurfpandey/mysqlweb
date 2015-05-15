@@ -27,27 +27,19 @@ type Result struct {
 	Rows    []Row    `json:"rows"`
 }
 
-//NewClient will create a new client
-func NewClient() (string, error) {
-	url := getConnectionString()
-
-	return NewClientFromURL(url)
-}
-
 //NewClientFromURL will create a new mysql client using the URL provided in parameters
 func NewClientFromURL(url string) (string, error) {
-	fmt.Println(url)
+
 	db, err := sqlx.Open("mysql", url)
 
 	if err != nil {
 		return "", err
 	}
 
-	user, host := getHostUserFromConnString(url)
+	user, host, _, _ := getConnParametersFromString(url)
 
 	u4, err := uuid.NewV4()
 	if err != nil {
-		fmt.Println("error:", err)
 		return "", err
 	}
 

@@ -23,6 +23,10 @@ type Error struct {
 	Message string `json:"error"`
 }
 
+type Info struct {
+	Connection []Connection `json:"connections"`
+}
+
 //NewError creates new Error struct from go's error
 func NewError(err error) Error {
 	return Error{err.Error()}
@@ -72,6 +76,17 @@ func APIConnect(c *gin.Context) {
 		c.JSON(400, Error{err.Error()})
 		return
 	}
+
+	user, host, database, port := getConnParametersFromString(url)
+	dbConn := Connection{
+		Host:     host,
+		Port:     port,
+		Username: user,
+		Database: database,
+		ConnID:   clientKey,
+	}
+
+	dbConnArr = append(dbConnArr, dbConn)
 
 	info, err := client.Info()
 
@@ -255,7 +270,13 @@ func APIInfo(c *gin.Context) {
 	dbClient := dbClientMap[yoConnID]
 
 	if dbClient == nil {
-		c.JSON(400, Error{"Not connected"})
+		//Also send the available connections list
+
+		formatedRes := &Info{
+			Connection: dbConnArr,
+		}
+
+		c.JSON(400, formatedRes)
 		return
 	}
 

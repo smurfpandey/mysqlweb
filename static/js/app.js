@@ -1173,6 +1173,9 @@ function showConnectionSettings() {
     }
   });
 }
+function showAvailableConnections(connections) {
+
+}
 
 function getConnectionString() {
   var url = $.trim($("#connection_url").val());
@@ -1787,9 +1790,17 @@ $(document).ready(function() {
   $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
 
   apiCall("get", "/info", {}, function(resp) {
-    if (resp.error) {
+    if (!dbConnId) {
       connected = false;
-      showConnectionSettings();
+      //showConnectionSettings();
+
+      //If connections are available, then show
+      //else, showConnectionSettings
+      if (resp.connections) {
+        showAvailableConnections();
+      } else {
+        showConnectionSettings();
+      }
     } else {
       connected = true;
       theDatabase = resp['DATABASE()'];
