@@ -77,3 +77,63 @@ func ExistsFileFolder(path string) (bool, error) {
 	}
 	return false, err
 }
+
+func compareVersion(currVer string, newVer string) int {
+	if currVer == newVer {
+		return 0
+	}
+
+	//Split by .
+	//Compare major, minor versions
+
+	arrCurr := strings.Split(currVer, ".")
+	arrNext := strings.Split(newVer, ".")
+
+	intMajorCurr, err := strconv.Atoi(arrCurr[0])
+	if err != nil {
+		return 0
+	}
+	intMajorNext, err := strconv.Atoi(arrNext[0])
+	if err != nil {
+		return 0
+	}
+
+	if intMajorCurr < intMajorNext {
+		return 1 //Next is the new one
+	} else if intMajorCurr > intMajorNext {
+		return -1 //Next is the old one
+	}
+
+	//Major version is same, check the minor update
+	intMinorCurr, _ := strconv.Atoi(arrCurr[1])
+	intMinorNext, _ := strconv.Atoi(arrNext[1])
+
+	if intMinorCurr < intMinorNext {
+		return 1 //Next is the new one
+	} else if intMinorCurr > intMinorNext {
+		return -1 //Next is the old one
+	}
+
+	//Check for patch version
+	lenCurr := len(arrCurr)
+	lenNext := len(arrNext)
+
+	//
+	if lenCurr < lenNext {
+		return 1 //Next is a patch version & latest one
+	}
+
+	if lenCurr > 2 && lenNext > 2 {
+		//There is a patch version
+		intPatchCurr, _ := strconv.Atoi(arrCurr[2])
+		intPatchNext, _ := strconv.Atoi(arrNext[2])
+
+		if intPatchCurr < intPatchNext {
+			return 1 //Next is the new one
+		} else if intPatchCurr > intPatchNext {
+			return -1 //Next is the old one
+		}
+	}
+
+	return 0
+}
