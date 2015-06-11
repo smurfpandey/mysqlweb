@@ -644,3 +644,13 @@ func APIServeAsset(c *gin.Context) {
 
 	c.Data(200, assetContentType(file), data)
 }
+
+func getUpdate(c *gin.Context) {
+	update := checkForUpdate(VERSION)
+
+	if update == nil {
+		c.Writer.WriteHeader(204)
+	}
+
+	c.JSON(200, update)
+}

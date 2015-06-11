@@ -1842,4 +1842,28 @@ $(document).ready(function() {
       fnSetConnectionInfo(userName, hostName);
     }
   });
+
+  //Check for updates
+  apiCall("get", "/updates", {}, function(data) {
+    if (typeof (data) === 'undefined' || data === null) {
+      //No updates
+      return;
+    }
+
+    // Display an info toast with no title
+    var toastTitle = 'Version ' + data.version + ' is out on Github';
+    var desc = data.description;
+    if (desc.length > 144) {
+      desc = desc.substr(0, 140) + '...';
+    }
+
+    var toastText = '<b>What\'s new: </b>' + desc + '<br>';
+    toastr.info(toastText, toastTitle, {
+      timeOut: 0,
+      extendedTimeOut: 0,
+      onclick: function() {
+        window.open(data.release_url, '_blank');
+      }
+    });
+  });
 });
