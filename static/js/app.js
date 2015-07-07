@@ -1460,6 +1460,21 @@ $(document).ready(function() {
     e.preventDefault();
   });
 
+  $('#ulQueryTab').on('shown.bs.tab', '.js-tab-btn', function(e) {
+    var $tabBtn = $(e.target);
+
+    var targetDivId = $tabBtn.attr('href');
+    var $targetDiv = $(targetDivId).find('.query-editor');
+
+    var editor = $targetDiv.data('ace-editor');
+    editor.focus(); //To focus the ace editor
+    var session = editor.getSession();
+    //Get the number of lines
+    var count = session.getLength();
+    //Go to end of the last line
+    editor.gotoLine(count, session.getLine(count - 1).length);
+  });
+
   $('#body').on('click', '.close-query-tab', function(e) {
     //Get the tab div of this
     var $tabButton = $(this).parent();

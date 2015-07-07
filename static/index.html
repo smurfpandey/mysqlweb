@@ -63,7 +63,7 @@
           <!-- Nav tabs -->
           <ul id="ulQueryTab" class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active">
-              <a href="#query_tab_1" aria-controls="home" role="tab" data-toggle="tab">
+              <a href="#query_tab_1" aria-controls="home" role="tab" data-toggle="tab" class="js-tab-btn">
                 <span aria-hidden="true" class="pull-right close-query-tab hide">&times;</span>
                 Query 1
               </a>
@@ -496,7 +496,7 @@
 
   <script id="tmpl-query-tab-btn" type="text/x-handlebars-template">
     <li role="presentation">
-      <a href="#query_tab_{{tab_id}}" id="query_tab_btn_{{tab_id}}" role="tab" data-toggle="tab">
+      <a href="#query_tab_{{tab_id}}" id="query_tab_btn_{{tab_id}}" role="tab" data-toggle="tab" class="js-tab-btn">
         <span aria-hidden="true" class="pull-right close-query-tab">&times;</span>
         {{#if tab_name}}
         {{tab_name}}
