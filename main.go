@@ -14,7 +14,7 @@ import (
 )
 
 //Current version of the app
-const VERSION = "0.8.1"
+const VERSION = "0.8.2"
 
 var options struct {
 	Version  bool   `short:"v" long:"version" description:"Print version"`
