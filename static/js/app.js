@@ -43,7 +43,7 @@ function generateFromTemplate(objData, templateId, $destContainer, iReplace) {
 }
 
 
-function apiCall(method, path, params, cb) {
+function apiCall(method, path, params, cb, isBackground) {
   $.ajax({
     url: path,
     method: method,
@@ -52,11 +52,19 @@ function apiCall(method, path, params, cb) {
     headers: {
       "X-CONN-ID": dbConnId
     },
+    beforeSend: function() {
+      if(!isBackground){
+        $.blockUI();
+      }      
+    },
     success: function(data) {
       cb(data);
     },
     error: function(xhr, status, data) {
       cb(jQuery.parseJSON(xhr.responseText));
+    },
+    complete: function(){
+      $.unblockUI();
     }
   });
 }
@@ -1892,5 +1900,5 @@ $(document).ready(function() {
         window.open(data.release_url, '_blank');
       }
     });
-  });
+  }, true);
 });
