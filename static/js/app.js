@@ -6,28 +6,23 @@ var charCollData = [];
 var strCharsetOptions = '';
 var queryTabCounter = 1;
 var dbConnId = '';
-var dbChildNode = [
-  {
-    label: 'Table',
-    load_on_demand: true,
-    type: 'tbl-holder'
-  },
-  {
-    label: 'View',
-    load_on_demand: true,
-    type: 'vw-holder'
-  },
-  {
-    label: 'Procedure',
-    load_on_demand: true,
-    type: 'sp-holder'
-  },
-  {
-    label: 'Function',
-    load_on_demand: true,
-    type: 'fn-holder'
-  }
-];
+var dbChildNode = [{
+  label: 'Table',
+  load_on_demand: true,
+  type: 'tbl-holder'
+}, {
+  label: 'View',
+  load_on_demand: true,
+  type: 'vw-holder'
+}, {
+  label: 'Procedure',
+  load_on_demand: true,
+  type: 'sp-holder'
+}, {
+  label: 'Function',
+  load_on_demand: true,
+  type: 'fn-holder'
+}];
 
 function getFromTemplate(objData, templateId) {
   var source = $("#" + templateId).html();
@@ -80,76 +75,99 @@ String.prototype.splice = function(idx, rem, s) {
 function getTableStructure(dbName, tblName, cb) {
   apiCall("get", "databases/" + dbName + "/tables/" + tblName + "/column", {}, cb);
 }
+
 function getTablesOfDatabase(dbName, cb) {
   apiCall("get", "/databases/" + dbName + "/tables", {}, cb);
 }
+
 function getViewsOfDatabase(dbName, cb) {
   apiCall("get", "/databases/" + dbName + "/views", {}, cb);
 }
+
 function getProceduresOfDatabase(dbName, cb) {
   apiCall("get", "/databases/" + dbName + "/procedures", {}, cb);
 }
+
 function getFunctionsOfDatabase(dbName, cb) {
   apiCall("get", "/databases/" + dbName + "/functions", {}, cb);
 }
+
 function getTableIndexes(table, cb) {
   apiCall("get", "/tables/" + table + "/indexes", {}, cb);
 }
+
 function getHistory(cb) {
   apiCall("get", "/history", {}, cb);
 }
+
 function getDatabases(cb) {
   apiCall("get", "/databases", {}, cb);
 }
+
 function setDefaultDatabase(dbName, cb) {
   apiCall("post", "/databases/" + dbName + "/actions/default", {}, cb);
 }
+
 function getProcedureParameters(procedure, dbName, cb) {
   apiCall("get", "/procedures/" + procedure + "/parameters?database=" + dbName, {}, cb);
 }
+
 function getAllCollationCharSet(cb) {
   apiCall("get", "/collation", {}, cb);
 }
+
 function alterDatabase(dbName, data, cb) {
   apiCall("post", "/databases/" + dbName + "/actions/alter", data, cb);
 }
+
 function dropDatabase(dbName, cb) {
   apiCall("delete", "/databases/" + dbName + "/actions/drop", {}, cb);
 }
+
 function dropTable(dbName, tblName, cb) {
   apiCall("delete", "/databases/" + dbName + "/tables/" + tblName + "/actions/drop", {}, cb);
 }
+
 function getProcDefiniton(dbName, procName, cb) {
   apiCall("get", "/databases/" + dbName + "/procedures/" + procName, {}, cb);
 }
+
 function getFuncDefiniton(dbName, funcName, cb) {
   apiCall("get", "/databases/" + dbName + "/functions/" + funcName, {}, cb);
 }
+
 function editProcedure(dbName, procName, procDef, cb) {
   apiCall("post", "/databases/" + dbName + "/procedures/" + procName, {
     definition: procDef
   }, cb);
 }
+
 function editFunction(dbName, fnName, fnDef, cb) {
   apiCall("post", "/databases/" + dbName + "/functions/" + fnName, {
     definition: fnDef
   }, cb);
 }
+
 function getViewDefiniton(dbName, viewName, cb) {
   apiCall("get", "/databases/" + dbName + "/views/" + viewName, {}, cb);
 }
+
 function closeConnection(cb) {
   apiCall("delete", "/disconnect", {}, cb);
 }
+
 function apiSearchDatabase(query, cb) {
   apiCall("get", "/search/" + query, {}, cb);
 }
+
 function getAllBookmarks(cb) {
   apiCall("get", "/bookmarks", {}, cb);
 }
+
 function saveBookmark(bookmarkName, bookmarkData, cb) {
   apiCall("post", "/bookmarks/" + bookmarkName, bookmarkData, cb);
 }
+
 function deleteBookmark(bookmarkName, cb) {
   apiCall("delete", "/bookmarks/" + bookmarkName, {}, cb);
 }
@@ -164,14 +182,14 @@ var fnCreateEditorTab = function(editorName, editorData, editorTitle, objData, e
 
   //Create query tab
   generateFromTemplate({
-    tab_id: queryTabCounter,
-    tab_mode: objData.mode || 'proc',
-    tab_title: editorTitle,
-    proc_name: objData.proc_name,
-    db_name: objData.db_name,
-    proc_type: objData.proc_type,
-    is_new: objData.is_new
-  },
+      tab_id: queryTabCounter,
+      tab_mode: objData.mode || 'proc',
+      tab_title: editorTitle,
+      proc_name: objData.proc_name,
+      db_name: objData.db_name,
+      proc_type: objData.proc_type,
+      is_new: objData.is_new
+    },
     'tmpl-query-tab', $('#body .tab-content'), false);
 
   //Create tab button
@@ -237,8 +255,7 @@ var fnShowTheDatabase = function() {
 var setNoLoadOnDemand = function(node) {
   $tree.tree(
     'updateNode',
-    node,
-    {
+    node, {
       load_on_demand: false
     }
   );
@@ -354,7 +371,7 @@ var showDropDBPopup = function(dbName) {
 
     dropDatabase(dbName, function(result) {
 
-      if (typeof (result) === 'undefined') {
+      if (typeof(result) === 'undefined') {
         //remove this ndoe from the tree
         fnRemoveNodeInTree(dbName, 'database');
         $thisModel.modal('hide');
@@ -391,7 +408,7 @@ var showDropTablePopup = function(tblName, treeNode) {
 
     dropTable(dbName, tblName, function(result) {
 
-      if (typeof (result) === 'undefined') {
+      if (typeof(result) === 'undefined') {
         //remove this ndoe from the tree
         fnRemoveNodeInTree(tblName, 'table');
         $thisModel.modal('hide');
@@ -567,7 +584,7 @@ function loadDatabases() {
     //Check if the tree alreay exists
     var thisTree = $('#database-tree').data('simple_widget_tree');
 
-    if (typeof (thisTree) === 'object') {
+    if (typeof(thisTree) === 'object') {
       //Just load data
       $('#database-tree').tree('loadData', objData);
     } else {
@@ -807,28 +824,22 @@ function forTheTree() {
     fnShowTheDatabase();
   });
 
-  var menuArray = [
-    {
-      type: 'table',
-      menu_element: $('#tblMenu')
-    },
-    {
-      type: 'database',
-      menu_element: $('#dbMenu')
-    },
-    {
-      type: 'procedure',
-      menu_element: $('#spMenu')
-    },
-    {
-      type: 'function',
-      menu_element: $('#fnMenu')
-    },
-    {
-      type: 'view',
-      menu_element: $('#vwMenu')
-    }
-  ];
+  var menuArray = [{
+    type: 'table',
+    menu_element: $('#tblMenu')
+  }, {
+    type: 'database',
+    menu_element: $('#dbMenu')
+  }, {
+    type: 'procedure',
+    menu_element: $('#spMenu')
+  }, {
+    type: 'function',
+    menu_element: $('#fnMenu')
+  }, {
+    type: 'view',
+    menu_element: $('#vwMenu')
+  }];
 
   $tree.jqTreeContextMenu(menuArray, {
     "edit": function(node) {
@@ -900,10 +911,10 @@ function unescapeHtml(str) {
 
 function resetTable($result) {
   $result.
-    attr("data-mode", "").
-    text("").
-    removeClass("empty").
-    removeClass("no-crop");
+  attr("data-mode", "").
+  text("").
+  removeClass("empty").
+  removeClass("no-crop");
 }
 
 function buildTable(results, $result) {
@@ -1194,6 +1205,7 @@ function showConnectionSettings() {
     }
   });
 }
+
 function showAvailableConnections(connections) {
   $("#connection_window").show();
   $('#connection_form').addClass('hide');
@@ -1311,9 +1323,9 @@ $(document).ready(function() {
     }
 
     var textarea = $("<textarea />").
-      text(value).
-      addClass("form-control").
-      css("width", $(this).css("width"));
+    text(value).
+    addClass("form-control").
+    css("width", $(this).css("width"));
 
     if (value.split("\n").length >= 3) {
       textarea.css("height", "200px");
@@ -1332,7 +1344,7 @@ $(document).ready(function() {
   $("#close_connection").on("click", function() {
     if (connected) {
       closeConnection(function(data) {
-        if (typeof (data) === 'undefined') {
+        if (typeof(data) === 'undefined') {
           connected = false;
           showConnectionSettings();
           return;
@@ -1522,49 +1534,51 @@ $(document).ready(function() {
     }
 
     switch (procType) {
-      case "PROC": {
-        editProcedure(dbName, procName, procDef, function(data) {
-          if (data.error) {
-            swal({
-              title: "Error!",
-              text: data.error,
-              type: "error",
-              confirmButtonText: "Cool"
-            });
-          } else {
-            swal({
-              title: "Nice!",
-              text: "Procedure saved successfully",
-              type: "success",
-              confirmButtonText: "Cool"
-            });
+      case "PROC":
+        {
+          editProcedure(dbName, procName, procDef, function(data) {
+            if (data.error) {
+              swal({
+                title: "Error!",
+                text: data.error,
+                type: "error",
+                confirmButtonText: "Cool"
+              });
+            } else {
+              swal({
+                title: "Nice!",
+                text: "Procedure saved successfully",
+                type: "success",
+                confirmButtonText: "Cool"
+              });
 
-            $thisQueryDiv.data('isnew', false);
-          }
-        });
-        break;
+              $thisQueryDiv.data('isnew', false);
+            }
+          });
+          break;
         }
-      case "FUNC": {
-        editFunction(dbName, procName, procDef, function(data) {
-          if (data.error) {
-            swal({
-              title: "Error!",
-              text: data.error,
-              type: "error",
-              confirmButtonText: "Cool"
-            });
-          } else {
-            swal({
-              title: "Nice!",
-              text: "Procedure saved successfully",
-              type: "success",
-              confirmButtonText: "Cool"
-            });
+      case "FUNC":
+        {
+          editFunction(dbName, procName, procDef, function(data) {
+            if (data.error) {
+              swal({
+                title: "Error!",
+                text: data.error,
+                type: "error",
+                confirmButtonText: "Cool"
+              });
+            } else {
+              swal({
+                title: "Nice!",
+                text: "Procedure saved successfully",
+                type: "success",
+                confirmButtonText: "Cool"
+              });
 
-            $thisQueryDiv.data('isnew', false);
-          }
-        });
-        break;
+              $thisQueryDiv.data('isnew', false);
+            }
+          });
+          break;
         }
     }
 
@@ -1604,7 +1618,7 @@ $(document).ready(function() {
 
         var a = objData[dbName];
 
-        if (typeof (a) === "undefined") {
+        if (typeof(a) === "undefined") {
           objData[dbName] = [];
           arrDB.push(dbName);
         }
@@ -1761,7 +1775,7 @@ $(document).ready(function() {
       };
 
       saveBookmark(bookmarkName, objData, function(data) {
-        if (typeof (data) === 'undefined') {
+        if (typeof(data) === 'undefined') {
           //Bookmark saved
           swal.close();
 
@@ -1787,7 +1801,7 @@ $(document).ready(function() {
     bookmarkName = encodeURIComponent(bookmarkName);
 
     deleteBookmark(bookmarkName, function(data) {
-      if (typeof (data) === 'undefined') {
+      if (typeof(data) === 'undefined') {
         //Bookmark deleted
         $this.parents('.js-bookmark-link').remove();
         return;
@@ -1831,8 +1845,6 @@ $(document).ready(function() {
   initEditor("custom_query");
   addShortcutTooltips();
 
-  $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
-
   apiCall("get", "/info", {}, function(resp) {
     if (!dbConnId) {
       connected = false;
@@ -1860,7 +1872,7 @@ $(document).ready(function() {
 
   //Check for updates
   apiCall("get", "/updates", {}, function(data) {
-    if (typeof (data) === 'undefined' || data === null) {
+    if (typeof(data) === 'undefined' || data === null) {
       //No updates
       return;
     }
