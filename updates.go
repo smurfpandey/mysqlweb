@@ -2,7 +2,7 @@ package main
 
 import (
 	"time"
-
+	"strings"
 	"github.com/octokit/go-octokit/octokit"
 )
 
@@ -28,10 +28,19 @@ func checkForUpdate(currVer string) *Update {
 		return nil
 	}
 
+		
 	latestRelease := releases[0]
 
-	isNew := compareVersion(currVer, latestRelease.TagName)
+	latestVersion := latestRelease.TagName	 
 
+	if strings.HasPrefix(latestVersion, "v") {
+		//Remove v then compare
+		latestVersion = strings.Replace(latestVersion, "v", "", 1)
+	}
+
+	isNew := compareVersion(currVer, latestVersion)
+
+		
 	if isNew == 0 || isNew == -1 {
 		return nil
 	}

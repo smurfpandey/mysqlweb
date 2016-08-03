@@ -650,6 +650,7 @@ func getUpdate(c *gin.Context) {
 
 	if update == nil {
 		c.Writer.WriteHeader(204)
+		return
 	}
 
 	c.JSON(200, update)
