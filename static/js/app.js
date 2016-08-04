@@ -53,9 +53,9 @@ function apiCall(method, path, params, cb, isBackground) {
       "X-CONN-ID": dbConnId
     },
     beforeSend: function() {
-      if(!isBackground){
+      if (!isBackground) {
         $.blockUI();
-      }      
+      }
     },
     success: function(data) {
       cb(data);
@@ -63,7 +63,7 @@ function apiCall(method, path, params, cb, isBackground) {
     error: function(xhr, status, data) {
       cb(jQuery.parseJSON(xhr.responseText));
     },
-    complete: function(){
+    complete: function() {
       $.unblockUI();
     }
   });
@@ -1844,8 +1844,11 @@ $(document).ready(function() {
     $("#main").show();
     //
     fnSetConnectionInfo(userName, host);
+  });
 
-
+  //Prevent accidental navigation
+  $(window).on('beforeunload', function() {
+    return "Are you sure you want to exit? All queries will be lost :(";
   });
 
   initModals();
