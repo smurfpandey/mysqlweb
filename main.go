@@ -174,7 +174,7 @@ func startServer() {
 	router.GET("/explain", APIExplainQuery)
 	router.POST("/explain", APIExplainQuery)
 	router.GET("/history", APIHistory)
-	router.GET("/static/:type/:name", APIServeAsset)
+	router.GET("/static/*filepath", APIServeAsset)
 	router.GET("/procedures/:procedure/parameters", APIProcedureParameters)
 	router.GET("/collation", APIGetCollationCharSet)
 	router.POST("/databases/:database/actions/alter", APIAlterDatabase)

@@ -625,9 +625,8 @@ func APIDeleteBookmark(c *gin.Context) {
 //APIServeAsset serves the static assets
 func APIServeAsset(c *gin.Context) {
 	file := fmt.Sprintf(
-		"static/%s/%s",
-		c.Params.ByName("type"),
-		c.Params.ByName("name"),
+		"static%s",
+		c.Params.ByName("filepath"),
 	)
 
 	data, err := Asset(file)
