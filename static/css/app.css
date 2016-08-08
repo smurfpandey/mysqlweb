@@ -475,3 +475,8 @@ strong.form-control {
 .delete-bookmark{
   font-size: 30px;
 }
+
+
+#mdlDiffViewer .modal-dialog {
+  width: 90%;
+}

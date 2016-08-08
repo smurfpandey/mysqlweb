@@ -212,6 +212,10 @@ var fnCreateEditorTab = function(editorName, editorData, editorTitle, objData, e
   //Initialize the ace editor
   initEditor('query_editor_' + queryTabCounter, editorData);
 
+  if (objData.proc_type === 'PROC' || objData.proc_type === 'FUNC' || objData.proc_type === 'VIEW') {
+    $('#query_editor_' + queryTabCounter).data('savedText', editorData);
+  }
+
   $('#query_tab_btn_' + queryTabCounter).tab('show');
 
   if (executeNow) {
@@ -1280,6 +1284,18 @@ function fnLoadAllBookmarks() {
   });
 }
 
+
+function initMonacoDiffViewer() {
+  require.config({ paths: { 'vs': '/static/js/vs' }});
+  require(['vs/editor/editor.main'], function() {
+        var diffViewer = monaco.editor.createDiffEditor(document.getElementById('dvDiffViewer'));
+        diffViewer.setModel({
+				  original: monaco.editor.createModel('SELECT * FROM userinfo WHERE userid > 890;', 'sql'),
+				  modified: monaco.editor.createModel('SELECT * FROM userdetails WHERE uid > 1890;', 'sql'),
+			})
+  });  
+}
+
 $(document).ready(function() {
   $("#table_content").on("click", function() {
     showTableContent();
@@ -1463,7 +1479,8 @@ $(document).ready(function() {
 
     //Create query tab
     generateFromTemplate({
-      tab_id: queryTabCounter
+      tab_id: queryTabCounter,
+      proc_type: 'QUERY'
     }, 'tmpl-query-tab', $('#body .tab-content'), false);
 
     //Create tab button
@@ -1504,6 +1521,21 @@ $(document).ready(function() {
 
     //Get editor of this tab
     var tabEditor = $tabEditor.data('ace-editor');
+
+    //07Aug2016: Check if there are any unsaved changes.
+    var tabType = $tabDiv.data('tabType');
+    if (tabType === 'PROC' || tabType === 'FUNC' || tabType === 'VIEW') {
+      var oldData = $.trim($tabEditor.data('savedText'));
+      var currData = $.trim(tabEditor.getValue());
+
+      if (oldData != currData) {
+        console.log('There is a mismatch');
+        $('#dvConfirmTabClose').addClass('is-visible');
+        return false;
+      } else {
+        console.log('It\'s all the same');
+      }
+    }
 
     //Destory the editor: Free memory
     tabEditor.destroy();
@@ -1561,6 +1593,12 @@ $(document).ready(function() {
               });
 
               $thisQueryDiv.data('isnew', false);
+
+              var savedText = $thisQueryDiv.data('savedText');
+              var origText = $thisQueryDiv.data('origText');
+              if (!origText) {
+                $thisQueryDiv.data('origText', savedText);
+              }
             }
           });
           break;
@@ -1584,6 +1622,12 @@ $(document).ready(function() {
               });
 
               $thisQueryDiv.data('isnew', false);
+
+              var savedText = $thisQueryDiv.data('savedText');
+              var origText = $thisQueryDiv.data('origText');
+              if (!origText) {
+                $thisQueryDiv.data('origText', savedText);
+              }
             }
           });
           break;
@@ -1904,4 +1948,32 @@ $(document).ready(function() {
       }
     });
   }, true);
+
+  //Close cd-popup
+  $('.cd-popup').on('click', function(event) {
+    if ($(event.target).is('.cd-popup-close') || $(event.target).is('.cd-popup')) {
+      event.preventDefault();
+      $(this).removeClass('is-visible');
+    }
+  });
+  //close popup when clicking the esc keyboard button
+  $(document).keyup(function(event) {
+    if (event.which == '27') {
+      $('.cd-popup').removeClass('is-visible');
+    }
+  });
+
+  //View diff between procs
+  $('#lnkViewDiff').on('click', function(e){
+    e.preventDefault();
+
+    $('#dvConfirmTabClose').removeClass('is-visible');
+
+    $('#mdlDiffViewer').on('shown.bs.modal', function(){
+        initMonacoDiffViewer('origText', 'modifiedText');
+    }).modal('show');
+
+    
+    
+  });
 });

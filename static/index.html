@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
   <title>mysqlweb</title>
   <meta charset="utf-8">
@@ -13,10 +14,12 @@
   <link rel="stylesheet" href="/static/css/sweetalert.css" />
   <link rel="stylesheet" href="/static/css/ie9.css" />
   <link rel="stylesheet" href="/static/css/example.wink.css" />
-  <link rel="stylesheet" href="/static/css/toastr.min.css"/>
+  <link rel="stylesheet" href="/static/css/toastr.min.css" />
+  <link rel="stylesheet" href="/static/css/cd-popup.css" />
   <link rel="stylesheet" href="/static/css/app.css" />
   <link rel="icon" type="image/x-icon" href="/static/img/icon.ico" />
 </head>
+
 <body>
   <div id="main">
     <div id="nav">
@@ -36,7 +39,8 @@
               <span class="input-group-btn">
                 <button class="btn btn-default" id="btnSearchDB" type="button">Go!</button>
               </span>
-            </div><!-- /input-group -->
+            </div>
+            <!-- /input-group -->
             <div id="dvClearSearch" class="hide">
               Search is on: <a href="#" id="btnClearSearch" class="btn btn-link">Clear</a>
             </div>
@@ -59,42 +63,41 @@
       </div>
     </div>
     <div id="body">
-        <div role="tabpanel">
-          <!-- Nav tabs -->
-          <ul id="ulQueryTab" class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active">
-              <a href="#query_tab_1" aria-controls="home" role="tab" data-toggle="tab" class="js-tab-btn">
-                <span aria-hidden="true" class="pull-right close-query-tab hide">&times;</span>
-                Query 1
-              </a>
-            </li>
-            <li role="presentation"><a href="#" id="lnkAddQueryTab">+ New Query Tab</a></li>
-          </ul>
+      <div role="tabpanel">
+        <!-- Nav tabs -->
+        <ul id="ulQueryTab" class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active">
+            <a href="#query_tab_1" aria-controls="home" role="tab" data-toggle="tab" class="js-tab-btn">
+              <span aria-hidden="true" class="pull-right close-query-tab hide">&times;</span> Query 1
+            </a>
+          </li>
+          <li role="presentation"><a href="#" id="lnkAddQueryTab">+ New Query Tab</a></li>
+        </ul>
 
-          <!-- Tab panes -->
-          <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="query_tab_1">
-              <div class="wrapper">
-                <div class="input">
-                  <div id="custom_query" class="query-editor"></div>
-                  <div class="actions">
-                    <input type="button" value="Run Query" class="btn btn-sm btn-primary js-run-query" />
-                    <input type="button" value="Explain Query" class="btn btn-sm btn-default js-explain-query" />
-                    <input type="button" id="csv" value="Download CSV" class="btn btn-sm btn-default" />
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane active" id="query_tab_1">
+            <div class="wrapper">
+              <div class="input">
+                <div id="custom_query" class="query-editor"></div>
+                <div class="actions">
+                  <input type="button" value="Run Query" class="btn btn-sm btn-primary js-run-query" />
+                  <input type="button" value="Explain Query" class="btn btn-sm btn-default js-explain-query" />
+                  <input type="button" id="csv" value="Download CSV" class="btn btn-sm btn-default" />
 
-                    <div id="query_progress">Please wait, query is executing...</div>
-                  </div>
+                  <div id="query_progress">Please wait, query is executing...</div>
                 </div>
-                <div class="output">
-                  <div class="wrapper">
-                    <table class="table results"></table>
-                  </div>
+              </div>
+              <div class="output">
+                <div class="wrapper">
+                  <table class="table results"></table>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
+
+      </div>
 
     </div>
   </div>
@@ -312,9 +315,12 @@
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           <button id="btnAlterDatabase" data-db-name="" type="button" class="btn btn-primary">Save changes</button>
         </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
   <!-- Modal for drop database -->
   <div id="mdlDropDB" class="modal fade">
     <div class="modal-dialog">
@@ -340,9 +346,12 @@
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           <button id="btnDropDatabase" data-db-name="" type="button" class="btn btn-danger">Drop Database</button>
         </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
   <!-- Modal for drop table -->
   <div id="mdlDropTable" class="modal fade">
     <div class="modal-dialog">
@@ -368,9 +377,12 @@
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           <button id="btnDropTable" type="button" class="btn btn-danger">Drop Table</button>
         </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
   <!-- Modal for create table -->
   <div id="mdlCreateTable" class="modal fade js-myModal">
     <div class="modal-dialog modal-lg">
@@ -436,13 +448,13 @@
                 <tbody>
                   <tr>
                     <td><input type="checkbox" /></td>
-                    <td><input type="textbox"/></td>
+                    <td><input type="textbox" /></td>
                     <td><select></select></td>
                     <td><input type="checkbox" /></td>
                     <td><input type="checkbox" /></td>
                     <td><input type="checkbox" /></td>
                     <td><input type="checkbox" /></td>
-                    <td><input type="textbox"/></td>
+                    <td><input type="textbox" /></td>
                   </tr>
                 </tbody>
               </table>
@@ -454,12 +466,53 @@
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           <button id="btnDropTable" type="button" class="btn btn-primary">Create Table</button>
         </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+
+  <div id="dvConfirmTabClose" class="cd-popup" role="alert">
+    <div class="cd-popup-container">
+      <p>There are some unsaved changes. Are you sure you want to close with out saving the changes?
+        <br><br>
+        <a id="lnkViewDiff" href="#">View Diff</a>
+      </p>
+      <ul class="cd-buttons">
+        <li><a href="#0" title="Apply changes & close tab.">Apply Changes</a></li>
+        <li><a href="#0" title="Ignore changes & close tab.">Ignore Changes</a></li>
+      </ul>
+      <a href="#0" class="cd-popup-close img-replace">Close</a>
+    </div>
+    <!-- cd-popup-container -->
+  </div>
+  <!-- cd-popup -->
+
+  <!-- Modal for drop table -->
+  <div id="mdlDiffViewer" class="modal fade js-myModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body" style="max-height: 650px; overflow-y: auto">
+          <div id="dvDiffViewer" style="width:95%;height:600px;margin:0 auto;"></div>
+        </div>
+        <div class="modal-footer">
+          
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+
 
   <script type="text/x-handlebars-template" id="tmpl-query-tab">
-    <div role="tabpanel" class="tab-pane" id="query_tab_{{tab_id}}">
+    <div role="tabpanel" class="tab-pane" id="query_tab_{{tab_id}}" data-tab-type="{{proc_type}}">
       <div class="wrapper">
         <div class="input">
           {{#equal tab_mode 'proc'}}
@@ -497,19 +550,13 @@
   <script id="tmpl-query-tab-btn" type="text/x-handlebars-template">
     <li role="presentation">
       <a href="#query_tab_{{tab_id}}" id="query_tab_btn_{{tab_id}}" role="tab" data-toggle="tab" class="js-tab-btn">
-        <span aria-hidden="true" class="pull-right close-query-tab">&times;</span>
-        {{#if tab_name}}
-        {{tab_name}}
-        {{else}}
-        Query {{tab_id}}
-        {{/if}}
+        <span aria-hidden="true" class="pull-right close-query-tab">&times;</span> {{#if tab_name}} {{tab_name}} {{else}} Query {{tab_id}} {{/if}}
       </a>
     </li>
   </script>
 
   <script id="tmpl-bookmark-list" type="text/x-handlebars-template">
-    {{#each bookmarks}}
-    {{#with conn_info}}
+    {{#each bookmarks}} {{#with conn_info}}
     <a href="#" class="list-group-item js-bookmark-link clearfix bookmark-list-item" data-username="{{Username}}" data-host="{{Host}}" data-port="{{Port}}" data-database="{{Database}}">
       <div class="pull-left">
         <div><strong>{{../name}}</strong></div>
@@ -517,13 +564,10 @@
       </div>
       <span class="pull-right delete-bookmark js-delete-bookmark" data-bookmarkname="{{../name}}" title="Delete this bookmark">&times;</span>
     </a>
-    {{/with}}
-    {{/each}}
-    {{#unless bookmarks}}
+    {{/with}} {{/each}} {{#unless bookmarks}}
     <a class="list-group-item text-center">
       No bookmarks available
-    </a>
-    {{/unless}}
+    </a> {{/unless}}
   </script>
   <script id="tmpl-connection-list" type="text/x-handlebars-template">
     {{#each connections}}
@@ -536,7 +580,7 @@
     {{/each}}
   </script>
 
-  <script type="text/javascript" src="/static/js/jquery.js"></script>
+  <script type="text/javascript" src="/static/js/vendor/jquery.js"></script>
   <script type="text/javascript" src="/static/js/bootstrap.js"></script>
   <script type="text/javascript" src="/static/js/bootstrap-select.min.js"></script>
   <script type="text/javascript" src="/static/js/ace.js"></script>
@@ -550,6 +594,7 @@
   <script type="text/javascript" src="/static/js/jquery.blockUI.min.js"></script>
   <script type="text/javascript" src="/static/js/hideShowPassword.js"></script>
   <script type="text/javascript" src="/static/js/toastr.min.js"></script>
+  <script type="text/javascript" src="/static/js/vs/loader.js"></script>
   <script type="text/javascript" src="/static/js/app.js"></script>
   <script id="tmpl-database-tree" type="text/x-handlebars-template">
     <ul>
@@ -561,4 +606,5 @@
     </ul>
   </script>
 </body>
+
 </html>
