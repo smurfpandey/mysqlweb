@@ -1554,7 +1554,10 @@ $(document).ready(function() {
   });
 
   $('#body').on('click', '.js-apply-proc', function(e) {
+    var $this = $(this);
+    
     var $thisQueryDiv = $(this).parent().prev();
+    var shouldClose = $(this).data('shouldClose');
 
     var thisEditor = $thisQueryDiv.data('ace-editor');
     var procDef = $.trim(thisEditor.getValue());
@@ -1592,11 +1595,14 @@ $(document).ready(function() {
               });
 
               $thisQueryDiv.data('isnew', false);
+              $thisQueryDiv.data('savedText', procDef);
 
-              var savedText = $thisQueryDiv.data('savedText');
-              var origText = $thisQueryDiv.data('origText');
-              if (!origText) {
-                $thisQueryDiv.data('origText', savedText);
+              if(shouldClose){
+                // Close this panel
+                var $tabBtn = $this.data('tabBtn');
+
+                // close-query-tab trigger click
+                $tabBtn.find('.close-query-tab').trigger('click');
               }
             }
           });
@@ -1621,19 +1627,20 @@ $(document).ready(function() {
               });
 
               $thisQueryDiv.data('isnew', false);
+              $thisQueryDiv.data('savedText', procDef);
 
-              var savedText = $thisQueryDiv.data('savedText');
-              var origText = $thisQueryDiv.data('origText');
-              if (!origText) {
-                $thisQueryDiv.data('origText', savedText);
+              if(shouldClose){
+                // Close this panel
+                var $tabBtn = $this.data('tabBtn');
+
+                // close-query-tab trigger click
+                $tabBtn.find('.close-query-tab').trigger('click');
               }
             }
           });
           break;
         }
     }
-
-
   });
 
   $('#refresh-list').on('click', function(e) {
@@ -2010,6 +2017,25 @@ $(document).ready(function() {
 
     //Remove the tab button from DOM
     $tabButton.parent().remove();
+  });
+
+
+  // Apply changes
+  $('#lnkApplyChanges').on('click', function(e){
+    e.preventDefault();
+    var $dvCDPopup = $('#dvConfirmTabClose');
+
+    // Close the CD popup
+    $dvCDPopup.removeClass('is-visible');
+
+    var tabId = $dvCDPopup.data('tabId');
+    var $tabButton = $dvCDPopup.data('tabBtn');
+
+    $dvCDPopup.data('origText', '').data('newText', '');
+
+    var $tabDiv = $('#' + tabId);
+
+    $tabDiv.find('.js-apply-proc').data('shouldClose', true).data('tabBtn', $tabButton).trigger('click');
   });
 
 });
