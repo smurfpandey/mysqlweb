@@ -1284,14 +1284,16 @@ function fnLoadAllBookmarks() {
   });
 }
 
-
-function initMonacoDiffViewer() {
+var diffViewer;
+function initMonacoDiffViewer(origText, modifText) {
   require.config({ paths: { 'vs': '/static/js/vs' }});
   require(['vs/editor/editor.main'], function() {
-        var diffViewer = monaco.editor.createDiffEditor(document.getElementById('dvDiffViewer'));
+        if (!diffViewer) {
+          diffViewer = monaco.editor.createDiffEditor(document.getElementById('dvDiffViewer'));
+        }
         diffViewer.setModel({
-				  original: monaco.editor.createModel('SELECT * FROM userinfo WHERE userid > 890;', 'sql'),
-				  modified: monaco.editor.createModel('SELECT * FROM userdetails WHERE uid > 1890;', 'sql'),
+				  original: monaco.editor.createModel(origText, 'sql'),
+				  modified: monaco.editor.createModel(modifText, 'sql'),
 			})
   });  
 }
@@ -1528,12 +1530,9 @@ $(document).ready(function() {
       var oldData = $.trim($tabEditor.data('savedText'));
       var currData = $.trim(tabEditor.getValue());
 
-      if (oldData != currData) {
-        console.log('There is a mismatch');
-        $('#dvConfirmTabClose').addClass('is-visible');
+      if (oldData != currData) {        
+        $('#dvConfirmTabClose').addClass('is-visible').data('origText', oldData).data('newText', currData).data('tabId', tabId).data('tabBtn', $tabButton);
         return false;
-      } else {
-        console.log('It\'s all the same');
       }
     }
 
@@ -1951,7 +1950,7 @@ $(document).ready(function() {
 
   //Close cd-popup
   $('.cd-popup').on('click', function(event) {
-    if ($(event.target).is('.cd-popup-close') || $(event.target).is('.cd-popup')) {
+    if ($(event.target).is('.cd-popup-close')) {
       event.preventDefault();
       $(this).removeClass('is-visible');
     }
@@ -1967,13 +1966,50 @@ $(document).ready(function() {
   $('#lnkViewDiff').on('click', function(e){
     e.preventDefault();
 
-    $('#dvConfirmTabClose').removeClass('is-visible');
+    //$('#dvConfirmTabClose').removeClass('is-visible');
 
-    $('#mdlDiffViewer').on('shown.bs.modal', function(){
-        initMonacoDiffViewer('origText', 'modifiedText');
-    }).modal('show');
+   var oldText = $('#dvConfirmTabClose').data('origText');
+   var newText = $('#dvConfirmTabClose').data('newText');
 
-    
-    
+   $('#mdlDiffViewer').on('shown.bs.modal', function(){
+       initMonacoDiffViewer(oldText, newText);
+   }).modal('show');
   });
+
+  // Ignore changes
+  $('#lnkIgnoreChanges').on('click', function(e){
+    e.preventDefault();
+    var $dvCDPopup = $('#dvConfirmTabClose')
+    
+    // Close the CD popup
+    $dvCDPopup.removeClass('is-visible');
+
+    var tabId = $dvCDPopup.data('tabId');
+    var $tabButton = $dvCDPopup.data('tabBtn');
+
+    $dvCDPopup.data('origText', '').data('newText', '');
+
+    var $tabDiv = $('#' + tabId);
+    var $tabEditor = $tabDiv.find('.query-editor');
+
+    //Get editor of this tab
+    var tabEditor = $tabEditor.data('ace-editor');
+
+    //Destory the editor: Free memory
+    tabEditor.destroy();
+
+    //Make previous tab active, if this tab is active
+    var isActive = $tabButton.parent().hasClass('active');
+    if (isActive) {
+      var $prevTab = $tabButton.parent().prev().find('a');
+      $prevTab.tab('show');
+    }
+
+    //Remove the tab from DOM
+    $tabDiv.remove();
+
+    //Remove the tab button from DOM
+    $tabButton.parent().remove();
+  });
+
 });

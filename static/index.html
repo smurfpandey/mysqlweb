@@ -480,8 +480,8 @@
         <a id="lnkViewDiff" href="#">View Diff</a>
       </p>
       <ul class="cd-buttons">
-        <li><a href="#0" title="Apply changes & close tab.">Apply Changes</a></li>
-        <li><a href="#0" title="Ignore changes & close tab.">Ignore Changes</a></li>
+        <li><a id="lnkApplyChanges" href="#0" title="Apply changes & close tab.">Apply Changes</a></li>
+        <li><a id="lnkIgnoreChanges" href="#0" title="Ignore changes & close tab.">Ignore Changes</a></li>
       </ul>
       <a href="#0" class="cd-popup-close img-replace">Close</a>
     </div>
@@ -495,13 +495,13 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title"></h4>
+          <h4 class="modal-title">View Difference</h4>
         </div>
         <div class="modal-body" style="max-height: 650px; overflow-y: auto">
-          <div id="dvDiffViewer" style="width:95%;height:600px;margin:0 auto;"></div>
+          <div id="dvDiffViewer" style="width:99%;height:620px;margin:0 auto;"></div>
         </div>
         <div class="modal-footer">
-          
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
       <!-- /.modal-content -->
