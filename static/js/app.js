@@ -938,26 +938,26 @@ function buildTable(results, $result) {
     return;
   }
 
-  if (!results.rows) {
-    $("<tr><td>No records found</tr></tr>").appendTo($result);
-    $result.addClass("empty");
-    return;
-  }
-
   var cols = "";
   var rows = "";
 
-  results.columns.forEach(function(col) {
-    cols += "<th data='" + col + "'>" + col + "</th>";
-  });
+  if (results.columns) {
+    results.columns.forEach(function(col) {
+      cols += "<th data='" + col + "'>" + col + "</th>";
+    });
+  }
 
-  results.rows.forEach(function(row) {
-    var r = "";
-    for (var i in row) {
-      r += "<td><div>" + escapeHtml(row[i]) + "</div></td>";
-    }
-    rows += "<tr>" + r + "</tr>";
-  });
+  if (results.rows) {
+    results.rows.forEach(function(row) {
+      var r = "";
+      for (var i in row) {
+        r += "<td><div>" + escapeHtml(row[i]) + "</div></td>";
+      }
+      rows += "<tr>" + r + "</tr>";
+    });
+  } else {
+    rows = '<tr>No records found</tr>'
+  }
 
   $("<thead>" + cols + "</thead><tbody>" + rows + "</tobdy>").appendTo($result);
 }
