@@ -545,10 +545,18 @@ func APIHandleQuery(query string, c *gin.Context) {
 	yoConnID := c.Request.Header.Get("X-CONN-ID")
 	dbClient := dbClientMap[yoConnID]
 
+	// 31 Aug
+	// Make it mandatory to have WHERE for UPDATE & DELETE
+	// TODO: Make this enforcing a setting
+	if !strings.Contains(strings.ToUpper(query), "WHERE") {
+		c.JSON(400, Error{"WHERE statement is mandatory with UPDATE & DELETE statements"})
+		return
+	}
+
 	result, err := dbClient.Query(query)
 
 	if err != nil {
-		c.JSON(400, NewError(err))
+		c.JSON(403, "{}")
 		return
 	}
 
