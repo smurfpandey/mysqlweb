@@ -956,7 +956,9 @@ function buildTable(results, $result) {
       rows += "<tr>" + r + "</tr>";
     });
   } else {
-    rows = '<tr>No records found</tr>'
+    $("<tr><td>No records found</tr></tr>").appendTo($result);
+    $result.addClass("empty");
+    return;
   }
 
   $("<thead>" + cols + "</thead><tbody>" + rows + "</tobdy>").appendTo($result);
