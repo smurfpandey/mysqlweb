@@ -951,7 +951,7 @@ function buildTable(results, $result) {
     results.rows.forEach(function(row) {
       var r = "";
       for (var i in row) {
-        r += "<td><div>" + escapeHtml(row[i]) + "</div></td>";
+        r += '<td><div class="js-cell-item">' + escapeHtml(row[i]) + '</div></td>';
       }
       rows += "<tr>" + r + "</tr>";
     });
@@ -1287,17 +1287,22 @@ function fnLoadAllBookmarks() {
 }
 
 var diffViewer;
+
 function initMonacoDiffViewer(origText, modifText) {
-  require.config({ paths: { 'vs': '/static/js/vs' }});
+  require.config({
+    paths: {
+      'vs': '/static/js/vs'
+    }
+  });
   require(['vs/editor/editor.main'], function() {
-        if (!diffViewer) {
-          diffViewer = monaco.editor.createDiffEditor(document.getElementById('dvDiffViewer'));
-        }
-        diffViewer.setModel({
-				  original: monaco.editor.createModel(origText, 'sql'),
-				  modified: monaco.editor.createModel(modifText, 'sql'),
-			})
-  });  
+    if (!diffViewer) {
+      diffViewer = monaco.editor.createDiffEditor(document.getElementById('dvDiffViewer'));
+    }
+    diffViewer.setModel({
+      original: monaco.editor.createModel(origText, 'sql'),
+      modified: monaco.editor.createModel(modifText, 'sql'),
+    })
+  });
 }
 
 $(document).ready(function() {
@@ -1532,7 +1537,7 @@ $(document).ready(function() {
       var oldData = $.trim($tabEditor.data('savedText'));
       var currData = $.trim(tabEditor.getValue());
 
-      if (oldData != currData) {        
+      if (oldData != currData) {
         $('#dvConfirmTabClose').addClass('is-visible').data('origText', oldData).data('newText', currData).data('tabId', tabId).data('tabBtn', $tabButton);
         return false;
       }
@@ -1557,7 +1562,7 @@ $(document).ready(function() {
 
   $('#body').on('click', '.js-apply-proc', function(e) {
     var $this = $(this);
-    
+
     var $thisQueryDiv = $(this).parent().prev();
     var shouldClose = $(this).data('shouldClose');
 
@@ -1599,7 +1604,7 @@ $(document).ready(function() {
               $thisQueryDiv.data('isnew', false);
               $thisQueryDiv.data('savedText', procDef);
 
-              if(shouldClose){
+              if (shouldClose) {
                 // Close this panel
                 var $tabBtn = $this.data('tabBtn');
 
@@ -1631,7 +1636,7 @@ $(document).ready(function() {
               $thisQueryDiv.data('isnew', false);
               $thisQueryDiv.data('savedText', procDef);
 
-              if(shouldClose){
+              if (shouldClose) {
                 // Close this panel
                 var $tabBtn = $this.data('tabBtn');
 
@@ -1972,24 +1977,24 @@ $(document).ready(function() {
   });
 
   //View diff between procs
-  $('#lnkViewDiff').on('click', function(e){
+  $('#lnkViewDiff').on('click', function(e) {
     e.preventDefault();
 
     //$('#dvConfirmTabClose').removeClass('is-visible');
 
-   var oldText = $('#dvConfirmTabClose').data('origText');
-   var newText = $('#dvConfirmTabClose').data('newText');
+    var oldText = $('#dvConfirmTabClose').data('origText');
+    var newText = $('#dvConfirmTabClose').data('newText');
 
-   $('#mdlDiffViewer').on('shown.bs.modal', function(){
-       initMonacoDiffViewer(oldText, newText);
-   }).modal('show');
+    $('#mdlDiffViewer').on('shown.bs.modal', function() {
+      initMonacoDiffViewer(oldText, newText);
+    }).modal('show');
   });
 
   // Ignore changes
-  $('#lnkIgnoreChanges').on('click', function(e){
+  $('#lnkIgnoreChanges').on('click', function(e) {
     e.preventDefault();
     var $dvCDPopup = $('#dvConfirmTabClose')
-    
+
     // Close the CD popup
     $dvCDPopup.removeClass('is-visible');
 
@@ -2023,7 +2028,7 @@ $(document).ready(function() {
 
 
   // Apply changes
-  $('#lnkApplyChanges').on('click', function(e){
+  $('#lnkApplyChanges').on('click', function(e) {
     e.preventDefault();
     var $dvCDPopup = $('#dvConfirmTabClose');
 
@@ -2038,6 +2043,41 @@ $(document).ready(function() {
     var $tabDiv = $('#' + tabId);
 
     $tabDiv.find('.js-apply-proc').data('shouldClose', true).data('tabBtn', $tabButton).trigger('click');
+  });
+
+
+  // Double Click for copying
+  $('.js-cell-item').tooltip({
+    trigger: 'manual',
+    placement: 'auto'
+  });
+
+  function setTooltip(btn, message) {
+    $(btn).tooltip('hide')
+      .attr('data-original-title', message)
+      .tooltip('show');
+  }
+
+  function hideTooltip(btn) {
+    setTimeout(function() {
+      $(btn).tooltip('hide');
+    }, 1000);
+  }
+
+  var clipboard = new Clipboard('.js-cell-item', {
+    text: function(trigger) {
+      return $(trigger).text();
+    }
+  });
+
+  clipboard.on('success', function(e) {
+    setTooltip(e.trigger, 'Copied!');
+    hideTooltip(e.trigger);
+  });
+
+  clipboard.on('error', function(e) {
+    setTooltip(e.trigger, 'Failed!');
+    hideTooltip(e.trigger);
   });
 
 });

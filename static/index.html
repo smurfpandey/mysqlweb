@@ -210,8 +210,6 @@
           </div>
         </div>
 
-
-
         <div id="connection_error" class="alert alert-danger"></div>
 
         <div id="dvConnectionFormBtns" class="form-group">
@@ -584,8 +582,18 @@
     </div>
     {{/each}}
   </script>
+  <script id="tmpl-database-tree" type="text/x-handlebars-template">
+    <ul>
+      {{#each database}}
+      <li data-jstree='{"children": true}'>
+        {{.}}
+      </li>
+      {{/each}}
+    </ul>
+  </script>
 
   <script type="text/javascript" src="/static/js/vendor/jquery.js"></script>
+  <script type="text/javascript" src="/static/js/vendor/clipboard.js"></script>
   <script type="text/javascript" src="/static/js/bootstrap.js"></script>
   <script type="text/javascript" src="/static/js/bootstrap-select.min.js"></script>
   <script type="text/javascript" src="/static/js/ace.js"></script>
@@ -601,15 +609,6 @@
   <script type="text/javascript" src="/static/js/toastr.min.js"></script>
   <script type="text/javascript" src="/static/js/vs/loader.js"></script>
   <script type="text/javascript" src="/static/js/app.js"></script>
-  <script id="tmpl-database-tree" type="text/x-handlebars-template">
-    <ul>
-      {{#each database}}
-      <li data-jstree='{"children": true}'>
-        {{.}}
-      </li>
-      {{/each}}
-    </ul>
-  </script>
 </body>
 
 </html>
