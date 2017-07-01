@@ -211,6 +211,16 @@ func APISetDefaultDatabase(c *gin.Context) {
 }
 
 //APIRunQuery will run the user's sql query
+func APIRunQueryGet(c *gin.Context) {
+	query := strings.TrimSpace(c.Request.FormValue("query"))
+
+	if query == "" {
+		c.JSON(400, errors.New("Query parameter is missing"))
+		return
+	}
+
+	APIHandleQuery(query, c)
+}
 func APIRunQuery(c *gin.Context) {
 	query := strings.TrimSpace(c.Request.FormValue("query"))
 
@@ -543,11 +553,23 @@ func apiSearch(c *gin.Context) {
 func APIHandleQuery(query string, c *gin.Context) {
 	//Read client id from the headers
 	yoConnID := c.Request.Header.Get("X-CONN-ID")
+
+	// If id missing from header, check in query string
+	if yoConnID == "" {
+		yoConnID = c.Request.FormValue("conn_id")
+	}
+
+	if yoConnID == "" {
+		c.JSON(400, Error{"Invalid connection"})
+		return
+	}
+
 	dbClient := dbClientMap[yoConnID]
 
 	// 31 Aug
 	// Make it mandatory to have WHERE for UPDATE & DELETE
 	// TODO: Make this enforcing a setting
+
 	if strings.Contains(strings.ToUpper(query), "UPDATE") ||
 		strings.Contains(strings.ToUpper(query), "DELETE") {
 		if !strings.Contains(strings.ToUpper(query), "WHERE") {

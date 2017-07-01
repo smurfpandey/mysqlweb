@@ -1147,7 +1147,16 @@ function runExplain(editor) {
 }
 
 function exportToCSV(editor) {
-  var query = $.trim(editor.getValue());
+  var query = ''; //$.trim(editor.getValue());
+
+  //Check if text is selected.
+  //If yes, then execute that selection only;
+
+  var selectedText = editor.session.getTextRange(editor.getSelectionRange());
+
+  if (selectedText.length > 0) {
+    query = selectedText;
+  }
 
   if (query.length === 0) {
     return;
@@ -1156,7 +1165,7 @@ function exportToCSV(editor) {
   // Replace line breaks with spaces and properly encode query
   query = window.encodeURI(query.replace(/\n/g, " "));
 
-  var url = "http://" + window.location.host + "/query?format=csv&query=" + query;
+  var url = "http://" + window.location.host + "/query?format=csv&query=" + query + "&conn_id=" + dbConnId;
   var win = window.open(url, '_blank');
 
   setCurrentTab("table_query");
@@ -1336,8 +1345,11 @@ $(document).ready(function() {
     runExplain(editor);
   });
 
-  $("#csv").on("click", function() {
-    exportToCSV();
+  $('#body').on('click', '.js-export-query', function() {
+    var $editor = $(this).parent().prev();
+    var editor = $editor.data('ace-editor');
+
+    exportToCSV(editor);
   });
 
   $("#results").on("click", "tr", function() {
