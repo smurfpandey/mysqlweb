@@ -73,7 +73,7 @@ func (client *Client) Test() error {
 
 func (client *Client) recordQuery(query string) {
 	saveQuery := Query{
-		Timestamp: time.Now().Unix(),
+		Timestamp: time.Now().UTC().Unix(),
 		Query:     query,
 	}
 	client.history = append(client.history, saveQuery)
