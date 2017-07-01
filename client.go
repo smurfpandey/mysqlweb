@@ -76,7 +76,10 @@ func (client *Client) recordQuery(query string) {
 		Timestamp: time.Now().UTC().Unix(),
 		Query:     query,
 	}
-	client.history = append(client.history, saveQuery)
+	client.history = prepend(saveQuery, client.history)
+}
+func prepend(v Query, slice []Query) []Query {
+	return append([]Query{v}, slice...)
 }
 
 //Info of our connected database
