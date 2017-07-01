@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"reflect"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/nu7hatch/gouuid"
@@ -13,7 +14,7 @@ import (
 //Client is our SQL client
 type Client struct {
 	db      *sqlx.DB
-	history []string
+	history []Query
 	host    string
 	user    string
 }
@@ -25,6 +26,12 @@ type Row []interface{}
 type Result struct {
 	Columns []string `json:"columns"`
 	Rows    []Row    `json:"rows"`
+}
+
+// Query
+type Query struct {
+	Timestamp int64  `json:"timestamp"`
+	Query     string `json:"query"`
 }
 
 //NewClientFromURL will create a new mysql client using the URL provided in parameters
@@ -65,7 +72,11 @@ func (client *Client) Test() error {
 }
 
 func (client *Client) recordQuery(query string) {
-	client.history = append(client.history, query)
+	saveQuery := Query{
+		Timestamp: time.Now().Unix(),
+		Query:     query,
+	}
+	client.history = append(client.history, saveQuery)
 }
 
 //Info of our connected database
