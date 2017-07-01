@@ -364,8 +364,9 @@
   display: inline-block;
 }
 
-#close_connection {
+#nav .btn {
   float: right;
+  margin-left: 10px;
 }
 
 #close_connection_window {
@@ -479,4 +480,8 @@ strong.form-control {
 
 #mdlDiffViewer .modal-dialog {
   width: 90%;
+}
+
+#mdlViewHistory .timestamp {
+  width: 111px;
 }

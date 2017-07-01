@@ -28,6 +28,8 @@
         <strong>Database: </strong><span id="current-database"></span>
       </div>
       <a href="#" id="close_connection" class="btn btn-primary btn-sm"><i class="fa fa-trash-o"></i> Close Connection</a>
+      &nbsp;&nbsp;
+      <a href="#" id="btnViewHistory" class="btn btn-primary btn-sm"><i class="fa fa-history"></i> View History</a>
     </div>
     <div id="sidebar">
       <div class="tables-list">
@@ -487,7 +489,7 @@
   </div>
   <!-- cd-popup -->
 
-  <!-- Modal for drop table -->
+  <!-- Modal for diff viewer -->
   <div id="mdlDiffViewer" class="modal fade js-myModal">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -503,6 +505,38 @@
         </div>
         <div class="modal-body" style="max-height: 650px; overflow-y: auto">
           <div id="dvDiffViewer" style="width:99%;height:620px;margin:0 auto;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+
+   <!-- Modal for view history -->
+  <div id="mdlViewHistory" class="modal fade js-myModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position: absolute;right: 10px;"><span aria-hidden="true">&times;</span></button>          
+          <h4 class="modal-title">View History</h4>
+          <div class="clearfix"></div>
+        </div>
+        <div class="modal-body" style="max-height: 650px; overflow-y: auto">
+          <table id="tblQueryHistory" class="table table-striped">
+            <thead>
+              <tr>
+                <th>Query</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody>
+              <td>
+            </tbody>
+          </table>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -592,6 +626,19 @@
     </ul>
   </script>
 
+  <script id="tmpl-query-history" type="text/x-handlebars-template">
+  {{#each this}}
+    <tr>
+      <td>
+        {{query}}
+      </td>
+      <td class="timestamp">
+        {{hbPrettyDate timestamp}}
+      </td>
+    </tr>
+  {{/each}}
+  </script>
+
   <script type="text/javascript" src="/static/js/vendor/jquery.js"></script>
   <script type="text/javascript" src="/static/js/vendor/clipboard.js"></script>
   <script type="text/javascript" src="/static/js/bootstrap.js"></script>
@@ -607,7 +654,9 @@
   <script type="text/javascript" src="/static/js/jquery.blockUI.min.js"></script>
   <script type="text/javascript" src="/static/js/hideShowPassword.js"></script>
   <script type="text/javascript" src="/static/js/toastr.min.js"></script>
+  <script type="text/javascript" src="/static/js/vendor/moment.min.js"></script>
   <script type="text/javascript" src="/static/js/vs/loader.js"></script>
+  <script type="text/javascript" src="/static/js/handlebars.helper.js"></script>
   <script type="text/javascript" src="/static/js/app.js"></script>
 </body>
 

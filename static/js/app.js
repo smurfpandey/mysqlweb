@@ -69,13 +69,6 @@ function apiCall(method, path, params, cb, isBackground) {
   });
 }
 
-Handlebars.registerHelper('equal', function(v1, v2, options) {
-  if (v1 === v2) {
-    return options.fn(this);
-  }
-  return options.inverse(this);
-});
-
 String.prototype.splice = function(idx, rem, s) {
   return (this.slice(0, idx) + s + this.slice(idx + Math.abs(rem)));
 };
@@ -180,6 +173,9 @@ function deleteBookmark(bookmarkName, cb) {
   apiCall("delete", "/bookmarks/" + bookmarkName, {}, cb);
 }
 
+function getHistory(cb) {
+  apiCall('get', '/history', {}, cb);
+}
 
 var fnGetSelectedTable = function() {
   return theTable;
@@ -893,8 +889,6 @@ function forTheTree() {
   });
 }
 
-
-
 function executeQuery(query, cb) {
   apiCall("post", "/query", {
     query: query
@@ -1311,6 +1305,12 @@ function initMonacoDiffViewer(origText, modifText) {
       original: monaco.editor.createModel(origText, 'sql'),
       modified: monaco.editor.createModel(modifText, 'sql'),
     })
+  });
+}
+
+function fnViewHistory(){
+  getHistory(function(data){
+    generateFromTemplate(data, 'tmpl-query-history', $('#tblQueryHistory tbody'), true);
   });
 }
 
@@ -2090,6 +2090,14 @@ $(document).ready(function() {
   clipboard.on('error', function(e) {
     setTooltip(e.trigger, 'Failed!');
     hideTooltip(e.trigger);
+  });
+
+  //Click view history button
+  $('#btnViewHistory').off('click').on('click', function(e){
+    e.preventDefault();
+
+    $('#mdlViewHistory').modal('show');
+    fnViewHistory();
   });
 
 });
