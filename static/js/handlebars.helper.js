@@ -57,7 +57,7 @@ var formatDate = function (originalDate) {
 
 var localDate = function (originalDate) {
     if (window.moment && moment(originalDate).isValid()) {
-        var feedDateTime = moment.utc(originalDate, 'YYYY-MM-DD HH-mm-ss');
+        var feedDateTime = moment.unix(originalDate);
 
         return feedDateTime.local().format('DD-MMM-YYYY hh:mm A');
     }
